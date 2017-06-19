@@ -10,6 +10,7 @@
 #include "item_location.h"
 #include "cursesdef.h"
 #include "ranged.h"
+#include "zmq.h"
 
 #include <vector>
 #include <map>
@@ -19,6 +20,7 @@
 
 extern const int savegame_version;
 extern int save_loading_version;
+extern void *zmqPublisher, *zmqContext;
 
 extern bool test_mode;
 
