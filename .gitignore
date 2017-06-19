@@ -20,7 +20,6 @@ CataclysmWin.depend
 CataclysmWin.layout
 *.exe
 *.dll
-WinDepend/
 *.7z
 *.zip
 build/
