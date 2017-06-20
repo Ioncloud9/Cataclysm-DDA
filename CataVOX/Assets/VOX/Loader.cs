@@ -6,6 +6,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using System.Threading;
 using System.Net.Sockets;
+using Assets;
 
 [Serializable]
 class Map
@@ -44,11 +45,10 @@ class UnknownTile : MonoBehaviour
 
 }
 
-class Loader : MonoBehaviour
+class Loader : GameBase
 {
-    public float scale;
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
-    GameObject frame, cached, player;
+    GameObject frame, cached;
     List<Label> labels = new List<Label>();
     Vector2 size = new Vector2(1, 1);
     bool needReload = false;
@@ -61,10 +61,14 @@ class Loader : MonoBehaviour
         cached = new GameObject("cache");
         client = new Thread(new ThreadStart(this.RequestMapJSON));
         client.Start();
-        mapJSON = File.ReadAllText("Assets/map.json");
-
-        player = VOXGameObject.CreateGameObject("Assets/tiles/player.vox", scale);
-        player.name = "player";
+        try
+        {
+            mapJSON = File.ReadAllText("Assets/map.json");
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Map.json not created yet");
+        }
     }
 
     void OnApplicationQuit()
@@ -124,14 +128,14 @@ class Loader : MonoBehaviour
         else
         {
             //Debug.Log(String.Format("object {0} not found, loading", id));
-            GameObject newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + id + ".vox", scale);
+            GameObject newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + id + ".vox", Game.Global_Scale);
             if (VOXGameObject.model.size.x == 0 &&
                 VOXGameObject.model.size.y == 0 &&
                 VOXGameObject.model.size.z == 0)
             {
                 //Debug.Log(String.Format("object {0} has not been found, creating unknow instead", id));
                 GameObject.Destroy(newObj);
-                newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + def + ".vox", scale);
+                newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + def + ".vox", Game.Global_Scale);
                 newObj.AddComponent<UnknownTile>();
                 if (VOXGameObject.model.size.x == 0 &&
                 VOXGameObject.model.size.y == 0 &&
@@ -169,8 +173,7 @@ class Loader : MonoBehaviour
         centeredStyle.alignment = TextAnchor.UpperCenter;
         foreach (Label label in labels)
         {
-            Camera cam = Camera.current;
-            Vector3 pos = cam.WorldToScreenPoint(label.pos);
+            Vector3 pos = Game.Camera.MainCamera.WorldToScreenPoint(label.pos);
             GUI.Label(new Rect(pos.x - 150 / 2, Screen.height - pos.y - 130 / 2, 150, 130), label.text, centeredStyle);
         }
     }
@@ -192,9 +195,8 @@ class Loader : MonoBehaviour
 				GameObject.Destroy(obj.Value);
             }
             objects = new Dictionary<string, GameObject>();
-            GameObject.Destroy(player);
-            player = VOXGameObject.CreateGameObject("Assets/tiles/player.vox", scale);
-            player.name = "player";
+            Game.Player.Reload();
+            Game.Camera.MoveTo(Game.Player.transform.position);
             needReload = true;
             return;
         }
