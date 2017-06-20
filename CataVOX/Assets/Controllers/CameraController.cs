@@ -58,8 +58,8 @@ namespace Assets.Controllers
             {
                 rotationAngle -= 360f;
             }
-            transform.Rotate(Vector3.up, rotationAngle);
-            //transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
+            //transform.Rotate(Vector3.up, rotationAngle);
+            transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
         }
 
         public void AdjustPosition(float xDelta, float zDelta)

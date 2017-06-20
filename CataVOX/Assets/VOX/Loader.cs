@@ -45,22 +45,18 @@ class UnknownTile : MonoBehaviour
 
 }
 
-class Loader : GameBase
+public class Loader : GameBase
 {
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
     GameObject frame, cached;
     List<Label> labels = new List<Label>();
     Vector2 size = new Vector2(1, 1);
     bool needReload = false;
-    bool quitting = false;
     string mapJSON, paintedJSON;
-    Thread client;
 
     void Start()
     {
         cached = new GameObject("cache");
-        client = new Thread(new ThreadStart(this.RequestMapJSON));
-        client.Start();
         try
         {
             mapJSON = File.ReadAllText("Assets/map.json");
@@ -70,40 +66,14 @@ class Loader : GameBase
             Debug.Log("Map.json not created yet");
         }
     }
-
-    void OnApplicationQuit()
+    
+    public void ProcessMapData(string message)
     {
-        //Debug.Log("exit");
-        quitting = true;
-        NetMQConfig.Cleanup();
-    }
-
-    private void RequestMapJSON()
-    {
-		try 
-		{
-	        using (var subscriber = new SubscriberSocket("tcp://localhost:3332"))
-	        {
-	            string prevMap = null;
-	            subscriber.Subscribe("");
-	            while (!quitting)
-	            {
-	                mapJSON = subscriber.ReceiveFrameString();
-	                if (prevMap != mapJSON) {
-	                    needReload = true;
-	                }
-	                prevMap = mapJSON;
-	            }
-	        }
-		} catch(SocketException)
-		{
-			Debug.Log ("Socket exception");
-		}
-        catch (Exception)
+        if (message != mapJSON)
         {
-            Debug.Log("Some exception");
+            mapJSON = message;
+            needReload = true;
         }
-        NetMQConfig.Cleanup();
     }
 
     void AddOrInstantiate(float x, float y, string id, string def)
@@ -178,6 +148,10 @@ class Loader : GameBase
         }
     }
 
+    public void Reload()
+    {
+        needReload = true;
+    }
     void Update()
     {
         if (mapJSON == null) return;

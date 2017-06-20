@@ -216,6 +216,7 @@
     <Compile Include="Assets\VOX\Loader.cs" />
     <Compile Include="Assets\VOX\VOXFile.cs" />
     <Compile Include="Assets\VOX\VOXGameObject.cs" />
+    <Compile Include="Assets\zMQThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
