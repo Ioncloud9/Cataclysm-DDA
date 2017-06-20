@@ -91,6 +91,7 @@
 #include "safemode_ui.h"
 #include "game_constants.h"
 #include "string_input_popup.h"
+#include "zmq_sender.h"
 
 #include <map>
 #include <set>
@@ -232,6 +233,7 @@ public:
 game::game() :
     map_ptr( new map() ),
     u_ptr( new player() ),
+    mqSender_ptr(new zmq_sender()),
     liveview_ptr( new live_view() ),
     liveview( *liveview_ptr ),
     scent_ptr( new scent_map( *this ) ),
@@ -239,6 +241,7 @@ game::game() :
     uquit(QUIT_NO),
     m( *map_ptr ),
     u( *u_ptr ),
+    mqSender(*mqSender_ptr),
     scent( *scent_ptr ),
     critter_tracker( new Creature_tracker() ),
     weather( WEATHER_CLEAR ),
@@ -399,8 +402,7 @@ void game::load_data_from_dir( const std::string &path, const std::string &src )
 
 game::~game()
 {
-    zmq_close(zmqPublisher);
-    zmq_ctx_destroy(zmqContext);
+    g->mqSender.~zmq_sender();
     MAPBUFFER.reset();
 }
 
@@ -423,16 +425,8 @@ void to_overmap_font_dimension(int &, int &) { }
 void reinitialize_framebuffer() { }
 #endif
 
-void* zmqContext = NULL;
-void* zmqPublisher = NULL;
-
 void game::init_ui()
 {
-    zmqContext = zmq_ctx_new();
-    zmqPublisher = zmq_socket(zmqContext, ZMQ_PUB);
-    int rc = zmq_bind(zmqPublisher, "tcp://*:3332");
-    assert(rc == 0);
-
     // clear the screen
     static bool first_init = true;
 
@@ -1578,7 +1572,9 @@ bool game::do_turn()
     sfx::remove_hearing_loss();
     sfx::do_danger_music();
     sfx::do_fatigue();
-
+    
+    mqSender.SendMapData();
+    /*
     const tripoint ppos = u.pos();
     std::stringstream ss;
     JsonOut json(ss);
@@ -1614,6 +1610,7 @@ bool game::do_turn()
     //fclose(ff);
 
     zmq_send (zmqPublisher, ss.str().c_str(), (size_t)ss.str().length(), 0);
+    */
     return false;
 }
 
