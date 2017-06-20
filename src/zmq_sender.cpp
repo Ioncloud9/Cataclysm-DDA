@@ -32,7 +32,6 @@ void zmq_sender::SendMapData() {
     std::stringstream ss;
     JsonOut json(ss);
 
-    const int size = 20;
     json.start_object();
     json.member("width", size * 2);
     json.member("height", size * 2);

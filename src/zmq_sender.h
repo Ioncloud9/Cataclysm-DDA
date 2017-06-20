@@ -28,6 +28,8 @@ public:
     zmq_sender();
     ~zmq_sender();
     void SendMapData();
+protected:
+    const int size = 20;
 };
 
 #endif
