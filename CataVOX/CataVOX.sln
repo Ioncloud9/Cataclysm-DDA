@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CataVOX", "CataVOX.csproj", "{1AF38039-EE0D-579A-98AD-A018D5F2AA04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CataVOX.Editor", "CataVOX.Editor.csproj", "{2EF3A29E-90F8-3686-5D81-E6C613676862}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AF38039-EE0D-579A-98AD-A018D5F2AA04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AF38039-EE0D-579A-98AD-A018D5F2AA04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AF38039-EE0D-579A-98AD-A018D5F2AA04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AF38039-EE0D-579A-98AD-A018D5F2AA04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EF3A29E-90F8-3686-5D81-E6C613676862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF3A29E-90F8-3686-5D81-E6C613676862}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF3A29E-90F8-3686-5D81-E6C613676862}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF3A29E-90F8-3686-5D81-E6C613676862}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
