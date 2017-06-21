@@ -89,6 +89,7 @@
     <Compile Include="Assets\Controllers\CameraController.cs" />
     <Compile Include="Assets\Controllers\InputController.cs" />
     <Compile Include="Assets\Controllers\PlayerController.cs" />
+    <Compile Include="Assets\Enums.cs" />
     <Compile Include="Assets\GameBase.cs" />
     <Compile Include="Assets\GameMaster.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\Atlas.cs" />

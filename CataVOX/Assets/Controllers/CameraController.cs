@@ -8,6 +8,8 @@ namespace Assets.Controllers
 {
     public class CameraController : GameBase
     {
+        private Direction _cameraDirection = Direction.N;
+
         public float stickMinZoom, stickMaxZoom;
 
         public float swivelMinZoom, swivelMaxZoom;
@@ -24,8 +26,17 @@ namespace Assets.Controllers
 
         public void Awake()
         {
+            this.transform.position = Vector3.zero;
+            this.transform.rotation = Quaternion.identity;
+
             swivel = transform.GetChild(0);
+            swivel.localPosition = new Vector3(0, 0, 0);
+            swivel.localRotation = Quaternion.Euler(45, 0, 0);
+            
             stick = swivel.GetChild(0);
+            stick.localPosition = new Vector3(0,0,-20);
+            stick.localRotation = Quaternion.identity;
+
             MainCamera = GetComponentInChildren<Camera>();
         }
 

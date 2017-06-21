@@ -38,6 +38,7 @@ namespace Assets
             }
         }
 
+
         public static GameMaster Current
         {
             get { return _instance; }
