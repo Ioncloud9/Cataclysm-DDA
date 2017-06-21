@@ -1,8 +1,8 @@
 # These files are text and should be normalized (convert crlf =&gt; lf)
 *.c       text
 *.cbp     text
-*.cpp     text
-*.h       text
+*.cpp     text eol=crlf
+*.h       text eol=crlf
 *.json    text
 *.lua     text
 *.md      text
@@ -11,6 +11,7 @@
 *.sh      text eol=lf
 *.txt     text
 *.yml     text
+*.cs      text eol=crlf
 
 # Visual Studio project files, leave them alone.
 *.cmd     -text

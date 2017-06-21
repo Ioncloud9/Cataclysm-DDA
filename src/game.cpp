@@ -1574,43 +1574,6 @@ bool game::do_turn()
     sfx::do_fatigue();
     
     mqSender.SendMapData();
-    /*
-    const tripoint ppos = u.pos();
-    std::stringstream ss;
-    JsonOut json(ss);
-
-    const int size = 20;
-    json.start_object();
-    json.member("width", size * 2);
-    json.member("height", size * 2);
-    json.member("tiles");
-    json.start_array();
-
-    for (int dx = -size; dx < size; dx++) {
-        for (int dy = -size; dy < size; dy++) {
-            const tripoint p(ppos.x + dx, ppos.y + dy, ppos.z);
-            const ter_id ter = m.ter(p);
-            const furn_id furn = m.furn(p);
-
-            json.start_object();
-            if (u.sees(p, true)) {
-                json.member("ter", ter.id());
-                if (furn != f_null) {
-                    json.member("furn", furn.id());
-                }
-            }
-            json.end_object();
-        }
-    }
-    json.end_array();
-    json.end_object();
-
-    //FILE* ff = fopen("cataMap.json", "w");
-    //fwrite(ss.str().c_str(), (size_t)ss.str().length(), 1, ff);
-    //fclose(ff);
-
-    zmq_send (zmqPublisher, ss.str().c_str(), (size_t)ss.str().length(), 0);
-    */
     return false;
 }
 
