@@ -91,7 +91,7 @@
 #include "safemode_ui.h"
 #include "game_constants.h"
 #include "string_input_popup.h"
-#include "zmq_sender.h"
+#include "zmq_manager.h"
 
 #include <map>
 #include <set>
@@ -233,7 +233,7 @@ public:
 game::game() :
     map_ptr( new map() ),
     u_ptr( new player() ),
-    mqSender_ptr(new zmq_sender()),
+    mqSender_ptr(new zmq_manager()),
     liveview_ptr( new live_view() ),
     liveview( *liveview_ptr ),
     scent_ptr( new scent_map( *this ) ),
@@ -402,7 +402,7 @@ void game::load_data_from_dir( const std::string &path, const std::string &src )
 
 game::~game()
 {
-    g->mqSender.~zmq_sender();
+    g->mqSender.~zmq_manager();
     MAPBUFFER.reset();
 }
 
@@ -1573,7 +1573,7 @@ bool game::do_turn()
     sfx::do_danger_music();
     sfx::do_fatigue();
     
-    mqSender.SendMapData();
+    //mqSender.Send("MapData", mqSender.GetMapData());
     return false;
 }
 

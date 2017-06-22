@@ -17,7 +17,8 @@ namespace Assets
     public class zMQThread : IDisposable
     {
         private static readonly object _locker = new object();
-        private SubscriberSocket _subscriber;
+        private RequestSocket _requestor;
+        private ResponseSocket _subscriber;
         private bool _stopping = false;
         private Thread _thread;
 
@@ -26,6 +27,13 @@ namespace Assets
         public zMQThread()
         {
             Running = false;
+
+        }
+
+        private class AsyncCommand
+        {
+            public string Command;
+            public Action<string> Callback;
         }
 
         public void Stop()
@@ -35,6 +43,8 @@ namespace Assets
             {
                 if (!Running || _stopping) return;
                 _stopping = true;
+                _requestor.Dispose();
+                _subscriber.Dispose();
                 //give things a chance to stop...
                 _thread.Join(1000);
                 if (_thread.ThreadState != ThreadState.Stopped)
@@ -51,6 +61,30 @@ namespace Assets
 
             }
         }
+
+        public string SendCommand(string command)
+        {
+            _requestor.SendFrame(command);
+            var msg = _requestor.ReceiveFrameString();
+            return msg;
+        }
+
+        private void _SendCommandAsync(object args)
+        {
+            var command = (AsyncCommand) args;
+            var msg = SendCommand(command.Command);
+            command.Callback(msg);
+        }
+
+        public void SendCommandAsync(string command, Action<string> callback)
+        {
+            var th = new Thread(_SendCommandAsync);
+            th.Start(new AsyncCommand()
+            {
+                Command = command,
+                Callback = callback
+            });
+        }
         
         public void Start()
         {
@@ -60,7 +94,8 @@ namespace Assets
                 if (Running) return;
                 Running = true;
                 _stopping = false;
-                _subscriber = new SubscriberSocket("tcp://localhost:3332");
+                _requestor = new RequestSocket(">tcp://localhost:3333");
+                _subscriber = new ResponseSocket(">tcp://localhost:3332");
                 _thread = new Thread(Main);
                 _thread.Start();
             }
@@ -70,29 +105,51 @@ namespace Assets
 
         private void Main()
         {
-            while (!_stopping)
+            try
             {
-                _subscriber.SubscribeToAnyTopic();
-                string msg;
-                while (!_subscriber.TryReceiveFrameString(TimeSpan.FromMilliseconds(100), out msg) && !_stopping)
+                while (!_stopping)
                 {
-                }
-                if (_stopping) break;
-                if (OnMessageReceived != null)
-                {
-                    OnMessageReceived("MapData", msg);
+                    try
+                    {
+                        var msg = "";
+                        while (!_subscriber.TryReceiveFrameString(TimeSpan.FromMilliseconds(1000), out msg) && !_stopping)
+                        {
+                        }
+                        if (_stopping) break;
+                        var msgSplit = msg.Split(':');
+                        var command = msgSplit[0];
+                        var data = "";
+                        if (msgSplit.Length > 1)
+                            data = msgSplit[1];
+                        else
+                        {
+                            data = command;
+                            command = "";
+                        }
+                        if (OnMessageReceived != null) OnMessageReceived(command, data);
+                        _subscriber.SendFrame("OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
+                    Thread.Sleep(100);
                 }
             }
-            _subscriber.Dispose();
-            _subscriber = null;
-            Running = false;
-            _stopping = false;
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Running = false;
+                _stopping = false;
+            }
         }
 
         public void Dispose()
         {
             Stop();
-            if(_subscriber != null) _subscriber.Dispose();
         }
     }
 }

@@ -54,11 +54,12 @@ public class Loader : GameBase
     bool needReload = false;
     string mapJSON, paintedJSON;
 
-    void Start()
+    private void Start()
     {
         cached = new GameObject("cache");
         try
         {
+            ProcessMapData(Game.SendCommand("MapData"));
             mapJSON = File.ReadAllText("Assets/map.json");
         }
         catch (Exception ex)
@@ -76,7 +77,7 @@ public class Loader : GameBase
         }
     }
 
-    void AddOrInstantiate(float x, float y, string id, string def)
+    private void AddOrInstantiate(float x, float y, string id, string def)
     {
         if (id == null) return;
         float d = 0.0f;
@@ -137,7 +138,7 @@ public class Loader : GameBase
         }
     }
 
-    void OnGUI()
+    private void OnGUI()
     {
         var centeredStyle = GUI.skin.GetStyle("Label");
         centeredStyle.alignment = TextAnchor.UpperCenter;
@@ -148,34 +149,32 @@ public class Loader : GameBase
         }
     }
 
-    public void Reload()
+    private void Update()
     {
-        needReload = true;
-    }
-    void Update()
-    {
+        if (Input.GetKeyUp(KeyCode.F5))
+        {
+            ProcessMapData(Game.SendCommand("MapData"));
+            return;
+        }
+
         if (mapJSON == null) return;
         if (paintedJSON != mapJSON)
         {
             needReload = true;
         }
 
-        if (Input.GetKeyUp(KeyCode.F5))
+        if (needReload)
         {
             GameObject.Destroy(cached);
             cached = new GameObject("cache");
             foreach (var obj in objects)
             {
-				GameObject.Destroy(obj.Value);
+                GameObject.Destroy(obj.Value);
             }
             objects = new Dictionary<string, GameObject>();
             Game.Player.Reload();
             Game.Camera.MoveTo(Game.Player.transform.position);
-            needReload = true;
-            return;
-        }
-        if (needReload)
-        {
+            
             Map map = JsonUtility.FromJson<Map>(mapJSON);
             Debug.Log("reloading...");
             labels = new List<Label>();

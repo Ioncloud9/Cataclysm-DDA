@@ -113,7 +113,7 @@ struct w_point;
 struct explosion_data;
 struct visibility_variables;
 class scent_map;
-class zmq_sender;
+class zmq_manager;
 
 // Note: this is copied from inventory.h
 // Entire inventory.h would also bring item.h here
@@ -170,7 +170,7 @@ class game
         std::unique_ptr<map> map_ptr;
         std::unique_ptr<player> u_ptr;
         std::unique_ptr<live_view> liveview_ptr;
-        std::unique_ptr<zmq_sender> mqSender_ptr;
+        std::unique_ptr<zmq_manager> mqSender_ptr;
         live_view& liveview;
         std::unique_ptr<scent_map> scent_ptr;
     public:
@@ -217,7 +217,7 @@ class game
         /** Make map a reference here, to avoid map.h in game.h */
         map &m;
         player &u;
-        zmq_sender &mqSender;
+        zmq_manager &mqSender;
         scent_map &scent;
 
         std::unique_ptr<Creature_tracker> critter_tracker;

@@ -28,6 +28,15 @@ namespace Assets
             _zmqClient.Start();
         }
 
+        public void SendCommandAsync(string command, Action<string> callback)
+        {
+            _zmqClient.SendCommandAsync(command, callback);
+        }
+        public string SendCommand(string command)
+        {
+            return _zmqClient.SendCommand(command);
+        }
+
         private void _zmqClient_OnMessageReceived(string messageType, string message)
         {
             switch (messageType.ToLower())

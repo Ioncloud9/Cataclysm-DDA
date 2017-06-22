@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.props" Condition="Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -255,6 +256,7 @@
     <Import Project="packages\libiconv.vp.1.14.0.1\build\native\libiconv.vp.targets" Condition="Exists('packages\libiconv.vp.1.14.0.1\build\native\libiconv.vp.targets')" />
     <Import Project="packages\libintl.vp.redist.0.19.8.3\build\native\libintl.vp.redist.targets" Condition="Exists('packages\libintl.vp.redist.0.19.8.3\build\native\libintl.vp.redist.targets')" />
     <Import Project="packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets" Condition="Exists('packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets')" />
+    <Import Project="packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets" Condition="Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -279,5 +281,7 @@
     <Error Condition="!Exists('packages\libiconv.vp.1.14.0.1\build\native\libiconv.vp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libiconv.vp.1.14.0.1\build\native\libiconv.vp.targets'))" />
     <Error Condition="!Exists('packages\libintl.vp.redist.0.19.8.3\build\native\libintl.vp.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libintl.vp.redist.0.19.8.3\build\native\libintl.vp.redist.targets'))" />
     <Error Condition="!Exists('packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets'))" />
+    <Error Condition="!Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.props'))" />
+    <Error Condition="!Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets'))" />
   </Target>
 </Project>
