@@ -149,16 +149,25 @@ unsigned __stdcall zmq_manager::zmqListener(void* PtrToInstance)
         if (zmq_SUB_Socket.recv(&msg)) {
             std::vector<string> command = pInstance->ReadCommand(&msg);
             string strResponse;
-            if (command[0] == "MapData") {
-                strResponse = pInstance->GetMapData();
+            try {
+                if (command[0] == "MapData") {
+                    strResponse = "MapData:" + pInstance->GetMapData();
+                }
+                else if (command[0] == "Move") {
+                    if (command.size() != 2) {
+                        strResponse = "FAIL:Malformed command";
+                    }
+                    else {
+                        strResponse = "Move:" + pInstance->MovePlayer(command[1]);
+                    }
+                }
+                else {
+                    strResponse = "OK:OK";
+                }
             }
-            else if (command[0] == "Move") {
-                strResponse = pInstance->MovePlayer(command[1]);
+            catch (const std::exception& e) {
+                strResponse = "FAIL:" + *e.what();
             }
-            else {
-                strResponse = "OK";
-            }
-
             message_t resp = pInstance->CreateMessage(strResponse);
             zmq_SUB_Socket.send(resp);
         }
@@ -187,45 +196,33 @@ std::vector<string> zmq_manager::split(const string &s, char delim) {
 }
 
 string zmq_manager::MovePlayer(string dir) {
+
     WORD key;
 
     if (dir == "N") {
-        key = 0x38;
+        g->plmove(0, -1);
     }
     else if (dir == "S") {
-        key = 0x32;
+        g->plmove(0, 1);
     }
     else if (dir == "E") {
-        key = 0x36;
+        g->plmove(1, 0);
     }
     else if (dir == "W") {
-        key = 0x34;
+        g->plmove(-1, 0);
     }
     else if (dir == "NE") {
-        key = 0x39;
+        g->plmove(1, -1);
     }
     else if (dir == "NW") {
-        key = 0x37;
+        g->plmove(-1, -1);
     }
     else if (dir == "SE") {
-        key = 0x33;
+        g->plmove(1, 1);
     }
     else if (dir == "SW") {
-        key = 0x31;
+        g->plmove(-1, 1);
     }
-
-    INPUT ip;
-    ip.type = INPUT_KEYBOARD;
-    ip.ki.wScan = 0;
-    ip.ki.time = 0;
-    ip.ki.dwExtraInfo = 0;
-
-    ip.ki.wVk = key;
-    ip.ki.dwFlags = 0;
-    SendInput(1, &ip, sizeof(INPUT));
-
-    ip.ki.dwFlags = KEYEVENTF_KEYUP; // KEYEVENTF_KEYUP for key release
-    SendInput(1, &ip, sizeof(INPUT));
 
     return GetMapData();
 }

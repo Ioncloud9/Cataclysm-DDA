@@ -8,6 +8,7 @@ namespace Assets.Controllers
 {
     public class CameraController : GameBase
     {
+        [SerializeField]
         private Direction _cameraDirection = Direction.N;
 
         public float stickMinZoom, stickMaxZoom;
@@ -27,7 +28,7 @@ namespace Assets.Controllers
         public void Awake()
         {
             this.transform.position = Vector3.zero;
-            this.transform.rotation = Quaternion.identity;
+            this.transform.rotation = Quaternion.Euler(0, -90, 0);
 
             swivel = transform.GetChild(0);
             swivel.localPosition = new Vector3(0, 0, 0);
@@ -58,8 +59,44 @@ namespace Assets.Controllers
             swivel.localRotation = Quaternion.Euler(angle, 0f, 0f);
         }
 
+        public Direction Facing
+        {
+            get { return _cameraDirection; }
+            set { _cameraDirection = value; }
+        }
+
         public void AdjustRotation(float delta)
         {
+            float newRot;
+            if (delta < 0)
+            {
+                newRot = transform.localRotation.eulerAngles.y - 45;
+            }
+            else if (delta > 0)
+            {
+                newRot = transform.localRotation.eulerAngles.y + 45;
+            }
+            else return;
+
+            var newDirVal = (int)Facing + delta;
+            if (newDirVal < 0)
+            {
+                Facing = Direction.NW;
+            }
+            else if
+                (newDirVal > (int)Direction.NW)
+            {
+                Facing = Direction.N;
+            }
+            else
+            {
+                Facing = (Direction)newDirVal;
+            }
+
+            transform.localRotation =Quaternion.Euler(0f, newRot, 0f);
+
+            //transform.localRotation = Quaternion.Euler(0f, newRot, 0f);
+            /*
             rotationAngle += delta * rotationSpeed * Time.deltaTime;
             if (rotationAngle < 0f)
             {
@@ -71,6 +108,7 @@ namespace Assets.Controllers
             }
             //transform.Rotate(Vector3.up, rotationAngle);
             transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
+            */
         }
 
         public void AdjustPosition(float xDelta, float zDelta)

@@ -92,6 +92,8 @@
     <Compile Include="Assets\Enums.cs" />
     <Compile Include="Assets\GameBase.cs" />
     <Compile Include="Assets\GameMaster.cs" />
+    <Compile Include="Assets\InputPair.cs" />
+    <Compile Include="Assets\SendCommandException.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\Atlas.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\AtlasScaler.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\AtlasTile.cs" />
@@ -214,6 +216,7 @@
     <Compile Include="Assets\ProceduralToolkit\VectorE.cs" />
     <Compile Include="Assets\Testing\MapGen\TilePoint.cs" />
     <Compile Include="Assets\Testing\MapGen\TileRenderer.cs" />
+    <Compile Include="Assets\Utils.cs" />
     <Compile Include="Assets\VOX\Loader.cs" />
     <Compile Include="Assets\VOX\VOXFile.cs" />
     <Compile Include="Assets\VOX\VOXGameObject.cs" />

@@ -34,7 +34,15 @@ namespace Assets
         }
         public string SendCommand(string command)
         {
-            return _zmqClient.SendCommand(command);
+            try
+            {
+                return _zmqClient.SendCommand(command);
+            }
+            catch (SendCommandException sce)
+            {
+                Debug.Log(string.Format("SendCommand failed with {0}", sce.Message));
+                return null;
+            }
         }
 
         private void _zmqClient_OnMessageReceived(string messageType, string message)

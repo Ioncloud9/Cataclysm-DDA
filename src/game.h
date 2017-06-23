@@ -719,6 +719,10 @@ class game
 
         /** Attempt to load first valid save (if any) in world */
         bool load( const std::string &world );
+        void pldrive(int x, int y); // drive vehicle
+                                    // Standard movement; handles attacks, traps, &c. Returns false if auto move
+                                    // should be canceled
+        bool plmove(int dx, int dy, int dz = 0);
 
     private:
         // Game-start procedures
@@ -772,10 +776,6 @@ class game
         bool prompt_dangerous_tile( const tripoint &dest_loc ) const;
         /** Returns true if the menu handled stuff and player shouldn't do anything else */
         bool npc_menu( npc &who );
-        void pldrive(int x, int y); // drive vehicle
-        // Standard movement; handles attacks, traps, &c. Returns false if auto move
-        // should be canceled
-        bool plmove(int dx, int dy, int dz = 0);
         // Handle pushing during move, returns true if it handled the move
         bool grabbed_move( const tripoint &dp );
         bool grabbed_veh_move( const tripoint &dp );

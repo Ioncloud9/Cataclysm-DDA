@@ -66,7 +66,14 @@ namespace Assets
         {
             _requestor.SendFrame(command);
             var msg = _requestor.ReceiveFrameString();
-            return msg;
+            var spMsg = msg.Split(':').ToList();
+            if (spMsg[0] == "FAIL")
+            {
+                throw new SendCommandException(spMsg[1]);
+            }
+            spMsg.RemoveAt(0);
+            var newMsg = string.Join(":", spMsg.ToArray());
+            return newMsg;
         }
 
         private void _SendCommandAsync(object args)
