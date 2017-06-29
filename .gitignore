@@ -145,5 +145,8 @@ Cataclysm.nam
 # Distribution script results
 msvc-full-features/distribution
 
+msvc-full-features/packages
+msvc-full-features/bin
+
 # Transifex Client
 .tx/
