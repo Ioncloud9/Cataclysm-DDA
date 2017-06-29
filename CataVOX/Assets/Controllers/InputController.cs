@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Assets.Scripts;
+using Assets.Scripts.Inputs;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +12,9 @@ namespace Assets.Controllers
 {
     public class InputController : GameBase
     {
+        private static DDABindings _inputBindings = new DDABindings();
+
+        public DDABindings Bindings { get { return _inputBindings; } }
         public void Update()
         {
             var zoomDelta = Input.GetAxis("Mouse ScrollWheel");
@@ -33,6 +39,16 @@ namespace Assets.Controllers
             {
                 Game.Camera.AdjustPosition(xDelta, zDelta);
             }
+
+            var sw = Stopwatch.StartNew();
+            var binding = Bindings.GetInputCommand();
+            if (binding != null)
+            {
+                UnityEngine.Debug.Log(string.Format("Command for key is {0}", binding.DDACommand));
+                Game.SendCommand(binding.DDACommand);
+            }
+            sw.Stop();
+            //UnityEngine.Debug.Log(string.Format("Found binding in {0}ms", sw.ElapsedMilliseconds));
         }
     }
 }

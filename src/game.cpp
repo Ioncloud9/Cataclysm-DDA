@@ -91,7 +91,7 @@
 #include "safemode_ui.h"
 #include "game_constants.h"
 #include "string_input_popup.h"
-#include "zmq_manager.h"
+#include "voxMQManager.h"
 
 #include <map>
 #include <set>
@@ -233,7 +233,7 @@ public:
 game::game() :
     map_ptr( new map() ),
     u_ptr( new player() ),
-    mqSender_ptr(new zmq_manager()),
+    mqSender_ptr(new voxMQManager()),
     liveview_ptr( new live_view() ),
     liveview( *liveview_ptr ),
     scent_ptr( new scent_map( *this ) ),
@@ -402,7 +402,7 @@ void game::load_data_from_dir( const std::string &path, const std::string &src )
 
 game::~game()
 {
-    g->mqSender.~zmq_manager();
+    g->mqSender.~voxMQManager();
     MAPBUFFER.reset();
 }
 
@@ -1573,7 +1573,14 @@ bool game::do_turn()
     sfx::do_danger_music();
     sfx::do_fatigue();
     
-    //mqSender.Send("MapData", mqSender.GetMapData());
+    mqSender.SendCommandResponse();
+    /*
+    if (mqSender.HasCommand()) {
+        if (mqSender.EndProcessing()) { // indicate we've completed processing (this could be done elsewhere
+            mqSender.EndCommand(); // indicate the command has finished and that a response should be sent
+        }
+    }
+    */
     return false;
 }
 
@@ -2047,21 +2054,49 @@ bool game::handle_mouseview(input_context &ctxt, std::string &action)
         if (action == "MOUSE_MOVE") {
             int mx, my;
             const bool are_valid_coordinates = ctxt.get_coordinates(w_terrain, mx, my);
-            // TODO: Z
-            int mz = g->get_levz();
-            if (are_valid_coordinates && ( mx != liveview_pos.x ||
-                                           my != liveview_pos.y ||
-                                           mz != liveview_pos.z ) ) {
-                liveview_pos = tripoint( mx, my, mz );
-                liveview.show( liveview_pos );
+                        // TODO: Z
+                int mz = g->get_levz();
+            if (are_valid_coordinates && (mx != liveview_pos.x ||
+                my != liveview_pos.y ||
+                mz != liveview_pos.z)) {
+                liveview_pos = tripoint(mx, my, mz);
+                liveview.show(liveview_pos);
                 draw_sidebar_messages();
-            } else if ( !are_valid_coordinates ) {
+               
+            }
+            else if (!are_valid_coordinates) {
                 liveview_pos = tripoint_min;
                 liveview.hide();
                 draw_sidebar_messages();
+                
             }
+            
         }
+        
     } while (action == "MOUSE_MOVE"); // Freeze animation when moving the mouse
+
+    std::string prevAction = action; //save whatever action was
+    voxMQCommand command;
+    if (mqSender.GetNextCommand(command)) {
+        action = command.Command;
+        /*
+        if (!mqSender.BeginProcessing(action)) { //if, for whatever reason, we don't begin processing, revert action
+            action = prevAction;
+        }
+        */
+    }
+    /*
+    action = mqSender.ListenOne();
+    if (action == "nrep") {
+        action = "TIMEOUT";
+    }
+    else if (action == "MapData") {
+        mqSender.RespondMapData();
+    }
+    else {
+        mqSender.RespondOK();
+    }
+    */
 
     if (action != "TIMEOUT" && ctxt.get_raw_input().get_first_input() != ERR) {
         // Keyboard event, break out of animation loop
@@ -2069,8 +2104,21 @@ bool game::handle_mouseview(input_context &ctxt, std::string &action)
         return false;
     }
 
-    // Mouse movement or un-handled key
     return true;
+    /*
+    action = mqSender.ListenOne();
+    if (action == "") {
+        action = "TIMEOUT";
+        return true;
+    }
+
+    if (action == "MapData") {
+        mqSender.RespondMapData();
+    }
+    else {
+        mqSender.RespondOK();
+    }
+    */
 }
 
 #ifdef TILES

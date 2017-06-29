@@ -2,11 +2,14 @@ using System;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using NetMQ;
 using NetMQ.Sockets;
 using System.Threading;
 using System.Net.Sockets;
 using Assets;
+using Assets.Scripts;
+using Debug = UnityEngine.Debug;
 
 [Serializable]
 class Map
@@ -45,6 +48,7 @@ class UnknownTile : MonoBehaviour
 
 }
 
+
 public class Loader : GameBase
 {
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
@@ -59,7 +63,11 @@ public class Loader : GameBase
         cached = new GameObject("cache");
         try
         {
-            ProcessMapData(Game.SendCommand("MapData"));
+            var sw = Stopwatch.StartNew();
+            var response = Game.SendCommand("MapData");
+            sw.Stop();
+            Debug.Log(string.Format("Request sent in {0}ms", sw.ElapsedMilliseconds));
+            ProcessMapData(response.Data);
             mapJSON = File.ReadAllText("Assets/map.json");
         }
         catch (Exception ex)
@@ -153,7 +161,7 @@ public class Loader : GameBase
     {
         if (Input.GetKeyUp(KeyCode.F5))
         {
-            ProcessMapData(Game.SendCommand("MapData"));
+            Game.SendCommand("MapData");
             return;
         }
 
@@ -174,7 +182,7 @@ public class Loader : GameBase
             objects = new Dictionary<string, GameObject>();
             Game.Player.Reload();
             Game.Camera.MoveTo(Game.Player.transform.position);
-            
+            Debug.Log(mapJSON);
             Map map = JsonUtility.FromJson<Map>(mapJSON);
             Debug.Log("reloading...");
             labels = new List<Label>();

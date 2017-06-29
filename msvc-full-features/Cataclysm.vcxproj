@@ -137,7 +137,7 @@
       <DisableSpecificWarnings>4819;4146</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <MinimalRebuild>false</MinimalRebuild>
-      <AdditionalOptions>/bigobj /utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /utf-8 -DHAVE_STRUCT_TIMESPEC %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -257,6 +257,8 @@
     <Import Project="packages\libintl.vp.redist.0.19.8.3\build\native\libintl.vp.redist.targets" Condition="Exists('packages\libintl.vp.redist.0.19.8.3\build\native\libintl.vp.redist.targets')" />
     <Import Project="packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets" Condition="Exists('packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets')" />
     <Import Project="packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets" Condition="Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets')" />
+    <Import Project="packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets" Condition="Exists('packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets')" />
+    <Import Project="packages\pthreads.2.9.1.4\build\native\pthreads.targets" Condition="Exists('packages\pthreads.2.9.1.4\build\native\pthreads.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -283,5 +285,7 @@
     <Error Condition="!Exists('packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libintl.vp.0.19.8.3\build\native\libintl.vp.targets'))" />
     <Error Condition="!Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.props'))" />
     <Error Condition="!Exists('packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\fix8.dependencies.zmq.4.2.20151130.1\build\native\fix8.dependencies.zmq.targets'))" />
+    <Error Condition="!Exists('packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\pthreads.redist.2.9.1.4\build\native\pthreads.redist.targets'))" />
+    <Error Condition="!Exists('packages\pthreads.2.9.1.4\build\native\pthreads.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\pthreads.2.9.1.4\build\native\pthreads.targets'))" />
   </Target>
 </Project>

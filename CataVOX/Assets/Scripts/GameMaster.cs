@@ -6,7 +6,7 @@ using Assets.Controllers;
 using NetMQ;
 using UnityEngine;
 
-namespace Assets
+namespace Assets.Scripts
 {
     public class GameMaster : MonoBehaviour
     {
@@ -14,8 +14,9 @@ namespace Assets
         private static GameMaster _instance;
 
         private zMQThread _zmqClient = new zMQThread();
-
+        
         public float Global_Scale = 0.4f;
+
 
         public void Awake()
         {
@@ -28,31 +29,28 @@ namespace Assets
             _zmqClient.Start();
         }
 
-        public void SendCommandAsync(string command, Action<string> callback)
-        {
-            _zmqClient.SendCommandAsync(command, callback);
-        }
-        public string SendCommand(string command)
+        public zMQResponse SendCommand(string command)
         {
             try
             {
-                return _zmqClient.SendCommand(command);
+                var response = _zmqClient.SendCommand(new zMQCommand(command));
+                if (response == null || response.Data == "BUSY")
+                {
+                    Debug.Log("DDA refused command, command already processing");
+                }
+                return response;
             }
             catch (SendCommandException sce)
             {
                 Debug.Log(string.Format("SendCommand failed with {0}", sce.Message));
-                return null;
             }
+            return null;
         }
 
-        private void _zmqClient_OnMessageReceived(string messageType, string message)
+        private void _zmqClient_OnMessageReceived(zMQResponse response)
         {
-            switch (messageType.ToLower())
-            {
-                case "mapdata":
-                    Loader.ProcessMapData(message);
-                    break;
-            }
+            Debug.Log(string.Format("Received {0}", response));
+            Loader.ProcessMapData(response.Data);
         }
 
 

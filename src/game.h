@@ -113,7 +113,7 @@ struct w_point;
 struct explosion_data;
 struct visibility_variables;
 class scent_map;
-class zmq_manager;
+class voxMQManager;
 
 // Note: this is copied from inventory.h
 // Entire inventory.h would also bring item.h here
@@ -170,7 +170,7 @@ class game
         std::unique_ptr<map> map_ptr;
         std::unique_ptr<player> u_ptr;
         std::unique_ptr<live_view> liveview_ptr;
-        std::unique_ptr<zmq_manager> mqSender_ptr;
+        std::unique_ptr<voxMQManager> mqSender_ptr;
         live_view& liveview;
         std::unique_ptr<scent_map> scent_ptr;
     public:
@@ -217,7 +217,7 @@ class game
         /** Make map a reference here, to avoid map.h in game.h */
         map &m;
         player &u;
-        zmq_manager &mqSender;
+        voxMQManager &mqSender;
         scent_map &scent;
 
         std::unique_ptr<Creature_tracker> critter_tracker;
@@ -827,6 +827,10 @@ public:
         void set_npcs_dirty();
         /** If invoked, dead will be cleaned this turn. */
         void set_critter_died();
+
+        // Input related
+        // Handles box showing items under mouse
+        bool handle_mouseview(input_context &ctxt, std::string &action);
 private:
         void wield(int pos = INT_MIN); // Wield a weapon  'w'
         void read(); // Read a book  'R' (or 'a')
@@ -914,9 +918,6 @@ private:
         void quicksave();        // Saves the game without quitting
         void quickload();        // Loads the previously saved game if it exists
 
-        // Input related
-        // Handles box showing items under mouse
-        bool handle_mouseview( input_context &ctxt, std::string &action );
 
         // On-request draw functions
         void draw_overmap();        // Draws the overmap, allows note-taking etc.

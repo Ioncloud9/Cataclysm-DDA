@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.Scripts;
 using UnityEngine;
 
 namespace Assets.Controllers
@@ -31,33 +32,38 @@ namespace Assets.Controllers
 
         public void Update()
         {
+            /*
+            string ddaCommand = null;
+            foreach (var map in _keyMap)
+            {
+                if (Input.GetKeyDown(map.Key))
+                {
+                    ddaCommand = map.Value;
+                    break;
+                }
+            }
+            if (_playerMove.ContainsKey(ddaCommand))
+            {
+                var dir = _playerMove[ddaCommand];
+                var newDir = DirectionUtils.ModMoveRelCamera(Game.Camera.Facing, dir);
+            }
+            Game.SendCommand(ddaCommand);
+
             var input = _moveControls.FirstOrDefault(x => x.Check());
+
             if (input != null)
             {
                 var dir = input.Value;
                 var newDir = DirectionUtils.ModMoveRelCamera(Game.Camera.Facing, dir);
                 Debug.Log(string.Format("cD: {0}, mD: {1}, nD: {2}", (int)Game.Camera.Facing, (int)dir, (int)newDir));
-                var response = Game.SendCommand(string.Format("Move:{0}", Enum.GetName(typeof(Direction), newDir)));
-                if (response == null) return;
-                Game.Loader.ProcessMapData(response);
+                Game.SendCommand(_cataMoveCommand[newDir]);
             }
-            if (Input.GetKeyDown(KeyCode.Keypad5))
+            var otherInput = _otherControls.FirstOrDefault(x => x.Check());
+            if (otherInput != null)
             {
-                
+                Game.SendCommand(otherInput.Value);
             }
+            */
         }
-
-
-        private static readonly List<InputPair<Direction>> _moveControls = new List<InputPair<Direction>>()
-        {
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad7), Direction.NW),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad8), Direction.N),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad9), Direction.NE),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad6), Direction.E),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad3), Direction.SE),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad2), Direction.S),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad1), Direction.SW),
-            new InputPair<Direction>(() => Input.GetKeyDown(KeyCode.Keypad4), Direction.W)
-        };
     }
 }
