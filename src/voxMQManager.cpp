@@ -7,6 +7,7 @@
 #include "weighted_list.h"
 #include "cata_utility.h"
 #include "zmq_utils.h"
+#include "weather_gen.h"
 
 #include <algorithm>
 #include <fstream>
@@ -248,27 +249,51 @@ string voxMQManager::FetchCommandData(string command) {
 string voxMQManager::GetMapData() {
     const tripoint ppos = g->u.pos();
     std::stringstream ss;
+    w_point* w = g->weather_precise.get();
+    weather_generator gen = g->get_cur_weather_gen();
+    
     JsonOut json(ss);
     json.start_object();
-    json.member("width", size * 2);
-    json.member("height", size * 2);
-    json.member("tiles");
-    json.start_array();
 
-    for (int dx = -size; dx < size; dx++) {
-        for (int dy = -size; dy < size; dy++) {
-            const tripoint p(ppos.x + dx, ppos.y + dy, ppos.z);
-            json.start_object();
-            if (g->u.sees(p, true)) {
-                json.member("ter", g->m.ter(p)->id);
-                if (g->m.has_furn(p)) {
-                    json.member("furn", g->m.furn(p)->id);
+    json.member("calendar");
+    json.start_object();
+        json.member("season", calendar::turn.name_season(calendar::turn.get_season()));
+        json.member("time", calendar::turn.print_time());
+        json.member("isNight", calendar::turn.is_night());
+    json.end_object();
+
+    json.member("weather");
+    json.start_object();
+        json.member("type", gen.get_weather_conditions(*w));
+        json.member("temprature", w->temperature);
+        json.member("humidity", w->humidity);
+        json.member("wind", w->windpower);
+        json.member("pressure", w->pressure);
+        json.member("acidic", w->acidic);
+    json.end_object();
+
+    json.member("map");
+    json.start_object();
+        json.member("width", size * 2);
+        json.member("height", size * 2);
+        json.member("tiles");
+        json.start_array();
+            for (int dx = -size; dx < size; dx++) {
+                for (int dy = -size; dy < size; dy++) {
+                    const tripoint p(ppos.x + dx, ppos.y + dy, ppos.z);
+                    json.start_object();
+                    if (g->u.sees(p, true)) {
+                        json.member("ter", g->m.ter(p)->id);
+                        if (g->m.has_furn(p)) {
+                            json.member("furn", g->m.furn(p)->id);
+                        }
+                    }
+                    json.end_object();
                 }
             }
-            json.end_object();
-        }
-    }
-    json.end_array();
+        json.end_array();
+    json.end_object();
+
     json.end_object();
 
     return (ss.str().c_str());

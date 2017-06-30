@@ -23,6 +23,7 @@ namespace Assets.Scripts
             Camera = FindObjectOfType<CameraController>();
             Input = FindObjectOfType<InputController>();
             Player = FindObjectOfType<PlayerController>();
+            UI = FindObjectOfType<UIController>();
             Loader = FindObjectOfType<Loader>();
             _instance = this;
             _zmqClient.OnMessageReceived += _zmqClient_OnMessageReceived;
@@ -69,5 +70,6 @@ namespace Assets.Scripts
         public InputController Input { get; private set; }
         public PlayerController Player { get; private set; }
         public Loader Loader { get; private set; }
+        public UIController UI { get; private set; }
     }
 }

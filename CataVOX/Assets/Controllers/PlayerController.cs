@@ -9,7 +9,7 @@ namespace Assets.Controllers
 {
     public class PlayerController : GameBase
     {
-        private GameObject _player;
+        private GameObject _pawn;
 
         public void Start()
         {
@@ -18,15 +18,15 @@ namespace Assets.Controllers
 
         private void CreatePlayer(float scale)
         {
-            _player = VOXGameObject.CreateGameObject("Assets/tiles/player.vox", scale);
-            _player.name = "player";
-            _player.transform.parent = this.transform;
+            _pawn = VOXGameObject.CreateGameObject("Assets/tiles/player.vox", scale);
+            _pawn.name = "player";
+            _pawn.transform.parent = this.transform;
         }
 
         public void Reload()
         {
 
-            GameObject.Destroy(_player);
+            GameObject.Destroy(_pawn);
             CreatePlayer(GameMaster.Current.Global_Scale);
         }
 

@@ -8,9 +8,27 @@ using UnityEngine;
 
 namespace Assets
 {
+    public static class Utils
+    {
+        public static string WeatherImage(WeatherType type, bool day)
+        {
+            var pfx = (day ? "day_" : "night_");
+            switch (type)
+            {
+                case WeatherType.WEATHER_CLEAR: return pfx + "Clear";
+                case WeatherType.WEATHER_CLOUDY: return pfx + "Cloudy";
+                case WeatherType.WEATHER_RAINY: return pfx + "Rain";
+                case WeatherType.WEATHER_LIGHTNING: return pfx + "Storm";
+                case WeatherType.WEATHER_SNOW: return pfx + "Snow";
+                case WeatherType.WEATHER_DRIZZLE: return pfx + "Drizzle";
+                case WeatherType.WEATHER_FLURRIES: return pfx + "Flurry";
+                default: return "na";
+            }
+        }
+
+    }
     public static class DirectionUtils
     {
-
 
         public static Direction ModMoveRelCamera(Direction cameraDirection, Direction moveDirection)
         {

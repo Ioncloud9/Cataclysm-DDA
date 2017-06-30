@@ -221,6 +221,7 @@
     <None Include="Assets\ProceduralToolkit\Shaders\Specular Vertex Color.shader" />
     <None Include="Assets\ProceduralToolkit\Shaders\Standard Vertex Color.shader" />
     <None Include="Assets\ProceduralToolkit\Shaders\Unlit Vertex Color.shader" />
+    <None Include="Assets\Resources\UIImages\extra\Read Me.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

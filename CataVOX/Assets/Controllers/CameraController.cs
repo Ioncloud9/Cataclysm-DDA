@@ -95,6 +95,7 @@ namespace Assets.Controllers
             }
 
             transform.localRotation =Quaternion.Euler(0f, newRot, 0f);
+            Game.UI.AdjustMiniMap(Facing);
 
             //transform.localRotation = Quaternion.Euler(0f, newRot, 0f);
             /*

@@ -12,7 +12,15 @@ using Assets.Scripts;
 using Debug = UnityEngine.Debug;
 
 [Serializable]
-class Map
+public class GameData
+{
+    public Calendar calendar;
+    public Weather weather;
+    public Map map;
+}
+
+[Serializable]
+public class Map
 {
     public int width;
     public int height;
@@ -26,7 +34,30 @@ class Map
 }
 
 [Serializable]
-class Tile
+public class Weather
+{
+    public WeatherType Type
+    {
+        get { return (WeatherType) type; }
+    }
+    public int type;
+    public double temprature;
+    public double humidity;
+    public double wind;
+    public double pressure;
+    public bool acidic;
+}
+
+[Serializable]
+public class Calendar
+{
+    public string season;
+    public string time;
+    public bool isNight;
+}
+
+[Serializable]
+public class Tile
 {
     public string ter;
     public string furn;
@@ -37,13 +68,13 @@ class Tile
     }
 }
 
-struct Label
+public struct Label
 {
     public string text;
     public Vector3 pos;
 }
 
-class UnknownTile : MonoBehaviour
+public class UnknownTile : MonoBehaviour
 {
 
 }
@@ -57,6 +88,7 @@ public class Loader : GameBase
     Vector2 size = new Vector2(1, 1);
     bool needReload = false;
     string mapJSON, paintedJSON;
+
 
     private void Start()
     {
@@ -183,7 +215,8 @@ public class Loader : GameBase
             Game.Player.Reload();
             Game.Camera.MoveTo(Game.Player.transform.position);
             Debug.Log(mapJSON);
-            Map map = JsonUtility.FromJson<Map>(mapJSON);
+            var gameData = JsonUtility.FromJson<GameData>(mapJSON);
+            Game.UI.SetUI(gameData.weather, gameData.calendar);
             Debug.Log("reloading...");
             labels = new List<Label>();
             GameObject.Destroy(frame);
@@ -191,16 +224,16 @@ public class Loader : GameBase
             frame.transform.parent = this.gameObject.transform;
 
             int i = 0;
-            for (int y = 0; y < map.height; y++)
+            for (int y = 0; y < gameData.map.height; y++)
             {
-                for (int x = 0; x < map.width; x++)
+                for (int x = 0; x < gameData.map.width; x++)
                 {
-                    AddOrInstantiate(x, y, map.tiles[i].ter == null ? "t_unseen" : map.tiles[i].ter, "t_unknown");
-                    AddOrInstantiate(x, y, map.tiles[i].furn, "f_unknown");
+                    AddOrInstantiate(x, y, gameData.map.tiles[i].ter == null ? "t_unseen" : gameData.map.tiles[i].ter, "t_unknown");
+                    AddOrInstantiate(x, y, gameData.map.tiles[i].furn, "f_unknown");
                     i++;
                 }
             }
-            frame.transform.SetPositionAndRotation(new Vector3(-map.width / 2 * size.x, 0, -map.height / 2 * size.y), Quaternion.identity);
+            frame.transform.SetPositionAndRotation(new Vector3(-gameData.map.width / 2 * size.x, 0, -gameData.map.height / 2 * size.y), Quaternion.identity);
             needReload = false;
             paintedJSON = mapJSON;
         }

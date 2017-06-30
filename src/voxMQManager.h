@@ -6,6 +6,7 @@
 #include "voxUtil.h"
 #include "json.h"
 #include "cqueue.h"
+#include "weather.h"
 
 #include <zmq.hpp>
 #include <list>

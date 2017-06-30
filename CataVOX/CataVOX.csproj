@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.2f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -89,10 +87,14 @@
     <Compile Include="Assets\Controllers\CameraController.cs" />
     <Compile Include="Assets\Controllers\InputController.cs" />
     <Compile Include="Assets\Controllers\PlayerController.cs" />
+    <Compile Include="Assets\Controllers\UIController.cs" />
     <Compile Include="Assets\Enums.cs" />
-    <Compile Include="Assets\Scripts\GameBase.cs" />
-    <Compile Include="Assets\Scripts\GameMaster.cs" />
     <Compile Include="Assets\InputPair.cs" />
+    <Compile Include="Assets\MiniMap\Scripts\InnerMap.cs" />
+    <Compile Include="Assets\MiniMap\Scripts\MapArrow.cs" />
+    <Compile Include="Assets\MiniMap\Scripts\MapCanvasController.cs" />
+    <Compile Include="Assets\MiniMap\Scripts\MapMarker.cs" />
+    <Compile Include="Assets\MiniMap\Scripts\MarkerGroup.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Attributes\GetSetAttribute.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Attributes\MinAttribute.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Attributes\TrackballAttribute.cs" />
@@ -210,6 +212,8 @@
     <Compile Include="Assets\ProceduralToolkit\TextureE.cs" />
     <Compile Include="Assets\ProceduralToolkit\Vector2Int.cs" />
     <Compile Include="Assets\ProceduralToolkit\VectorE.cs" />
+    <Compile Include="Assets\Scripts\GameBase.cs" />
+    <Compile Include="Assets\Scripts\GameMaster.cs" />
     <Compile Include="Assets\Scripts\Inputs\BindingBase.cs" />
     <Compile Include="Assets\Scripts\Inputs\BindingGroup.cs" />
     <Compile Include="Assets\Scripts\Inputs\DDABindings.cs" />
@@ -221,6 +225,7 @@
     <Compile Include="Assets\Scripts\voxConst.cs" />
     <Compile Include="Assets\Scripts\zMQCommand.cs" />
     <Compile Include="Assets\Scripts\zMQResponse.cs" />
+    <Compile Include="Assets\Scripts\zMQThread.cs" />
     <Compile Include="Assets\SendCommandException.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\Atlas.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\AtlasScaler.cs" />
@@ -231,7 +236,6 @@
     <Compile Include="Assets\VOX\Loader.cs" />
     <Compile Include="Assets\VOX\VOXFile.cs" />
     <Compile Include="Assets\VOX\VOXGameObject.cs" />
-    <Compile Include="Assets\Scripts\zMQThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
@@ -287,6 +291,7 @@
     <None Include="Assets\ProceduralToolkit\Shaders\Specular Vertex Color.shader" />
     <None Include="Assets\ProceduralToolkit\Shaders\Standard Vertex Color.shader" />
     <None Include="Assets\ProceduralToolkit\Shaders\Unlit Vertex Color.shader" />
+    <None Include="Assets\Resources\UIImages\extra\Read Me.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
