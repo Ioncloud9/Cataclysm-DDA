@@ -149,5 +149,12 @@ msvc-full-features/packages
 msvc-full-features/bin
 WinDepend
 
+!CataVOX/Assets/AsyncIO*/lib/**/*.dll
+!CataVOX/Assets/NetMQ*/lib/**/*.dll
+
+# don't add VS project because Unity recreates these files itself
+CataVOX/*.csproj
+CataVOX/*.sln
+
 # Transifex Client
 .tx/
