@@ -85,7 +85,7 @@
     <TargetName>Cataclysm</TargetName>
     <Linkage-libzmq>dynamic</Linkage-libzmq>
     <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\Artem\projects\Cataclysm-DDA-Voxel\msvc-full-features\packages\sdl2_mixer.2.0.0\content</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\packages\sdl2_mixer.2.0.0\content</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
