@@ -402,7 +402,6 @@ void game::load_data_from_dir( const std::string &path, const std::string &src )
 
 game::~game()
 {
-    g->mqSender.~voxMQManager();
     MAPBUFFER.reset();
 }
 
