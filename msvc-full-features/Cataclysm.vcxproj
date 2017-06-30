@@ -23,7 +23,7 @@
     <ProjectGuid>{18A6550D-1A53-478B-B615-20A2AF25A2CB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Cataclysm</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -85,6 +85,7 @@
     <TargetName>Cataclysm</TargetName>
     <Linkage-libzmq>dynamic</Linkage-libzmq>
     <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);D:\Artem\projects\Cataclysm-DDA-Voxel\msvc-full-features\packages\sdl2_mixer.2.0.0\content</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -197,7 +198,7 @@
       <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <DisableSpecificWarnings>4819;4146</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalOptions>/bigobj /utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /utf-8 -DHAVE_STRUCT_TIMESPEC %(AdditionalOptions)</AdditionalOptions>
       <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
@@ -230,7 +231,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2_mixer.lib" />
@@ -239,8 +242,6 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\lua.redist.5.3.4\build\native\lua.redist.targets" Condition="Exists('packages\lua.redist.5.3.4\build\native\lua.redist.targets')" />
     <Import Project="packages\lua.5.3.4\build\native\lua.targets" Condition="Exists('packages\lua.5.3.4\build\native\lua.targets')" />
-    <Import Project="packages\sdl2.redist.2.0.5\build\native\sdl2.redist.targets" Condition="Exists('packages\sdl2.redist.2.0.5\build\native\sdl2.redist.targets')" />
-    <Import Project="packages\sdl2.2.0.5\build\native\sdl2.targets" Condition="Exists('packages\sdl2.2.0.5\build\native\sdl2.targets')" />
     <Import Project="packages\libjpeg.redist.9.0.1.4\build\native\libjpeg.redist.targets" Condition="Exists('packages\libjpeg.redist.9.0.1.4\build\native\libjpeg.redist.targets')" />
     <Import Project="packages\libpng.redist.1.6.19.1\build\native\libpng.redist.targets" Condition="Exists('packages\libpng.redist.1.6.19.1\build\native\libpng.redist.targets')" />
     <Import Project="packages\libtiff.redist.4.0.6.2\build\native\libtiff.redist.targets" Condition="Exists('packages\libtiff.redist.4.0.6.2\build\native\libtiff.redist.targets')" />
@@ -266,8 +267,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\lua.redist.5.3.4\build\native\lua.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\lua.redist.5.3.4\build\native\lua.redist.targets'))" />
     <Error Condition="!Exists('packages\lua.5.3.4\build\native\lua.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\lua.5.3.4\build\native\lua.targets'))" />
-    <Error Condition="!Exists('packages\sdl2.redist.2.0.5\build\native\sdl2.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sdl2.redist.2.0.5\build\native\sdl2.redist.targets'))" />
-    <Error Condition="!Exists('packages\sdl2.2.0.5\build\native\sdl2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\sdl2.2.0.5\build\native\sdl2.targets'))" />
     <Error Condition="!Exists('packages\libjpeg.redist.9.0.1.4\build\native\libjpeg.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libjpeg.redist.9.0.1.4\build\native\libjpeg.redist.targets'))" />
     <Error Condition="!Exists('packages\libpng.redist.1.6.19.1\build\native\libpng.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libpng.redist.1.6.19.1\build\native\libpng.redist.targets'))" />
     <Error Condition="!Exists('packages\libtiff.redist.4.0.6.2\build\native\libtiff.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libtiff.redist.4.0.6.2\build\native\libtiff.redist.targets'))" />
