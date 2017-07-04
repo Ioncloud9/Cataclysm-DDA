@@ -115,6 +115,7 @@ public class VOXMapVolume {
         UnityEngine.Material uMat;
         Dictionary<VOXFile.Material, List<int>> trianglesByMat =
             new Dictionary<VOXFile.Material, List<int>>();
+        List<Vector3> normals = new List<Vector3>();
         int vi = 0;
 
         for (int x = 0; x < sizeX; x++)
@@ -142,6 +143,10 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z));
                 vertices.Add(new Vector3(x, y, z));
                 vertices.Add(new Vector3(x, y, z - 1f));
+                normals.Add(new Vector3(0, 1, 0));
+                normals.Add(new Vector3(0, 1, 0));
+                normals.Add(new Vector3(0, 1, 0));
+                normals.Add(new Vector3(0, 1, 0));
 
                 trianglesByMat[mat].Add(vi);
                 trianglesByMat[mat].Add(vi+1);
@@ -158,6 +163,10 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y - 0.5f, z));
                 vertices.Add(new Vector3(x, y - 0.5f, z));
                 vertices.Add(new Vector3(x, y - 0.5f, z - 1));
+                normals.Add(new Vector3(0, -1, 0));
+                normals.Add(new Vector3(0, -1, 0));
+                normals.Add(new Vector3(0, -1, 0));
+                normals.Add(new Vector3(0, -1, 0));
 
                 trianglesByMat[mat].Add(vi+2);
                 trianglesByMat[mat].Add(vi+1);
@@ -174,6 +183,10 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x, y, z - 1f));
                 vertices.Add(new Vector3(x, y, z));
                 vertices.Add(new Vector3(x, y - 1f, z));
+                normals.Add(new Vector3(1, 0, 0));
+                normals.Add(new Vector3(1, 0, 0));
+                normals.Add(new Vector3(1, 0, 0));
+                normals.Add(new Vector3(1, 0, 0));
 
                 trianglesByMat[mat].Add(vi);
                 trianglesByMat[mat].Add(vi+1);
@@ -190,6 +203,10 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z - 1f));
                 vertices.Add(new Vector3(x - 1f, y, z));
                 vertices.Add(new Vector3(x - 1f, y - 1f, z));
+                normals.Add(new Vector3(-1, 0, 0));
+                normals.Add(new Vector3(-1, 0, 0));
+                normals.Add(new Vector3(-1, 0, 0));
+                normals.Add(new Vector3(-1, 0, 0));
 
                 trianglesByMat[mat].Add(vi+2);
                 trianglesByMat[mat].Add(vi+1);
@@ -206,6 +223,10 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z - 1f));
                 vertices.Add(new Vector3(x, y, z - 1f));
                 vertices.Add(new Vector3(x, y - 1f, z - 1f));
+                normals.Add(new Vector3(0, 0, 1));
+                normals.Add(new Vector3(0, 0, 1));
+                normals.Add(new Vector3(0, 0, 1));
+                normals.Add(new Vector3(0, 0, 1));
 
                 trianglesByMat[mat].Add(vi);
                 trianglesByMat[mat].Add(vi+1);
@@ -222,6 +243,10 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z));
                 vertices.Add(new Vector3(x, y, z));
                 vertices.Add(new Vector3(x, y - 1f, z));
+                normals.Add(new Vector3(0, 0, -1));
+                normals.Add(new Vector3(0, 0, -1));
+                normals.Add(new Vector3(0, 0, -1));
+                normals.Add(new Vector3(0, 0, -1));
 
                 trianglesByMat[mat].Add(vi+2);
                 trianglesByMat[mat].Add(vi+1);
@@ -247,7 +272,7 @@ Out:
             }
         }        
         mr.materials = uMaterials.ToArray();
-        mesh.RecalculateNormals();
+        mesh.normals = normals.ToArray();
         mf.mesh = mesh;
         return obj;
     }
