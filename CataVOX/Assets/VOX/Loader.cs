@@ -11,84 +11,18 @@ using Assets;
 using Assets.Scripts;
 using Debug = UnityEngine.Debug;
 
-[Serializable]
-public class GameData
-{
-    public Calendar calendar;
-    public Weather weather;
-    public Map map;
-}
-
-[Serializable]
-public class Map
-{
-    public int width;
-    public int height;
-    public Tile[] tiles;
-    public Map(int width, int height, Tile[] tiles)
-    {
-        this.width = width;
-        this.height = height;
-        this.tiles = tiles;
-    }
-}
-
-[Serializable]
-public class Weather
-{
-    public WeatherType Type
-    {
-        get { return (WeatherType) type; }
-    }
-    public int type;
-    public double temprature;
-    public double humidity;
-    public double wind;
-    public double pressure;
-    public bool acidic;
-}
-
-[Serializable]
-public class Calendar
-{
-    public string season;
-    public string time;
-    public bool isNight;
-}
-
-[Serializable]
-public class Tile
-{
-    public string ter;
-    public string furn;
-    public Tile(string terrain, string furniture)
-    {
-        this.ter = terrain;
-        this.furn = furniture;
-    }
-}
-
-public struct Label
-{
-    public string text;
-    public Vector3 pos;
-}
-
 public class UnknownTile : MonoBehaviour
 {
 
 }
 
-
 public class Loader : GameBase
 {
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
     GameObject frame, cached;
-    List<Label> labels = new List<Label>();
-    Vector2 size = new Vector2(1, 1);
+     Vector2 size = new Vector2(1, 1);
     bool needReload = false;
     string mapJSON, paintedJSON;
-
 
     private void Start()
     {
@@ -126,31 +60,22 @@ public class Loader : GameBase
             //Debug.Log(String.Format("found object {0}, cloning", id));
             GameObject obj = Instantiate(objects[id], new Vector3(x * size.x, 0, y * size.y), Quaternion.identity, frame.transform);
             obj.SetActive(true);
-
-            if (objects[id].GetComponent<UnknownTile>() != null)
-            {
-                Label label;
-                label.pos = new Vector3(x * size.x, 0, y * size.y);
-                label.text = id;
-                labels.Add(label);
-            }
-
         }
         else
         {
             //Debug.Log(String.Format("object {0} not found, loading", id));
             GameObject newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + id + ".vox", Game.Global_Scale);
-            if (VOXGameObject.model.size.x == 0 &&
-                VOXGameObject.model.size.y == 0 &&
-                VOXGameObject.model.size.z == 0)
+            if (VOXGameObject.model.sizeX == 0 &&
+                VOXGameObject.model.sizeY == 0 &&
+                VOXGameObject.model.sizeZ == 0)
             {
                 //Debug.Log(String.Format("object {0} has not been found, creating unknow instead", id));
                 GameObject.Destroy(newObj);
                 newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + def + ".vox", Game.Global_Scale);
                 newObj.AddComponent<UnknownTile>();
-                if (VOXGameObject.model.size.x == 0 &&
-                VOXGameObject.model.size.y == 0 &&
-                VOXGameObject.model.size.z == 0)
+                if (VOXGameObject.model.sizeX == 0 &&
+                VOXGameObject.model.sizeY == 0 &&
+                VOXGameObject.model.sizeZ == 0)
                 {
                     //Debug.Log(String.Format("unknow has not been found", id));
                     return;
@@ -161,31 +86,11 @@ public class Loader : GameBase
             newObj.name = id;
 
             objects[id] = newObj;
-            size.x = VOXGameObject.model.size.x * (VOXGameObject.scale + d);
-            size.y = VOXGameObject.model.size.z * (VOXGameObject.scale + d);
+            size.x = VOXGameObject.model.sizeX * (VOXGameObject.scale + d);
+            size.y = VOXGameObject.model.sizeZ * (VOXGameObject.scale + d);
 
-
-            if (newObj.GetComponent<UnknownTile>() != null)
-            {
-                Label label;
-                label.pos = new Vector3(x * size.x , 0, y * size.y);
-                label.text = id;
-                labels.Add(label);
-                //Debug.Log(String.Format("added label {0}", id));
-            }
             GameObject obj = Instantiate(newObj, new Vector3(x * size.x, 0, y * size.y), Quaternion.identity, frame.transform);
             obj.SetActive(true);
-        }
-    }
-
-    private void OnGUI()
-    {
-        var centeredStyle = GUI.skin.GetStyle("Label");
-        centeredStyle.alignment = TextAnchor.UpperCenter;
-        foreach (Label label in labels)
-        {
-            Vector3 pos = Game.Camera.MainCamera.WorldToScreenPoint(label.pos);
-            GUI.Label(new Rect(pos.x - 150 / 2, Screen.height - pos.y - 130 / 2, 150, 130), label.text, centeredStyle);
         }
     }
 
@@ -218,7 +123,6 @@ public class Loader : GameBase
             var gameData = JsonUtility.FromJson<GameData>(mapJSON);
             Game.UI.SetUI(gameData.weather, gameData.calendar);
             Debug.Log("reloading...");
-            labels = new List<Label>();
             GameObject.Destroy(frame);
             frame = new GameObject("frame");
             frame.transform.parent = this.gameObject.transform;
