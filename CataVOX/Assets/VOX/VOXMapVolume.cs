@@ -20,6 +20,8 @@ public class VOXMapVolume {
     public string tilesPath;
     public int tileSizeX, tileSizeY, tileSizeZ;
     public int sizeX, sizeY, sizeZ;
+    public Dictionary<VOXFile.Material, UnityEngine.Material> materials =
+        new Dictionary<VOXFile.Material, UnityEngine.Material>();
 
     public VOXMapVolume(GameData gameData, string tilesPath) {
         this.gameData = gameData;
@@ -109,18 +111,30 @@ public class VOXMapVolume {
         MeshFilter mf = obj.AddComponent<MeshFilter>();
         MeshRenderer mr = obj.AddComponent<MeshRenderer>();
         List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
         List<Color> colors = new List<Color>();
+        UnityEngine.Material uMat;
+        Dictionary<VOXFile.Material, List<int>> trianglesByMat =
+            new Dictionary<VOXFile.Material, List<int>>();
         int vi = 0;
-
-        //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
         for (int x = 0; x < sizeX; x++)
             for (int y = 0; y < sizeY; y++)
                 for (int z = 0; z < sizeZ; z++)
         {
-            Nullable<VOXFile.Material> mat = VoxelAt(x, y, z);
-            if (mat == null) continue;
+            VOXFile.Material? matn = VoxelAt(x, y, z);
+            if (matn == null) continue;
+            VOXFile.Material mat = matn.Value;
+
+            if (materials.ContainsKey(mat)) {
+                uMat = materials[mat];                
+            } else {
+                uMat = new UnityEngine.Material(Shader.Find("Standard"));
+                uMat.color = mat.color;
+                materials.Add(mat, uMat);
+                if (!trianglesByMat.ContainsKey(mat))
+                    trianglesByMat[mat] = new List<int>();
+            }
+
             Neighbours neighbours = GetNeighbours(x, y, z);
             if (vi > 65000) goto Out;
             if ((neighbours & Neighbours.Top) == 0) {
@@ -128,18 +142,14 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z));
                 vertices.Add(new Vector3(x, y, z));
                 vertices.Add(new Vector3(x, y, z - 1f));
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
 
-                triangles.Add(vi);
-                triangles.Add(vi+1);
-                triangles.Add(vi+2);
+                trianglesByMat[mat].Add(vi);
+                trianglesByMat[mat].Add(vi+1);
+                trianglesByMat[mat].Add(vi+2);
 
-                triangles.Add(vi+2);
-                triangles.Add(vi+3);
-                triangles.Add(vi);
+                trianglesByMat[mat].Add(vi+2);
+                trianglesByMat[mat].Add(vi+3);
+                trianglesByMat[mat].Add(vi);
                 vi+=4;
             }
 
@@ -148,18 +158,14 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y - 0.5f, z));
                 vertices.Add(new Vector3(x, y - 0.5f, z));
                 vertices.Add(new Vector3(x, y - 0.5f, z - 1));
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
 
-                triangles.Add(vi+2);
-                triangles.Add(vi+1);
-                triangles.Add(vi);
+                trianglesByMat[mat].Add(vi+2);
+                trianglesByMat[mat].Add(vi+1);
+                trianglesByMat[mat].Add(vi);
 
-                triangles.Add(vi);
-                triangles.Add(vi+3);
-                triangles.Add(vi+2);
+                trianglesByMat[mat].Add(vi);
+                trianglesByMat[mat].Add(vi+3);
+                trianglesByMat[mat].Add(vi+2);
                 vi+=4;
             }
 
@@ -168,18 +174,14 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x, y, z - 1f));
                 vertices.Add(new Vector3(x, y, z));
                 vertices.Add(new Vector3(x, y - 1f, z));
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
 
-                triangles.Add(vi);
-                triangles.Add(vi+1);
-                triangles.Add(vi+2);
+                trianglesByMat[mat].Add(vi);
+                trianglesByMat[mat].Add(vi+1);
+                trianglesByMat[mat].Add(vi+2);
 
-                triangles.Add(vi+2);
-                triangles.Add(vi+3);
-                triangles.Add(vi);
+                trianglesByMat[mat].Add(vi+2);
+                trianglesByMat[mat].Add(vi+3);
+                trianglesByMat[mat].Add(vi);
                 vi+=4;
             }            
 
@@ -188,18 +190,14 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z - 1f));
                 vertices.Add(new Vector3(x - 1f, y, z));
                 vertices.Add(new Vector3(x - 1f, y - 1f, z));
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
 
-                triangles.Add(vi+2);
-                triangles.Add(vi+1);
-                triangles.Add(vi);
+                trianglesByMat[mat].Add(vi+2);
+                trianglesByMat[mat].Add(vi+1);
+                trianglesByMat[mat].Add(vi);
 
-                triangles.Add(vi);
-                triangles.Add(vi+3);
-                triangles.Add(vi+2);
+                trianglesByMat[mat].Add(vi);
+                trianglesByMat[mat].Add(vi+3);
+                trianglesByMat[mat].Add(vi+2);
                 vi+=4;
             }      
 
@@ -208,18 +206,14 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z - 1f));
                 vertices.Add(new Vector3(x, y, z - 1f));
                 vertices.Add(new Vector3(x, y - 1f, z - 1f));
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
 
-                triangles.Add(vi);
-                triangles.Add(vi+1);
-                triangles.Add(vi+2);
+                trianglesByMat[mat].Add(vi);
+                trianglesByMat[mat].Add(vi+1);
+                trianglesByMat[mat].Add(vi+2);
 
-                triangles.Add(vi+2);
-                triangles.Add(vi+3);
-                triangles.Add(vi);
+                trianglesByMat[mat].Add(vi+2);
+                trianglesByMat[mat].Add(vi+3);
+                trianglesByMat[mat].Add(vi);
                 vi+=4;
             }                  
 
@@ -228,26 +222,32 @@ public class VOXMapVolume {
                 vertices.Add(new Vector3(x - 1f, y, z));
                 vertices.Add(new Vector3(x, y, z));
                 vertices.Add(new Vector3(x, y - 1f, z));
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
-                colors.Add(mat.Value.color);
 
-                triangles.Add(vi+2);
-                triangles.Add(vi+1);
-                triangles.Add(vi);
+                trianglesByMat[mat].Add(vi+2);
+                trianglesByMat[mat].Add(vi+1);
+                trianglesByMat[mat].Add(vi);
 
-                triangles.Add(vi);
-                triangles.Add(vi+3);
-                triangles.Add(vi+2);
+                trianglesByMat[mat].Add(vi);
+                trianglesByMat[mat].Add(vi+3);
+                trianglesByMat[mat].Add(vi+2);
                 vi+=4;
             }      
         }
 Out:
         mesh.SetVertices(vertices);
-        mesh.SetTriangles(triangles, 0);
+        mesh.subMeshCount = trianglesByMat.Count;
+        int i = 0;
+        List<UnityEngine.Material> uMaterials = new List<UnityEngine.Material>();
+        foreach (KeyValuePair<VOXFile.Material, List<int>> triangles in trianglesByMat)
+        {
+            if (triangles.Value.Count > 0)
+            {
+                mesh.SetTriangles(triangles.Value, i++);
+                uMaterials.Add(materials[triangles.Key]);
+            }
+        }        
+        mr.materials = uMaterials.ToArray();
         mesh.RecalculateNormals();
-        mesh.SetColors(colors);
         mf.mesh = mesh;
         return obj;
     }
