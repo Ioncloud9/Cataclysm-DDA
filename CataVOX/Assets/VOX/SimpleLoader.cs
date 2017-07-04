@@ -26,7 +26,7 @@ public class SimpleLoader: MonoBehaviour //GameBase
             // var response = Game.SendCommand("MapData");
             // sw.Stop();
             //Debug.Log(string.Format("Request sent in {0}ms", sw.ElapsedMilliseconds));
-            mapJSON = File.ReadAllText("Assets/map_big.json");
+            mapJSON = File.ReadAllText("Assets/map_big2.json");
             //ProcessMapData(response.Data);
             ProcessMapData(mapJSON);
         }
