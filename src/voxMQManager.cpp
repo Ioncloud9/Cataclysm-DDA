@@ -259,6 +259,8 @@ string voxMQManager::GetMapData() {
     json.start_object();
         json.member("season", calendar::turn.name_season(calendar::turn.get_season()));
         json.member("time", calendar::turn.print_time());
+        json.member("date", calendar::turn.years() + ":" + calendar::turn.days());
+        json.member("moon", calendar::turn.moon());
         json.member("isNight", calendar::turn.is_night());
     json.end_object();
 

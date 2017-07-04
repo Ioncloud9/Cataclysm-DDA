@@ -3,18 +3,19 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <WINDEPEND>$(SolutionDir)..\WinDepend\</WINDEPEND>
+	<SDLMIXER>$(SolutionDir)\packages\sdl2_mixer.2.0.0\</SDLMIXER>
   </PropertyGroup>
   <PropertyGroup>
     <_PropertySheetDisplayName>WINDEPEND</_PropertySheetDisplayName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SDLMIXER)Content\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TILES;SDL_SOUND;LOCALIZE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 	<Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SDLMIXER)Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sdl2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -22,5 +23,9 @@
       <Value>$(WINDEPEND)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
+	<BuildMacro Include="SDLMIXER">
+		<Value>$(SDLMIXER)</Value>
+		<EnvironmentVariable>true</EnvironmentVariable>
+	</BuildMacro>
 </ItemGroup>
 </Project>

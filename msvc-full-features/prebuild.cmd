@@ -5,6 +5,8 @@ cd ..\src\lua
 echo Generating lua bindings
 lua generate_bindings.lua
 cd ..\..\msvc-full-features
+echo Copy SDL2_mixer.dll
+copy .\packages\sdl2_mixer.2.0.0\lib\SDL2_mixer.dll ..\
 echo Done
 
 echo Generating "version.h"...
