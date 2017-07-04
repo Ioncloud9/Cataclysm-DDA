@@ -157,3 +157,6 @@ CataVOX/*.sln
 
 # Transifex Client
 .tx/
+
+data/sound/**
+!data/sound/Basic
