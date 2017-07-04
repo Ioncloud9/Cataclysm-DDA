@@ -26,7 +26,7 @@ public class SimpleLoader: MonoBehaviour //GameBase
             // var response = Game.SendCommand("MapData");
             // sw.Stop();
             //Debug.Log(string.Format("Request sent in {0}ms", sw.ElapsedMilliseconds));
-            mapJSON = File.ReadAllText("Assets/map_big2.json");
+            mapJSON = File.ReadAllText("Assets/map_big.json");
             //ProcessMapData(response.Data);
             ProcessMapData(mapJSON);
         }
@@ -77,8 +77,12 @@ public class SimpleLoader: MonoBehaviour //GameBase
             }
 
             // Game.UI.SetUI(gameData.weather, gameData.calendar);
-
+            var sw = Stopwatch.StartNew();
             map = volume.CreateMapMesh();
+            sw.Stop();
+          
+            Debug.Log(string.Format("Mesh created in {0}ms", sw.ElapsedMilliseconds));
+
             map.name = "map";
             map.transform.parent = gameObject.transform;
             needReload = false;

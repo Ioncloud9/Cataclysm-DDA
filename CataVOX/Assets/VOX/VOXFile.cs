@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
@@ -30,11 +31,11 @@ namespace VOXFile
     {
         public float SCALE = 1f;
         public Material[] materials = null;
-        public Voxel[] voxels;
+        public byte[] voxels;
         public string path;
         public int version;
         public int frames = 1; // only one animation frame for now
-        public Vector3 size;
+        public int sizeX = 0, sizeY = 0, sizeZ = 0;
 
         public Model(string path)
         {
@@ -91,9 +92,9 @@ namespace VOXFile
                                 chunkSize = br.ReadInt32();
                                 childrenSize = br.ReadInt32();
 
-                                size.x = br.ReadInt32();
-                                size.z = br.ReadInt32();
-                                size.y = br.ReadInt32();
+                                sizeX = br.ReadInt32();
+                                sizeZ = br.ReadInt32();
+                                sizeY = br.ReadInt32();
 
                                 if (childrenSize > 0)
                                 {
@@ -101,18 +102,20 @@ namespace VOXFile
                                     Debug.LogWarning("[VOXLoader] Nested chunk for SIZE not supported");
                                 }
                                 bytesLeft -= chunkSize + childrenSize + 4 * 3;
+                                voxels = new byte[sizeX * sizeY * sizeZ];
                                 break;
                             case "XYZI":
                                 chunkSize = br.ReadInt32();
                                 childrenSize = br.ReadInt32();
                                 int n = br.ReadInt32();
-                                voxels = new Voxel[n];
+
                                 for (int i = 0; i < n; i++)
                                 {
-                                    voxels[i].x = br.ReadByte();
-                                    voxels[i].z = br.ReadByte();
-                                    voxels[i].y = br.ReadByte();
-                                    voxels[i].i = br.ReadByte();
+                                    byte x = br.ReadByte();
+                                    byte z = br.ReadByte();
+                                    byte y = br.ReadByte();
+                                    byte m = br.ReadByte();
+                                    voxels[sizeX * sizeY * z + sizeX * y + x] = m;
                                 }
                                 if (childrenSize > 0)
                                 {
@@ -125,7 +128,7 @@ namespace VOXFile
                                 materials = new Material[256];
                                 chunkSize = br.ReadInt32();
                                 childrenSize = br.ReadInt32();
-                                for (int i = 0; i < 256; i++)
+                                for (int i = 1; i < 256; i++)
                                 {
                                     materials[i].color.r = br.ReadByte() / 255.0f;
                                     materials[i].color.g = br.ReadByte() / 255.0f;
@@ -141,7 +144,7 @@ namespace VOXFile
                                 break;
                             case "MATT":
                                 if (materials == null)
-                                    loadDefaultPalette();
+                                    LoadDefaultPalette();
                                 chunkSize = br.ReadInt32();
                                 childrenSize = br.ReadInt32();
 
@@ -172,16 +175,27 @@ namespace VOXFile
                     }
 
                     if (materials == null)
-                        loadDefaultPalette();
+                        LoadDefaultPalette();
                 }
             }
             catch (IOException)
             {
-                size = new Vector3(0,0,0);
+
             }
         }
 
-        public void loadDefaultPalette()
+        public Nullable<Material> VoxelAt(int x, int y, int z) {
+            if (x < 0 || y < 0 || z < 0 || x >= sizeX || y >= sizeY || z >= sizeZ) return null;
+            byte m = voxels[sizeX * sizeY * z + sizeX * y + x];
+            if (m == 0) return null;
+            return materials[m];
+        }
+
+        public byte MaterialIDAt(int x, int y, int z) {
+            return voxels[sizeX * sizeY * z + sizeX * y + x];
+        }
+
+        public void LoadDefaultPalette()
         {
             #region defaultPalette
             Color[] colors = {
@@ -446,7 +460,7 @@ namespace VOXFile
             materials = new Material[256];
             for (int i = 0; i < 256; i++)
             {
-                materials[i].color = colors[i];
+                materials[i+1].color = colors[i];
             }
         }
     }
