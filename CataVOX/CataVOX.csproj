@@ -77,6 +77,12 @@
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="AsyncIO">
+      <HintPath>Assets\Packages\AsyncIO.0.1.26.0\lib\net35\AsyncIO.dll</HintPath>
+    </Reference>
+    <Reference Include="NetMQ">
+      <HintPath>Assets\Packages\NetMQ.4.0.0.1\lib\net35\NetMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="AsyncIO">
       <HintPath>Assets\plugins\AsyncIO.dll</HintPath>
     </Reference>
     <Reference Include="NetMQ">
@@ -233,9 +239,15 @@
     <Compile Include="Assets\Testing\MapGen\TilePoint.cs" />
     <Compile Include="Assets\Testing\MapGen\TileRenderer.cs" />
     <Compile Include="Assets\Utils.cs" />
+    <Compile Include="Assets\VOX\GameData.cs" />
     <Compile Include="Assets\VOX\Loader.cs" />
+    <Compile Include="Assets\VOX\SimpleLoader.cs" />
+    <Compile Include="Assets\VOX\VOXBlock.cs" />
+    <Compile Include="Assets\VOX\VOXChunk.cs" />
     <Compile Include="Assets\VOX\VOXFile.cs" />
     <Compile Include="Assets\VOX\VOXGameObject.cs" />
+    <Compile Include="Assets\VOX\VOXMap.cs" />
+    <Compile Include="Assets\VOX\VOXMapVolume.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />

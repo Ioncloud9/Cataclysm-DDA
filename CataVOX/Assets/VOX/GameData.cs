@@ -1,6 +1,7 @@
 using System;
 using Assets;
 using Assets.Scripts;
+using UnityEngine;
 
 [Serializable]
 public class GameData
@@ -51,10 +52,22 @@ public class Calendar
 public class Tile
 {
     public string ter;
+    public string loc;
     public string furn;
-    public Tile(string terrain, string furniture)
+
+    public Vector3 Location
+    {
+        get
+        {
+            var sp = loc.Split(',');
+            //Unity's Z axis is the Y axis, so convert it from DDA to Unity1
+            return new Vector3(float.Parse(sp[0]), float.Parse(sp[2]), float.Parse(sp[1]));
+        }
+    }
+    public Tile(string terrain, string loc, string furniture)
     {
         this.ter = terrain;
         this.furn = furniture;
+        this.loc = loc;
     }
 }

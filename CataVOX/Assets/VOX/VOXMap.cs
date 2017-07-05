@@ -1,0 +1,80 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Assets.Scripts;
+using UnityEngine;
+
+namespace Assets.VOX
+{
+    public class VOXMap : MonoBehaviour
+    {
+        private readonly Dictionary<Vector2, VOXChunk> _chunks = new Dictionary<Vector2, VOXChunk>();
+        private GameData _gameData;
+        private List<GameObject> _objs;
+
+        public int ChunkSizeX = 20;
+        public int ChunkSizeY = 20; //Not sure what upper bound on DDA's Z (unity Y) axis is.
+        public int ChunkSizeZ = 20;
+        public int BlockSizeX = 1;
+        public int BlockSizeY = 1;
+        public int BlockSizeZ = 1;
+
+        public VOXMap() { }
+
+        public void Awake()
+        {
+        }
+
+        public void Start()
+        {
+        }
+
+        public void Render()
+        {
+            _objs = new List<GameObject>();
+            foreach (var chunk in _chunks)
+            {
+                var obj = new GameObject(string.Format("chunk_{0}-{1}", chunk.Key.x, chunk.Key.y));
+                var filter = obj.AddComponent<MeshFilter>();
+                var renderer = obj.AddComponent<MeshRenderer>();
+                var mesh = chunk.Value.Render().ToMesh();
+                filter.sharedMesh = mesh;
+                obj.transform.parent = this.transform;
+                _objs.Add(obj);
+                //renderer.sharedMaterial = ?
+            }
+        }
+
+
+
+        public void CreateMap(GameData data)
+        {
+            var numX = Math.Ceiling(data.map.tiles.Max(x => x.Location.x));
+            var numZ = Math.Ceiling(data.map.tiles.Max(x => x.Location.z));
+            var chunksX = numX / ChunkSizeX;
+            var chunksZ = numZ / ChunkSizeZ;
+            for (var x = 0; x < chunksX; x++)
+            {
+                for (var z = 0; z < chunksZ; z++)
+                {
+                    CreateChunk(new Vector2(x, z), data);
+                }
+            }
+        }
+
+        private void CreateChunk(Vector2 location, GameData data)
+        {
+            var chunkStartX = location.x * ChunkSizeX;
+            var chunkStartY = location.y * ChunkSizeZ;
+            var chunkTiles = data.map.tiles.Where(x => x.Location.x >= chunkStartX &&
+                                                       x.Location.x < chunkStartX + ChunkSizeX &&
+                                                       x.Location.z >= chunkStartY &&
+                                                       x.Location.z < chunkStartY + ChunkSizeZ).ToList();
+
+            var chunk = new VOXChunk(location, this);
+            chunk.Create(chunkTiles);
+            _chunks.Add(location, chunk);
+        }
+    }
+}

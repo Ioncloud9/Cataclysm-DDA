@@ -113,6 +113,12 @@
       <HintPath>Library\UnityAssemblies\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
     <Reference Include="AsyncIO">
+      <HintPath>Assets\Packages\AsyncIO.0.1.26.0\lib\net35\AsyncIO.dll</HintPath>
+    </Reference>
+    <Reference Include="NetMQ">
+      <HintPath>Assets\Packages\NetMQ.4.0.0.1\lib\net35\NetMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="AsyncIO">
       <HintPath>Assets\plugins\AsyncIO.dll</HintPath>
     </Reference>
     <Reference Include="NetMQ">
@@ -166,6 +172,7 @@
     <Compile Include="Assets\ProceduralToolkit\Examples\BuildingGenerator\Editor\BuildingGeneratorConfiguratorEditor.cs" />
     <Compile Include="Assets\ProceduralToolkit\Examples\ChairGenerator\Editor\ChairGeneratorConfiguratorEditor.cs" />
     <Compile Include="Assets\ProceduralToolkit\Examples\LowPolyTerrainGenerator\Editor\LowPolyTerrainGeneratorConfiguratorEditor.cs" />
+    <Compile Include="Assets\VOX\Editor\VOXMapEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />

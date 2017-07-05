@@ -8,6 +8,7 @@
 #include "cqueue.h"
 #include "weather.h"
 #include "monster.h"
+#include "messages.h"
 
 #include <zmq.hpp>
 #include <list>

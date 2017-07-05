@@ -213,6 +213,7 @@ unsigned __stdcall voxMQManager::Listener(void* PtrToInstance)
         message_t msg;
         if (subscriber.recv(&msg)) {
             string command = voxUtil::ReadMessage(&msg);
+            add_msg(_("%s"), command);
             voxMQCommand pCmd = voxMQCommand::Parse(command);
             if (!pInstance->ProcessSpecialCommand(pCmd)) {
                 pInstance->_requestQueue.push(pCmd);
@@ -300,8 +301,11 @@ string voxMQManager::GetMapData() {
                     }
                     */
                     if (g->u.sees(p, true)) {
-                        
+                        std::string loc = (ppos.x + dx) + ",";
+                        loc += (ppos.y + dy) + ",";
+                        loc += ppos.z;
                         json.member("ter", g->m.ter(p)->id);
+                        json.member("loc", loc);
                         if (g->m.has_furn(p)) {
                             json.member("furn", g->m.furn(p)->id);
                         }
