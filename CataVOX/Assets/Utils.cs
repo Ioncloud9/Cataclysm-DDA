@@ -26,6 +26,17 @@ namespace Assets
             }
         }
 
+        public static string SeasonImage(string season)
+        {
+            switch (season.ToLower())
+            {
+                case "spring": return "spring";
+                case "fall": return "fall";
+                case "winter": return "winter";
+                case "summer": return "summer";
+                default: return "na";
+            }
+        }
     }
     public static class DirectionUtils
     {

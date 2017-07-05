@@ -53,7 +53,9 @@ public class Calendar
 {
     public string season;
     public string time;
+    public string date;
     public bool isNight;
+
 }
 
 [Serializable]
@@ -228,6 +230,7 @@ public class Loader : GameBase
             {
                 for (int x = 0; x < gameData.map.width; x++)
                 {
+                    
                     AddOrInstantiate(x, y, gameData.map.tiles[i].ter == null ? "t_unseen" : gameData.map.tiles[i].ter, "t_unknown");
                     AddOrInstantiate(x, y, gameData.map.tiles[i].furn, "f_unknown");
                     i++;

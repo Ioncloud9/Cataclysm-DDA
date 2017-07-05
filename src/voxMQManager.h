@@ -7,6 +7,7 @@
 #include "json.h"
 #include "cqueue.h"
 #include "weather.h"
+#include "monster.h"
 
 #include <zmq.hpp>
 #include <list>

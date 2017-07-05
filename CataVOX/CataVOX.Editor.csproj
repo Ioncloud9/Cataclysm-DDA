@@ -113,10 +113,10 @@
       <HintPath>Library\UnityAssemblies\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
     <Reference Include="AsyncIO">
-      <HintPath>Assets\AsyncIO.0.1.26.0\lib\net35\AsyncIO.dll</HintPath>
+      <HintPath>Assets\plugins\AsyncIO.dll</HintPath>
     </Reference>
     <Reference Include="NetMQ">
-      <HintPath>Assets\NetMQ.4.0.0.1\lib\net35\NetMQ.dll</HintPath>
+      <HintPath>Assets\plugins\NetMQ.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

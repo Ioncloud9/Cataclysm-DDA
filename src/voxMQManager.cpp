@@ -274,6 +274,8 @@ string voxMQManager::GetMapData() {
         json.member("acidic", w->acidic);
     json.end_object();
 
+    
+
     json.member("map");
     json.start_object();
         json.member("width", size * 2);
@@ -282,9 +284,23 @@ string voxMQManager::GetMapData() {
         json.start_array();
             for (int dx = -size; dx < size; dx++) {
                 for (int dy = -size; dy < size; dy++) {
-                    const tripoint p(ppos.x + dx, ppos.y + dy, ppos.z);
                     json.start_object();
+                    const tripoint p(ppos.x + dx, ppos.y + dy, ppos.z);
+                    /*
+                    Creature* crit = g->critter_at(p, true);
+                    if (crit != NULL) {
+                        if (!crit->is_player()) {
+                            if (crit->is_monster()) {
+                                json.member("monster");
+                                monster* m = g->monster_at(p, true);
+                                json.write(m->serialize());
+                            }
+                            else {}
+                        }
+                    }
+                    */
                     if (g->u.sees(p, true)) {
+                        
                         json.member("ter", g->m.ter(p)->id);
                         if (g->m.has_furn(p)) {
                             json.member("furn", g->m.furn(p)->id);
