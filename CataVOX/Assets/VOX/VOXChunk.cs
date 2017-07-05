@@ -22,6 +22,11 @@ namespace Assets.VOX
         public VOXMap Parent { get; private set; }
         public Mesh CurrentMesh { get; private set; }
 
+        public Dictionary<Vector3, VOXBlock> Blocks
+        {
+            get { return _blocks; }
+        }
+
         public void Create(IEnumerable<Tile> chunkTiles)
         {
             foreach (var tile in chunkTiles)

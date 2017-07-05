@@ -46,7 +46,17 @@ namespace Assets.VOX
             }
         }
 
-
+        public VOXBlock GetBlockAt(Vector3 worldLocation)
+        {
+            var chunkX = (int)Math.Floor(worldLocation.x / ChunkSizeX);
+            var chunkY = (int)Math.Floor(worldLocation.z / ChunkSizeZ);
+            VOXChunk chunk;
+            if (!_chunks.TryGetValue(new Vector2(chunkX, chunkY), out chunk))
+            {
+                return null;
+            }
+            return chunk.Blocks.Select(x => x.Value).FirstOrDefault(x => x.WorldLocation == worldLocation);
+        }
 
         public void CreateMap(GameData data)
         {
@@ -65,6 +75,8 @@ namespace Assets.VOX
 
         private void CreateChunk(Vector2 location, GameData data)
         {
+            VOXChunk chunk;
+            if (_chunks.TryGetValue(location, out chunk)) return;
             var chunkStartX = location.x * ChunkSizeX;
             var chunkStartY = location.y * ChunkSizeZ;
             var chunkTiles = data.map.tiles.Where(x => x.Location.x >= chunkStartX &&
@@ -72,7 +84,7 @@ namespace Assets.VOX
                                                        x.Location.z >= chunkStartY &&
                                                        x.Location.z < chunkStartY + ChunkSizeZ).ToList();
 
-            var chunk = new VOXChunk(location, this);
+            chunk = new VOXChunk(location, this);
             chunk.Create(chunkTiles);
             _chunks.Add(location, chunk);
         }
