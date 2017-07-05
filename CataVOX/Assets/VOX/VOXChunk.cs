@@ -20,6 +20,7 @@ namespace Assets.VOX
         public Vector2 Location { get; private set; }
 
         public VOXMap Parent { get; private set; }
+        public Mesh CurrentMesh { get; private set; }
 
         public void Create(IEnumerable<Tile> chunkTiles)
         {
@@ -29,8 +30,12 @@ namespace Assets.VOX
             }
         }
 
-        public MeshDraft Render()
+        public Mesh Render(bool forceRedraw = false)
         {
+
+            if (forceRedraw) CurrentMesh = null;
+            if (CurrentMesh != null) return CurrentMesh;
+
             var draft = new MeshDraft();
             for (var x = 0; x <= Parent.ChunkSizeX; x++)
             {
@@ -44,7 +49,9 @@ namespace Assets.VOX
                     }
                 }
             }
-            return draft;
+            CurrentMesh = draft.ToMesh();
+
+            return CurrentMesh;
         }
     }
 }

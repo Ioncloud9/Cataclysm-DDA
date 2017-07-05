@@ -38,7 +38,7 @@ namespace Assets.VOX
                 var obj = new GameObject(string.Format("chunk_{0}-{1}", chunk.Key.x, chunk.Key.y));
                 var filter = obj.AddComponent<MeshFilter>();
                 var renderer = obj.AddComponent<MeshRenderer>();
-                var mesh = chunk.Value.Render().ToMesh();
+                var mesh = chunk.Value.Render();
                 filter.sharedMesh = mesh;
                 obj.transform.parent = this.transform;
                 _objs.Add(obj);
