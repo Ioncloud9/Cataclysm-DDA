@@ -12,8 +12,6 @@ public static class VOXGameObject
     private static List<Vector3> allVertices = new List<Vector3>();
     private static List<Vector2> allUVs = new List<Vector2>();
     private static Dictionary<byte, List<int>> allTriangles = new Dictionary<byte, List<int>>();
-    private static Dictionary<VOXPos3, bool> voxels = new Dictionary<VOXPos3, bool>();
-    private static Dictionary<VOXPos3, bool> alphaVoxels = new Dictionary<VOXPos3, bool>();
     private static Texture grid = null;
 
     public static GameObject CreateGameObject(string path, float scale = 1f)
@@ -25,32 +23,19 @@ public static class VOXGameObject
         VOXGameObject.voxPath = path;
         VOXGameObject.scale = scale;
         VOXGameObject.model = new VOXFile.Model(path);
-        if (VOXGameObject.model.size.x == 0 &&
-            VOXGameObject.model.size.y == 0 &&
-            VOXGameObject.model.size.z == 0) return new GameObject();
+        if (VOXGameObject.model.sizeX == 0 &&
+            VOXGameObject.model.sizeY == 0 &&
+            VOXGameObject.model.sizeZ == 0) return new GameObject();
         InitMaterials();
-        CreateVoxelHashTable();
         var planes = CreateColorPlanes();
         return CreateMesh(planes);
-    }
-
-    private static void CreateVoxelHashTable()
-    {
-        foreach (Voxel voxel in model.voxels)
-        {
-            VOXPos3 pos;
-            pos.x = voxel.x;
-            pos.y = voxel.y;
-            pos.z = voxel.z;
-            voxels.Add(pos, true);
-        }
     }
 
     private static void InitMaterials()
     {
         uMaterials = new UnityEngine.Material[256];
 
-        for (int i = 0; i < 256; i++)
+        for (int i = 1; i <= 255; i++)
         {
             if (model.materials[i].type == 2) // glass 
             {
@@ -76,75 +61,48 @@ public static class VOXGameObject
     {
         Dictionary<ColorPlanePos, ColorPlane> planes = new Dictionary<ColorPlanePos, ColorPlane>();
         ColorPlane plane;
-        foreach (Voxel voxel in model.voxels)
+        for (int x = 0; x < model.sizeX; x++)
+            for (int y = 0; y < model.sizeY; y++)
+                for (int z = 0; z < model.sizeZ; z++)
         {
-            VOXPos3 neighbour;
-
+            if (model.VoxelAt(x, y, z) == null) continue;
+            byte i = model.MaterialIDAt(x, y, z);
+            if (i == 0) continue;
             // top
-            plane = GetColorPlaneFor(planes, voxel.y, voxel.i, new Vector3(0, -1f, 0));
-            neighbour.x = voxel.x;
-            neighbour.y = (byte)(voxel.y + 1);
-            neighbour.z = voxel.z;
-            if (!voxels.ContainsKey(neighbour))
-            {
-                plane.AddDot(voxel.x, voxel.z);
-            }
+            plane = GetColorPlaneFor(planes, y, i, new Vector3(0, -1f, 0));
+            if (model.VoxelAt(x, y + 1, z) == null)
+                plane.AddDot(x, z);
 
             // bottom
-            plane = GetColorPlaneFor(planes, voxel.y, voxel.i, new Vector3(0, 1f, 0));
-            neighbour.x = voxel.x;
-            neighbour.y = (byte)(voxel.y - 1);
-            neighbour.z = voxel.z;
-            if (!voxels.ContainsKey(neighbour))
-            {
-                plane.AddDot(voxel.x, voxel.z);
-            }
+            plane = GetColorPlaneFor(planes, y, i, new Vector3(0, 1f, 0));
+            if (model.VoxelAt(x, y - 1, z) == null)
+                plane.AddDot(x, z);
 
             // front
-            plane = GetColorPlaneFor(planes, voxel.z, voxel.i, new Vector3(0, 0, -1f));
-            neighbour.x = voxel.x;
-            neighbour.y = voxel.y;
-            neighbour.z = (byte)(voxel.z - 1);
-            if (!voxels.ContainsKey(neighbour))
-            {
-                plane.AddDot(voxel.x, voxel.y);
-            }
+            plane = GetColorPlaneFor(planes, z, i, new Vector3(0, 0, -1f));
+            if (model.VoxelAt(x, y, z - 1) == null)
+                plane.AddDot(x, y);
 
             // back
-            plane = GetColorPlaneFor(planes, voxel.z, voxel.i, new Vector3(0, 0, 1f));
-            neighbour.x = voxel.x;
-            neighbour.y = voxel.y;
-            neighbour.z = (byte)(voxel.z + 1);
-            if (!voxels.ContainsKey(neighbour))
-            {
-                plane.AddDot(voxel.x, voxel.y);
-            }
+            plane = GetColorPlaneFor(planes, z, i, new Vector3(0, 0, 1f));
+            if (model.VoxelAt(x, y, z + 1) == null)
+                plane.AddDot(x, y);
 
             // left
-            plane = GetColorPlaneFor(planes, voxel.x, voxel.i, new Vector3(-1f, 0, 0));
-            neighbour.x = (byte)(voxel.x - 1);
-            neighbour.y = voxel.y;
-            neighbour.z = voxel.z;
-            if (!voxels.ContainsKey(neighbour))
-            {
-                plane.AddDot(voxel.z, voxel.y);
-            }
+            plane = GetColorPlaneFor(planes, x, i, new Vector3(-1f, 0, 0));
+            if (model.VoxelAt(x - 1, y, z) == null)
+                plane.AddDot(z, y);
 
             // right
-            plane = GetColorPlaneFor(planes, voxel.x, voxel.i, new Vector3(1f, 0, 0));
-            neighbour.x = (byte)(voxel.x + 1);
-            neighbour.y = voxel.y;
-            neighbour.z = voxel.z;
-            if (!voxels.ContainsKey(neighbour))
-            {
-                plane.AddDot(voxel.z, voxel.y);
-            }
+            plane = GetColorPlaneFor(planes, x, i, new Vector3(1f, 0, 0));
+            if (model.VoxelAt(x + 1, y, z) == null)
+                plane.AddDot(z, y);
 
         }
         return planes;
     }
 
-    private static ColorPlane GetColorPlaneFor(Dictionary<ColorPlanePos, ColorPlane> planes, byte pos, byte matID, Vector3 normal)
+    private static ColorPlane GetColorPlaneFor(Dictionary<ColorPlanePos, ColorPlane> planes, int pos, byte matID, Vector3 normal)
     {
         ColorPlanePos planePos;
         planePos.pos = pos;
@@ -185,7 +143,7 @@ public static class VOXGameObject
         int i = 0;
         foreach (KeyValuePair<byte, List<int>> triangles in allTriangles)
         {
-            matList.Add(uMaterials[triangles.Key - 1]);
+            matList.Add(uMaterials[triangles.Key]);
             if (triangles.Value.Count > 0)
             {
                 mesh.SetTriangles(triangles.Value, i++);
@@ -197,7 +155,6 @@ public static class VOXGameObject
         allTriangles = new Dictionary<byte, List<int>>();
         allVertices = new List<Vector3>();
         allUVs = new List<Vector2>();
-        voxels = new Dictionary<VOXPos3, bool>(); ;
         return obj;
     }
 
@@ -289,10 +246,10 @@ public static class VOXGameObject
                 float x2 = maxFace[3] + 1;
                 float y1 = maxFace[0];
                 float y2 = maxFace[2] + 1;
-                x1 /= model.size.x;
-                x2 /= model.size.x;
-                y1 /= model.size.y;
-                y2 /= model.size.y;
+                x1 /= model.sizeX;
+                x2 /= model.sizeX;
+                y1 /= model.sizeY;
+                y2 /= model.sizeY;
 
                 allUVs.Add(new Vector2(x2, y1));
                 allUVs.Add(new Vector2(x1, y1));
@@ -407,18 +364,18 @@ struct ColorPlanePos
 
 struct VOXPos
 {
-    public byte x, y;
+    public int x, y;
 }
 
 struct VOXPos3
 {
-    public byte x, y, z;
+    public int x, y, z;
 }
 
 class ColorPlane
 {
     public int minX, minY, maxX, maxY;
-    public byte pos;
+    public int pos;
     public byte matID;
     public Vector3 normal;
     public List<VOXPos> dots;
@@ -442,7 +399,7 @@ class ColorPlane
         }
     }
 
-    public ColorPlane(byte pos, byte matID, Vector3 normal)
+    public ColorPlane(int pos, byte matID, Vector3 normal)
     {
         this.pos = pos;
         this.matID = matID;
@@ -450,7 +407,7 @@ class ColorPlane
         dots = new List<VOXPos>();
     }
 
-    public void AddDot(byte x, byte y)
+    public void AddDot(int x, int y)
     {
         if (minX >= x) minX = x;
         if (minY >= y) minY = y;
