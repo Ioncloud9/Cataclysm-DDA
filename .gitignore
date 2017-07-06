@@ -154,6 +154,7 @@ WinDepend
 # don't add VS project because Unity recreates these files itself
 CataVOX/*.csproj
 CataVOX/*.sln
+CataVOX/**/.meta
 
 # Transifex Client
 .tx/
