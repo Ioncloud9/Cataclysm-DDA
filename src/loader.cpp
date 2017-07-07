@@ -1,3 +1,4 @@
+#include <combaseapi.h>
 #include "loader.h"
 #include "path_info.h"
 #include "mapsharing.h"
@@ -5,16 +6,16 @@
 #include "options.h"
 #include "translations.h"
 #include "game.h"
+#include "worldfactory.h"
+#include "filesystem.h"
+#include "player.h"
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
 extern bool test_dirty;
 
 extern "C" {
-    int testSum(int a, int b) {
-        return a + b;
-    }
-    game* loadGame(void) {
+    void init(void) {
         // tyomalu: most code from original main.cpp but we ignore command line arguments
         // Set default file paths
         int seed = time(NULL);
@@ -35,7 +36,7 @@ extern "C" {
 #if (defined USE_HOME_DIR || defined USE_XDG_DIR)
         PATH_INFO::init_user_dir();
 #else
-        PATH_INFO::init_user_dir("./");
+        PATH_INFO::init_user_dir("../");
 #endif
         PATH_INFO::set_standard_filenames();
         MAP_SHARING::setDefaults();
@@ -80,6 +81,49 @@ extern "C" {
             exit_handler(-999);
         }
 
-        return g;
+        // from main_menu.cpp
+
+        world_generator->set_active_world(NULL);
+        world_generator->init();
+
+        if (!assure_dir_exist(FILENAMES["config_dir"])) {
+            printf("Unable to make config directory. Check permissions.");
+            return;
+        }
+
+        if (!assure_dir_exist(FILENAMES["savedir"])) {
+            printf("Unable to make save directory. Check permissions.");
+            return;
+        }
+
+        if (!assure_dir_exist(FILENAMES["templatedir"])) {
+            printf("Unable to make templates directory. Check permissions.");
+            return;
+        }
+
+        g->u = player();
+
+    }
+
+    const void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
+        if (world_generator->all_worldnames().empty()) {
+            *stringsCountReceiver = 0;
+            return;
+        }
+
+        // saved games are available
+        *stringsCountReceiver = world_generator->all_worldnames().size();
+        size_t arraySize = sizeof(char*) * (*stringsCountReceiver);
+
+        *stringBufferReceiver = (char**)::CoTaskMemAlloc(arraySize);
+        memset(*stringBufferReceiver, 0, arraySize);
+        
+        const auto worlds = world_generator->all_worldnames();
+
+        for (int i = 0; i < world_generator->all_worldnames().size(); i++) {
+            (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(worlds[i].length() + 1);
+            strcpy((*stringBufferReceiver)[i], worlds[i].c_str());
+        }
+        return;
     }
 }
