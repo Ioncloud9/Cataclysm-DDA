@@ -106,24 +106,46 @@ extern "C" {
     }
 
     const void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
-        if (world_generator->all_worldnames().empty()) {
+        const auto worlds = world_generator->all_worldnames();
+
+        if (worlds.empty()) {
             *stringsCountReceiver = 0;
             return;
         }
 
         // saved games are available
-        *stringsCountReceiver = world_generator->all_worldnames().size();
-        size_t arraySize = sizeof(char*) * (*stringsCountReceiver);
+        *stringsCountReceiver = worlds.size();
+        if (worlds.size() > 0) {
+            size_t arraySize = sizeof(char*) * (*stringsCountReceiver);
 
+            *stringBufferReceiver = (char**)::CoTaskMemAlloc(arraySize);
+            memset(*stringBufferReceiver, 0, arraySize);
+
+            for (int i = 0; i < worlds.size(); i++) {
+                (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(worlds[i].length() + 1);
+                strcpy((*stringBufferReceiver)[i], worlds[i].c_str());
+            }
+        }
+    }
+
+    const void getWorldSaves(char *worldName, /*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
+        std::string name = std::string(worldName);
+        *stringsCountReceiver = 0;
+
+        const auto saves = world_generator->get_world(name)->world_saves;
+        if (saves.empty()) {
+            *stringsCountReceiver = 0;
+            return;
+        }        
+
+        *stringsCountReceiver = saves.size();
+        size_t arraySize = sizeof(char*) * (*stringsCountReceiver);
         *stringBufferReceiver = (char**)::CoTaskMemAlloc(arraySize);
         memset(*stringBufferReceiver, 0, arraySize);
-        
-        const auto worlds = world_generator->all_worldnames();
 
-        for (int i = 0; i < world_generator->all_worldnames().size(); i++) {
-            (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(worlds[i].length() + 1);
-            strcpy((*stringBufferReceiver)[i], worlds[i].c_str());
+        for (int i = 0; i < saves.size(); i++) {
+            (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(saves[i].player_name().length() + 1);
+            strcpy((*stringBufferReceiver)[i], saves[i].player_name().c_str());
         }
-        return;
     }
 }

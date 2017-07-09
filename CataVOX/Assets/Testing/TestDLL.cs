@@ -3,19 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using System.Text;
 
 public class TestDLL : MonoBehaviour
 {
     [DllImport("Cataclysm", EntryPoint = "init")]
     public static extern int init();
 
-    [DllImport("Cataclysm", CharSet = CharSet.Ansi, EntryPoint = "getWorldNames")]
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getWorldNames")]
     // public static extern void GetWorldNames(
     //     [MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=1)] out string[] ar,
     //     out int size
     // );
 
     public static extern void GetWorldNames(
+        out IntPtr ar,
+        out int size
+    );
+
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getWorldSaves")]
+    public static extern void GetWorldSaves(
+        byte[] worldName,
         out IntPtr ar,
         out int size
     );
@@ -27,12 +35,22 @@ public class TestDLL : MonoBehaviour
         int size = 0;
 
         GetWorldNames(out worlds, out size);
-        Debug.Log(size);
 
-        string[] result = new string[size];
-        MarshalUnmananagedStrArray2ManagedStrArray(worlds, size, out result);
-        foreach (string world in result) {
-             Debug.Log(world);
+        string[] rWorlds;
+        Cpp2net_strArray(worlds, size, out rWorlds);
+
+        foreach (string world in rWorlds) {
+             Debug.Log(world +  ":");
+             IntPtr saves = IntPtr.Zero;
+             size = 0;
+
+             GetWorldSaves(Encoding.ASCII.GetBytes(world), out saves, out size);
+             string[] rSaves;
+             Cpp2net_strArray(saves, size, out rSaves);
+
+             foreach (string save in rSaves) {
+                 Debug.Log("  " + save);
+             }
         }
     }
 
@@ -42,12 +60,17 @@ public class TestDLL : MonoBehaviour
 
     }
 
-    static void MarshalUnmananagedStrArray2ManagedStrArray(
+    static void Cpp2net_strArray(
         IntPtr pUnmanagedStringArray,
         int StringCount,
         out string[] ManagedStringArray
     )
     {
+        if (StringCount == 0)
+        {
+            ManagedStringArray = new string[0];
+            return;
+        }
         IntPtr[] pIntPtrArray = new IntPtr[StringCount];
         ManagedStringArray = new string[StringCount];
 
