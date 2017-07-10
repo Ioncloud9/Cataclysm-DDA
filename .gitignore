@@ -161,3 +161,5 @@ CataVOX/**/*.meta
 
 data/sound/**
 !data/sound/Basic
+CataVOX/Assets/Plugins/Cataclysm.exp
+CataVOX/Assets/Plugins/Cataclysm.lib

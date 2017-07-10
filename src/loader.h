@@ -11,4 +11,6 @@ extern "C" {
     LOADERDLL_API void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver);
     LOADERDLL_API void getWorldSaves(char* worldName, /*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver);
     LOADERDLL_API void deinit(void);
+    LOADERDLL_API void loadGame(char* worldName); // loads first available game for the world
+    LOADERDLL_API void getTer(/*out*/ char** ter);
 }

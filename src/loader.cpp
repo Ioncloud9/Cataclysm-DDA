@@ -2,6 +2,7 @@
 #include "loader.h"
 #include "path_info.h"
 #include "mapsharing.h"
+#include "mapdata.h"
 #include "debug.h"
 #include "options.h"
 #include "translations.h"
@@ -9,6 +10,7 @@
 #include "worldfactory.h"
 #include "filesystem.h"
 #include "player.h"
+#include "map.h"
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
@@ -16,6 +18,7 @@ extern bool test_dirty;
 
 extern "C" {
     void init(void) {
+        test_mode = true;
         // tyomalu: most code from original main.cpp but we ignore command line arguments
         // Set default file paths
         int seed = time(NULL);
@@ -141,7 +144,7 @@ extern "C" {
         }        
 
         *stringsCountReceiver = saves.size();
-        size_t arraySize = sizeof(char*) * (*stringsCountReceiver);
+        size_t arraySize = sizeof(char*) * saves.size();
         *stringBufferReceiver = (char**)::CoTaskMemAlloc(arraySize);
         memset(*stringBufferReceiver, 0, arraySize);
 
@@ -149,6 +152,29 @@ extern "C" {
             (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(saves[i].player_name().length() + 1);
             strcpy((*stringBufferReceiver)[i], saves[i].player_name().c_str());
         }
+    }
+
+    void loadGame(char* worldName) {
+        WORLDPTR world = world_generator->get_world(worldName);
+        world_generator->set_active_world(world);
+        try {
+            g->setup();
+        }
+        catch (const std::exception &err) {
+            debugmsg("Error: %s", err.what());
+            g->u = player();
+        }
+        //auto save = world->world_saves[saveGame];
+        g->load(world->world_name);
+    }
+
+    void getTer(/*out*/ char** ter) {
+        const tripoint ppos = g->u.pos();
+
+        ter_str_id t = g->m.ter(ppos)->id;
+
+        *ter = (char*)::CoTaskMemAlloc(t.str().length() + 1);
+        strcpy(*ter, t.c_str());
     }
 
     void deinit(void) {

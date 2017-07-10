@@ -8,16 +8,22 @@ using System.Text;
 public class TestDLL : MonoBehaviour
 {
     [DllImport("Cataclysm", EntryPoint = "init")]
-    public static extern int init();
-    // [DllImport("Cataclysm", EntryPoint = "deinit")]
-    // public static extern int deinit();
+    public static extern void init();
+    [DllImport("Cataclysm", EntryPoint = "deinit")]
+    public static extern void deinit();
+
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")]
+    public static extern void loadGame(
+        [MarshalAs(UnmanagedType.LPStr)] string worldName
+    );
+
+
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getTer")]
+    public static extern void getTer(
+        out IntPtr ter
+    );
 
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getWorldNames")]
-    // public static extern void GetWorldNames(
-    //     [MarshalAs(UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeParamIndex=1)] out string[] ar,
-    //     out int size
-    // );
-
     public static extern void GetWorldNames(
         out IntPtr ar,
         out int size
@@ -42,18 +48,19 @@ public class TestDLL : MonoBehaviour
         Cpp2net_strArray(worlds, size, out rWorlds);
 
         foreach (string world in rWorlds) {
-             Debug.Log(world +  ":");
-             IntPtr saves = IntPtr.Zero;
-             size = 0;
+            Debug.Log(world +  ":");
+            IntPtr saves = IntPtr.Zero;
+            size = 0;
 
              //GetWorldSaves(Encoding.ASCII.GetBytes(world), out saves, out size);
-             GetWorldSaves(world, out saves, out size);
-             string[] rSaves;
-             Cpp2net_strArray(saves, size, out rSaves);
-
-             foreach (string save in rSaves) {
-                 Debug.Log("  " + save);
-             }
+            GetWorldSaves(world, out saves, out size);
+            if (size > 0) {
+                loadGame(world);
+                IntPtr ter = IntPtr.Zero;
+                getTer(out ter);
+                Debug.Log("terrain: " + Cpp2net_str(ter));
+                break;
+            }
         }
     }
 
@@ -93,5 +100,14 @@ public class TestDLL : MonoBehaviour
         }
 
         Marshal.FreeCoTaskMem(pUnmanagedStringArray);
+    }
+
+    static string Cpp2net_str(
+        IntPtr pUnmanagedString
+    ) {
+        string result;
+        result = Marshal.PtrToStringAnsi(pUnmanagedString);
+        Marshal.FreeCoTaskMem(pUnmanagedString);
+        return result;
     }
 }
