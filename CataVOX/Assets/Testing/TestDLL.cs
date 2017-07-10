@@ -9,6 +9,8 @@ public class TestDLL : MonoBehaviour
 {
     [DllImport("Cataclysm", EntryPoint = "init")]
     public static extern int init();
+    // [DllImport("Cataclysm", EntryPoint = "deinit")]
+    // public static extern int deinit();
 
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getWorldNames")]
     // public static extern void GetWorldNames(
@@ -23,7 +25,7 @@ public class TestDLL : MonoBehaviour
 
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getWorldSaves")]
     public static extern void GetWorldSaves(
-        byte[] worldName,
+        [MarshalAs(UnmanagedType.LPStr)] string worldName,
         out IntPtr ar,
         out int size
     );
@@ -44,7 +46,8 @@ public class TestDLL : MonoBehaviour
              IntPtr saves = IntPtr.Zero;
              size = 0;
 
-             GetWorldSaves(Encoding.ASCII.GetBytes(world), out saves, out size);
+             //GetWorldSaves(Encoding.ASCII.GetBytes(world), out saves, out size);
+             GetWorldSaves(world, out saves, out size);
              string[] rSaves;
              Cpp2net_strArray(saves, size, out rSaves);
 
@@ -54,11 +57,18 @@ public class TestDLL : MonoBehaviour
         }
     }
 
+    void OnApplicationQuit()
+    {
+        Debug.Log("onquit");
+        //deinit();
+    }
+
     // Update is called once per frame
     void Update()
     {
 
     }
+
 
     static void Cpp2net_strArray(
         IntPtr pUnmanagedStringArray,

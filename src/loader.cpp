@@ -47,6 +47,8 @@ extern "C" {
             exit(1);
         }
 
+        setupDebug();
+
         if (setlocale(LC_ALL, "") == NULL) {
             DebugLog(D_WARNING, D_MAIN) << "Error while setlocale(LC_ALL, '').";
         }
@@ -105,7 +107,7 @@ extern "C" {
 
     }
 
-    const void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
+    void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
         const auto worlds = world_generator->all_worldnames();
 
         if (worlds.empty()) {
@@ -128,7 +130,7 @@ extern "C" {
         }
     }
 
-    const void getWorldSaves(char *worldName, /*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
+    void getWorldSaves(char *worldName, /*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
         std::string name = std::string(worldName);
         *stringsCountReceiver = 0;
 
@@ -147,5 +149,13 @@ extern "C" {
             (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(saves[i].player_name().length() + 1);
             strcpy((*stringBufferReceiver)[i], saves[i].player_name().c_str());
         }
+    }
+
+    void deinit(void) {
+        deinitDebug();
+        if (g != NULL) {
+            delete g;
+        }
+        //Mix_CloseAudio();
     }
 }
