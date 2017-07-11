@@ -113,7 +113,7 @@ struct w_point;
 struct explosion_data;
 struct visibility_variables;
 class scent_map;
-class voxMQManager;
+//class voxMQManager;
 
 // Note: this is copied from inventory.h
 // Entire inventory.h would also bring item.h here
@@ -170,7 +170,7 @@ class game
         std::unique_ptr<map> map_ptr;
         std::unique_ptr<player> u_ptr;
         std::unique_ptr<live_view> liveview_ptr;
-        std::unique_ptr<voxMQManager> mqSender_ptr;
+        //std::unique_ptr<voxMQManager> mqSender_ptr;
         live_view& liveview;
         std::unique_ptr<scent_map> scent_ptr;
     public:
@@ -180,6 +180,7 @@ class game
         void setup();
         /** True if the game has just started or loaded, else false. */
         bool new_game;
+        std::string extAction = "";
         /** Used in main.cpp to determine what type of quit is being performed. */
         quit_status uquit;
         /** Saving and loading functions. */
@@ -217,7 +218,7 @@ class game
         /** Make map a reference here, to avoid map.h in game.h */
         map &m;
         player &u;
-        voxMQManager &mqSender;
+        //voxMQManager &mqSender;
         scent_map &scent;
 
         std::unique_ptr<Creature_tracker> critter_tracker;

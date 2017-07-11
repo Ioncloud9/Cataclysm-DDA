@@ -91,7 +91,7 @@
 #include "safemode_ui.h"
 #include "game_constants.h"
 #include "string_input_popup.h"
-#include "voxMQManager.h"
+//#include "voxMQManager.h"
 
 #include <map>
 #include <set>
@@ -233,7 +233,7 @@ public:
 game::game() :
     map_ptr( new map() ),
     u_ptr( new player() ),
-    mqSender_ptr(new voxMQManager()),
+    //mqSender_ptr(new voxMQManager()),
     liveview_ptr( new live_view() ),
     liveview( *liveview_ptr ),
     scent_ptr( new scent_map( *this ) ),
@@ -241,7 +241,7 @@ game::game() :
     uquit(QUIT_NO),
     m( *map_ptr ),
     u( *u_ptr ),
-    mqSender(*mqSender_ptr),
+    //mqSender(*mqSender_ptr),
     scent( *scent_ptr ),
     critter_tracker( new Creature_tracker() ),
     weather( WEATHER_CLEAR ),
@@ -1572,7 +1572,7 @@ bool game::do_turn()
     sfx::do_danger_music();
     sfx::do_fatigue();
     
-    mqSender.SendCommandResponse();
+    //mqSender.SendCommandResponse();
     /*
     if (mqSender.HasCommand()) {
         if (mqSender.EndProcessing()) { // indicate we've completed processing (this could be done elsewhere
@@ -2074,16 +2074,16 @@ bool game::handle_mouseview(input_context &ctxt, std::string &action)
         
     } while (action == "MOUSE_MOVE"); // Freeze animation when moving the mouse
 
-    std::string prevAction = action; //save whatever action was
-    voxMQCommand command;
-    if (mqSender.GetNextCommand(command)) {
-        action = command.Command;
-        /*
-        if (!mqSender.BeginProcessing(action)) { //if, for whatever reason, we don't begin processing, revert action
-            action = prevAction;
-        }
-        */
-    }
+    //std::string prevAction = action; //save whatever action was
+    //voxMQCommand command;
+    //if (mqSender.GetNextCommand(command)) {
+    //    action = command.Command;
+    //    /*
+    //    if (!mqSender.BeginProcessing(action)) { //if, for whatever reason, we don't begin processing, revert action
+    //        action = prevAction;
+    //    }
+    //    */
+    //}
     /*
     action = mqSender.ListenOne();
     if (action == "nrep") {
@@ -2524,8 +2524,10 @@ bool game::handle_action()
     std::string action;
     input_context ctxt;
     action_id act = ACTION_NULL;
-    // Check if we have an auto-move destination
-    if (u.has_destination()) {
+    
+    if (!extAction.empty()) {
+        action = extAction;
+    } else if (u.has_destination()) { // Check if we have an auto-move destination
         act = u.get_next_auto_move_direction();
         if (act == ACTION_NULL) {
             add_msg(m_info, _("Auto-move canceled"));

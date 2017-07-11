@@ -11,6 +11,24 @@ public class TestDLL : MonoBehaviour
     public static extern void init();
     [DllImport("Cataclysm", EntryPoint = "deinit")]
     public static extern void deinit();
+    [DllImport("Cataclysm", EntryPoint = "moveRight")]
+    public static extern void moveRight();
+
+    [DllImport("Cataclysm", EntryPoint = "doTurn")]
+    public static extern void doTurn();
+
+    [DllImport("Cataclysm", EntryPoint = "doAction")]
+    public static extern void doAction(
+        [MarshalAs(UnmanagedType.LPStr)] string action 
+    );
+
+    [DllImport("Cataclysm", EntryPoint = "getTurn")]
+    public static extern int getTurn();
+
+    [DllImport("Cataclysm", EntryPoint = "playerX")]
+    public static extern int playerX();
+    [DllImport("Cataclysm", EntryPoint = "playerY")]
+    public static extern int playerY();
 
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")]
     public static extern void loadGame(
@@ -39,35 +57,31 @@ public class TestDLL : MonoBehaviour
     void Start()
     {
         init();
-        IntPtr worlds = IntPtr.Zero;
-        int size = 0;
-
-        GetWorldNames(out worlds, out size);
-
-        string[] rWorlds;
-        Cpp2net_strArray(worlds, size, out rWorlds);
-
-        foreach (string world in rWorlds) {
-            Debug.Log(world +  ":");
-            IntPtr saves = IntPtr.Zero;
-            size = 0;
-
-             //GetWorldSaves(Encoding.ASCII.GetBytes(world), out saves, out size);
-            GetWorldSaves(world, out saves, out size);
-            if (size > 0) {
-                loadGame(world);
-                IntPtr ter = IntPtr.Zero;
-                getTer(out ter);
-                Debug.Log("terrain: " + Cpp2net_str(ter));
-                break;
-            }
-        }
+        IntPtr ter = IntPtr.Zero;
+        getTer(out ter);
+        Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
+        doAction("move_e");
+        ter = IntPtr.Zero;
+        getTer(out ter);
+        Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
+        doAction("move_e");
+        getTer(out ter);
+        Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
+        doAction("move_e");
+        getTer(out ter);
+        Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
+        doAction("move_e");
+        getTer(out ter);
+        Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
+        doAction("move_e");
+        getTer(out ter);
+        Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
     }
 
     void OnApplicationQuit()
     {
         Debug.Log("onquit");
-        //deinit();
+        deinit();
     }
 
     // Update is called once per frame

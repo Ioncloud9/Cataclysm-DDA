@@ -11,14 +11,18 @@
 #include "filesystem.h"
 #include "player.h"
 #include "map.h"
+#include "input.h"
+#include "main_menu.h"
+#include "calendar.h"
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
 extern bool test_dirty;
+extern input_context get_default_mode_input_context();
 
 extern "C" {
     void init(void) {
-        test_mode = true;
+        //test_mode = true;
         // tyomalu: most code from original main.cpp but we ignore command line arguments
         // Set default file paths
         int seed = time(NULL);
@@ -60,6 +64,16 @@ extern "C" {
         // need to call them from here too.
         get_options().init();
         get_options().load();
+
+        if (initscr() == nullptr) { // Initialize ncurses
+            DebugLog(D_ERROR, DC_ALL) << "initscr failed!";
+            return;
+        }
+        init_interface();
+        noecho();  // Don't echo keypresses
+        cbreak();  // C-style breaks (e.g. ^C to SIGINT)
+        keypad(stdscr, true); // Numpad is numbers
+
         set_language();
 
         // skip curses initialization
@@ -75,9 +89,11 @@ extern "C" {
                 exit_handler(0);
             }
             if (!dump.empty()) {
+                init_colors();
                 exit(g->dump_stats(dump, dmode, opts) ? 0 : 1);
             }
             if (check_mods) {
+                init_colors();
                 exit(g->check_mod_data(opts) && !test_dirty ? 0 : 1);
             }
         }
@@ -86,9 +102,16 @@ extern "C" {
             exit_handler(-999);
         }
 
-        // from main_menu.cpp
+        g->init_ui();
+        curs_set(0); // Invisible cursor here, because MAPBUFFER.load() is crash-prone
 
-        world_generator->set_active_world(NULL);
+
+        // from main_menu.cpp
+        main_menu menu;
+        if (!menu.opening_screen()) {
+            return;
+        }
+    /*    world_generator->set_active_world(NULL);
         world_generator->init();
 
         if (!assure_dir_exist(FILENAMES["config_dir"])) {
@@ -106,7 +129,7 @@ extern "C" {
             return;
         }
 
-        g->u = player();
+        g->u = player();*/
 
     }
 
@@ -175,6 +198,27 @@ extern "C" {
 
         *ter = (char*)::CoTaskMemAlloc(t.str().length() + 1);
         strcpy(*ter, t.c_str());
+    }
+
+    void doAction(char* action) {
+        g->extAction = action;
+        g->do_turn();
+    }
+
+    void doTurn(void) {
+        g->do_turn();
+    }
+
+    int getTurn(void) {
+        return calendar::turn.get_turn();
+    }
+    
+    int playerX(void) {
+        return g->u.posx();
+    }
+
+    int playerY(void) {
+        return g->u.posy();
     }
 
     void deinit(void) {
