@@ -21,7 +21,7 @@ extern bool test_dirty;
 extern input_context get_default_mode_input_context();
 
 extern "C" {
-    void init(void) {
+    void init(bool openMainMenu) {
         //test_mode = true;
         // tyomalu: most code from original main.cpp but we ignore command line arguments
         // Set default file paths
@@ -105,76 +105,76 @@ extern "C" {
         g->init_ui();
         curs_set(0); // Invisible cursor here, because MAPBUFFER.load() is crash-prone
 
-
-        // from main_menu.cpp
-        main_menu menu;
-        if (!menu.opening_screen()) {
-            return;
+        if (openMainMenu) {
+            main_menu menu;
+            if (!menu.opening_screen()) {
+                return;
+            }
         }
-    /*    world_generator->set_active_world(NULL);
-        world_generator->init();
+        else {
+            // this stuff is from main_menu.opening_screen(), need to be initialized
+            // if we don't open menu
+            world_generator->set_active_world(NULL);
+            world_generator->init();
 
-        if (!assure_dir_exist(FILENAMES["config_dir"])) {
-            printf("Unable to make config directory. Check permissions.");
-            return;
+            if (!assure_dir_exist(FILENAMES["config_dir"])) {
+                printf("Unable to make config directory. Check permissions.");
+                return;
+            }
+
+            if (!assure_dir_exist(FILENAMES["savedir"])) {
+                printf("Unable to make save directory. Check permissions.");
+                return;
+            }
+
+            if (!assure_dir_exist(FILENAMES["templatedir"])) {
+                printf("Unable to make templates directory. Check permissions.");
+                return;
+            }
+
+            g->u = player();
         }
-
-        if (!assure_dir_exist(FILENAMES["savedir"])) {
-            printf("Unable to make save directory. Check permissions.");
-            return;
-        }
-
-        if (!assure_dir_exist(FILENAMES["templatedir"])) {
-            printf("Unable to make templates directory. Check permissions.");
-            return;
-        }
-
-        g->u = player();*/
-
     }
 
-    void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
+    CStringArray* getWorldNames(void) {
+        CStringArray* arr = (CStringArray*)::CoTaskMemAlloc(sizeof(CStringArray));
         const auto worlds = world_generator->all_worldnames();
+        arr->len = worlds.size();
 
         if (worlds.empty()) {
-            *stringsCountReceiver = 0;
-            return;
+            return arr;
         }
 
         // saved games are available
-        *stringsCountReceiver = worlds.size();
-        if (worlds.size() > 0) {
-            size_t arraySize = sizeof(char*) * (*stringsCountReceiver);
+        size_t arrSize = sizeof(char*) * arr->len;
+        arr->stringArray = (char**)::CoTaskMemAlloc(arrSize);
+        memset(arr->stringArray, 0, arrSize);
 
-            *stringBufferReceiver = (char**)::CoTaskMemAlloc(arraySize);
-            memset(*stringBufferReceiver, 0, arraySize);
-
-            for (int i = 0; i < worlds.size(); i++) {
-                (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(worlds[i].length() + 1);
-                strcpy((*stringBufferReceiver)[i], worlds[i].c_str());
-            }
+        for (int i = 0; i < worlds.size(); i++) {
+            arr->stringArray[i] = (char*)::CoTaskMemAlloc(worlds[i].length() + 1);
+            strcpy(arr->stringArray[i], worlds[i].c_str());
         }
+        return arr;
     }
 
-    void getWorldSaves(char *worldName, /*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver) {
-        std::string name = std::string(worldName);
-        *stringsCountReceiver = 0;
+    CStringArray* getWorldSaves(char *worldName) {
+        CStringArray* arr = (CStringArray*)::CoTaskMemAlloc(sizeof(CStringArray));
+        const auto saves = world_generator->get_world(worldName)->world_saves;
+        arr->len = saves.size();
 
-        const auto saves = world_generator->get_world(name)->world_saves;
         if (saves.empty()) {
-            *stringsCountReceiver = 0;
-            return;
+            return arr;
         }        
 
-        *stringsCountReceiver = saves.size();
-        size_t arraySize = sizeof(char*) * saves.size();
-        *stringBufferReceiver = (char**)::CoTaskMemAlloc(arraySize);
-        memset(*stringBufferReceiver, 0, arraySize);
+        size_t arrSize = sizeof(char*) * arr->len;
+        arr->stringArray = (char**)::CoTaskMemAlloc(arrSize);
+        memset(arr->stringArray, 0, arrSize);
 
         for (int i = 0; i < saves.size(); i++) {
-            (*stringBufferReceiver)[i] = (char*)::CoTaskMemAlloc(saves[i].player_name().length() + 1);
-            strcpy((*stringBufferReceiver)[i], saves[i].player_name().c_str());
+            arr->stringArray[i] = (char*)::CoTaskMemAlloc(saves[i].player_name().length() + 1);
+            strcpy(arr->stringArray[i], saves[i].player_name().c_str());
         }
+        return arr;
     }
 
     void loadGame(char* worldName) {
@@ -200,46 +200,48 @@ extern "C" {
         strcpy(*ter, t.c_str());
     }
 
-    void getMap(/*[out]*/ MapData** data) {
+    MapData* getMap(void) {
+        MapData* data = (MapData*)::CoTaskMemAlloc(sizeof(MapData));
+
         w_point* w = g->weather_precise.get();
         weather_generator gen = g->get_cur_weather_gen();
         const tripoint ppos = g->u.pos();
 
         int width = 10, height = 10;
 
-        *data = (MapData*)::CoTaskMemAlloc(sizeof(MapData));
-        (*data)->calendar.season = calendar::turn.get_season();
-        (*data)->calendar.time = (char*)::CoTaskMemAlloc(calendar::turn.print_time().length() + 1);
-        strcpy((*data)->calendar.time, calendar::turn.print_time().c_str());
-        (*data)->calendar.years = calendar::turn.years();
-        (*data)->calendar.days = calendar::turn.days();
-        (*data)->calendar.moon = calendar::turn.moon();
-        (*data)->calendar.isNight = calendar::turn.is_night();
+        data->calendar.season = calendar::turn.get_season();
+        data->calendar.time = (char*)::CoTaskMemAlloc(calendar::turn.print_time().length() + 1);
+        strcpy(data->calendar.time, calendar::turn.print_time().c_str());
+        data->calendar.years = calendar::turn.years();
+        data->calendar.days = calendar::turn.days();
+        data->calendar.moon = calendar::turn.moon();
+        data->calendar.isNight = calendar::turn.is_night();
 
-        (*data)->weather.type = gen.get_weather_conditions(*w);
-        (*data)->weather.temperature = w->temperature;
-        (*data)->weather.humidity = w->humidity;
-        (*data)->weather.wind = w->windpower;
-        (*data)->weather.pressure = w->pressure;
-        (*data)->weather.acidic = w->acidic;
+        data->weather.type = gen.get_weather_conditions(*w);
+        data->weather.temperature = w->temperature;
+        data->weather.humidity = w->humidity;
+        data->weather.wind = w->windpower;
+        data->weather.pressure = w->pressure;
+        data->weather.acidic = w->acidic;
 
-        (*data)->map.width = width;
-        (*data)->map.height = height;
-        (*data)->map.tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
+        data->map.width = width;
+        data->map.height = height;
+        data->map.tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
 
         int i = 0;
         for (int dx = -width / 2; dx < width / 2; dx++) {
             for (int dy = -height / 2; dy < height / 2; dy++) {
                 const tripoint p = ppos + tripoint(dx, dy, 0);
                 ter_str_id ter = g->m.ter(p)->id;
-                (*data)->map.tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
-                strcpy((*data)->map.tiles[i].ter, ter.c_str());
+                data->map.tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
+                strcpy(data->map.tiles[i].ter, ter.c_str());
                 furn_str_id furn = g->m.furn(p)->id;
-                (*data)->map.tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
-                strcpy((*data)->map.tiles[i].furn, furn.c_str());
+                data->map.tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
+                strcpy(data->map.tiles[i].furn, furn.c_str());
                 i++;
             }
         }
+        return data;
     }
 
     void doAction(char* action) {
@@ -268,6 +270,7 @@ extern "C" {
         if (g != NULL) {
             delete g;
         }
-        //Mix_CloseAudio();
+
+        endwin();
     }
 }

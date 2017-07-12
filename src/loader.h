@@ -43,19 +43,23 @@ struct MapData {
 };
 
 
+struct CStringArray {
+    char** stringArray;
+    int len;
+};
+
 extern "C" {
-    LOADERDLL_API void init(void);
-    LOADERDLL_API void getWorldNames(/*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver);
-    LOADERDLL_API void getWorldSaves(char* worldName, /*[out]*/ char*** stringBufferReceiver, /*[out]*/ int* stringsCountReceiver);
+    LOADERDLL_API void init(bool openMainMenu);
+    LOADERDLL_API CStringArray* getWorldNames(void);
+    LOADERDLL_API CStringArray* getWorldSaves(char* worldName);
     LOADERDLL_API void deinit(void);
     LOADERDLL_API void loadGame(char* worldName); // loads first available game for the world
-    LOADERDLL_API void getTer(/*out*/ char** ter);
     LOADERDLL_API void doTurn(void);
     LOADERDLL_API int getTurn(void);
     LOADERDLL_API void doAction(char* action);
     LOADERDLL_API int playerX(void);
     LOADERDLL_API int playerY(void);
-    LOADERDLL_API void getMap(/*[out]*/ MapData** data);
+    LOADERDLL_API MapData* getMap(void);
 }
 
 
