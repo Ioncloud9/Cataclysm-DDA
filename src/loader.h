@@ -62,8 +62,7 @@ extern "C" {
     LOADERDLL_API void doTurn(void);
     LOADERDLL_API int getTurn(void);
     LOADERDLL_API void doAction(char* action);
-    LOADERDLL_API int playerX(void);
-    LOADERDLL_API int playerY(void);
+    LOADERDLL_API IVector3* playerPos(void);
     LOADERDLL_API GameData* getGameData(void);
 }
 

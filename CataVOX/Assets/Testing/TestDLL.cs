@@ -29,10 +29,9 @@ public class TestDLL : MonoBehaviour
     [DllImport("Cataclysm", EntryPoint = "getTurn")]
     public static extern int getTurn();
 
-    [DllImport("Cataclysm", EntryPoint = "playerX")]
-    public static extern int playerX();
-    [DllImport("Cataclysm", EntryPoint = "playerY")]
-    public static extern int playerY();
+    [DllImport("Cataclysm", EntryPoint = "playerPos")]
+    [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.IVector3_Marshaler")] 
+    public static extern IVector3 playerPos();
 
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")] // loads first save from the world
     public static extern void loadGame(
@@ -56,13 +55,14 @@ public class TestDLL : MonoBehaviour
     void Start()
     {
         init(true);
-		GameData data = GetGameData();
-		Tile tile = data.map.tileAt (5, 5);
-		Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
-		doAction ("move_e");
-		data = GetGameData ();
-		tile = data.map.tileAt (5, 5);
-		Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
+		Debug.Log(playerPos());
+		// GameData data = GetGameData();
+		// Tile tile = data.map.tileAt (5, 5);
+		// Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
+		// doAction ("move_e");
+		// data = GetGameData ();
+		// tile = data.map.tileAt (5, 5);
+		// Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
     }
 
     void OnApplicationQuit()

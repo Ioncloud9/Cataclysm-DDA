@@ -192,15 +192,6 @@ extern "C" {
         g->load(world->world_name);
     }
 
-    void getTer(/*[out]*/ char** ter) {
-        const tripoint ppos = g->u.pos();
-
-        ter_str_id t = g->m.ter(ppos)->id;
-
-        *ter = (char*)::CoTaskMemAlloc(t.str().length() + 1);
-        strcpy(*ter, t.c_str());
-    }
-
     GameData* getGameData(void) {
         GameData* data = (GameData*)::CoTaskMemAlloc(sizeof(GameData));
 
@@ -261,13 +252,14 @@ extern "C" {
         return calendar::turn.get_turn();
     }
     
-    int playerX(void) {
-        return g->u.posx();
+    IVector3* playerPos(void) {
+        IVector3* pVec = (IVector3*)::CoTaskMemAlloc(sizeof(IVector3));
+        pVec->x = g->u.posx();
+        pVec->y = g->u.posy();
+        pVec->z = g->u.posz();
+        return pVec;
     }
 
-    int playerY(void) {
-        return g->u.posy();
-    }
 
     void deinit(void) {
         deinitDebug();

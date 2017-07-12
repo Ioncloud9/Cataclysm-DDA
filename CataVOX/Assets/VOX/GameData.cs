@@ -70,6 +70,10 @@ public class IVector3
 	public static implicit operator Vector3(IVector3 v) {
 		return new Vector3 (v.x, v.y, v.z);
 	}
+
+    public override string ToString() {
+        return string.Format("({0}, {1}, {2})", x, y, z);
+    }
 }
 
 [Serializable]
@@ -86,6 +90,10 @@ public class IVector2
 	public static implicit operator Vector2(IVector2 v) {
 		return new Vector2 (v.x, v.y);
 	}
+
+    public override string ToString() {
+        return string.Format("({0}, {1})", x, y);
+    }
 }
 
 [Serializable]
