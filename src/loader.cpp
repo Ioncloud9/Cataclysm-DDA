@@ -13,7 +13,7 @@
 #include "map.h"
 #include "input.h"
 #include "main_menu.h"
-#include "calendar.h"
+#include "weather_gen.h"
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
@@ -191,13 +191,55 @@ extern "C" {
         g->load(world->world_name);
     }
 
-    void getTer(/*out*/ char** ter) {
+    void getTer(/*[out]*/ char** ter) {
         const tripoint ppos = g->u.pos();
 
         ter_str_id t = g->m.ter(ppos)->id;
 
         *ter = (char*)::CoTaskMemAlloc(t.str().length() + 1);
         strcpy(*ter, t.c_str());
+    }
+
+    void getMap(/*[out]*/ MapData** data) {
+        w_point* w = g->weather_precise.get();
+        weather_generator gen = g->get_cur_weather_gen();
+        const tripoint ppos = g->u.pos();
+
+        int width = 10, height = 10;
+
+        *data = (MapData*)::CoTaskMemAlloc(sizeof(MapData));
+        (*data)->calendar.season = calendar::turn.get_season();
+        (*data)->calendar.time = (char*)::CoTaskMemAlloc(calendar::turn.print_time().length() + 1);
+        strcpy((*data)->calendar.time, calendar::turn.print_time().c_str());
+        (*data)->calendar.years = calendar::turn.years();
+        (*data)->calendar.days = calendar::turn.days();
+        (*data)->calendar.moon = calendar::turn.moon();
+        (*data)->calendar.isNight = calendar::turn.is_night();
+
+        (*data)->weather.type = gen.get_weather_conditions(*w);
+        (*data)->weather.temperature = w->temperature;
+        (*data)->weather.humidity = w->humidity;
+        (*data)->weather.wind = w->windpower;
+        (*data)->weather.pressure = w->pressure;
+        (*data)->weather.acidic = w->acidic;
+
+        (*data)->map.width = width;
+        (*data)->map.height = height;
+        (*data)->map.tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
+
+        int i = 0;
+        for (int dx = -width / 2; dx < width / 2; dx++) {
+            for (int dy = -height / 2; dy < height / 2; dy++) {
+                const tripoint p = ppos + tripoint(dx, dy, 0);
+                ter_str_id ter = g->m.ter(p)->id;
+                (*data)->map.tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
+                strcpy((*data)->map.tiles[i].ter, ter.c_str());
+                furn_str_id furn = g->m.furn(p)->id;
+                (*data)->map.tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
+                strcpy((*data)->map.tiles[i].furn, furn.c_str());
+                i++;
+            }
+        }
     }
 
     void doAction(char* action) {
