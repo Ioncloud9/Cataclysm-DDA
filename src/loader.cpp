@@ -200,8 +200,8 @@ extern "C" {
         strcpy(*ter, t.c_str());
     }
 
-    MapData* getMap(void) {
-        MapData* data = (MapData*)::CoTaskMemAlloc(sizeof(MapData));
+    GameData* getGameData(void) {
+        GameData* data = (GameData*)::CoTaskMemAlloc(sizeof(GameData));
 
         w_point* w = g->weather_precise.get();
         weather_generator gen = g->get_cur_weather_gen();

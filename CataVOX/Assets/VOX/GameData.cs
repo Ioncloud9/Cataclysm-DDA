@@ -23,6 +23,11 @@ public class Map
         this.height = height;
         this.tiles = tiles;
     }
+	public Tile tileAt(int x, int y) {
+		if (x >=0 && y >= 0 && x < width && y < height)
+			return this.tiles [width * y + x];
+		return null;
+	}
 }
 
 [Serializable]

@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using System.Text;
 
-
 public class TestDLL : MonoBehaviour
 {
     [DllImport("Cataclysm", EntryPoint = "init")]
@@ -50,22 +49,18 @@ public class TestDLL : MonoBehaviour
         [MarshalAs(UnmanagedType.LPStr)] string worldName
     );
 
+	[DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getGameData")]
+	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.CGameData_Marshaler")] 
+	public static extern GameData GetGameData();
+
     void Start()
     {
-        init();
-        string[] worldNames = GetWorldNames();
-        foreach (string world in worldNames) {
-			string[] worldSaves = GetWorldSaves (world);
-			foreach (string save in worldSaves) {
-				Debug.Log("  " + save);
-			}
-            Debug.Log(world);
-        }
-
-        // IntPtr ter = IntPtr.Zero;
-        // getTer(out ter);
-        // Debug.Log(string.Format("ter: {0}, turn: {1}, pos: ({2}, {3})", Cpp2net_str(ter), getTurn(), playerX(), playerY()));
-        // doAction("move_e");
+        init(true);
+		GameData data = GetGameData();
+		Debug.Log (data.map.tileAt (5, 5).ter);
+		doAction ("move_e");
+		data = GetGameData ();
+		Debug.Log (data.map.tileAt (5, 5).ter);
     }
 
     void OnApplicationQuit()

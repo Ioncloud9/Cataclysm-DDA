@@ -36,7 +36,7 @@ struct Map {
     Tile* tiles;
 };
 
-struct MapData {
+struct GameData {
     Calendar calendar;
     Weather weather;
     Map map;
@@ -59,7 +59,7 @@ extern "C" {
     LOADERDLL_API void doAction(char* action);
     LOADERDLL_API int playerX(void);
     LOADERDLL_API int playerY(void);
-    LOADERDLL_API MapData* getMap(void);
+    LOADERDLL_API GameData* getGameData(void);
 }
 
 
