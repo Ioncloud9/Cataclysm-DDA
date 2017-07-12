@@ -34,7 +34,7 @@ public class TestDLL : MonoBehaviour
     [DllImport("Cataclysm", EntryPoint = "playerY")]
     public static extern int playerY();
 
-    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")]
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")] // loads first save from the world
     public static extern void loadGame(
         [MarshalAs(UnmanagedType.LPStr)] string worldName
     );

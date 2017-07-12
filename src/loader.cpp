@@ -14,6 +14,7 @@
 #include "input.h"
 #include "main_menu.h"
 #include "weather_gen.h"
+#include "init.h"
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
@@ -273,7 +274,7 @@ extern "C" {
         if (g != NULL) {
             delete g;
         }
-
+        DynamicDataLoader::get_instance().unload_data();
         endwin();
     }
 }
