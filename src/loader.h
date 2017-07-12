@@ -25,9 +25,14 @@ struct Calendar {
     bool isNight;
 };
 
+struct IVector3 {
+    int x, y, z;
+};
+
 struct Tile {
     char* ter;
     char* furn;
+    IVector3 loc;
 };
 
 struct Map {

@@ -27,6 +27,7 @@ namespace Marshalers
 	{
 		public IntPtr /* char* */ ter;
 		public IntPtr /* char* */ furn;
+		public IVector3 loc;
 	}
 
 	public struct CWeather
@@ -123,7 +124,7 @@ namespace Marshalers
 				CTile tile = (CTile)Marshal.PtrToStructure (p, typeof(CTile));
 				string ter = Marshal.PtrToStringAnsi (tile.ter);
 				string furn = Marshal.PtrToStringAnsi (tile.furn);
-				resData.map.tiles [i] = new Tile (ter, "", furn);
+				resData.map.tiles [i] = new Tile (ter, tile.loc, furn);
 			}
 			return resData;
 		}

@@ -238,6 +238,9 @@ extern "C" {
                 furn_str_id furn = g->m.furn(p)->id;
                 data->map.tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
                 strcpy(data->map.tiles[i].furn, furn.c_str());
+                data->map.tiles[i].loc.x = p.x;
+                data->map.tiles[i].loc.y = p.z;
+                data->map.tiles[i].loc.z = p.y; // swap z and y for unity coordinate system
                 i++;
             }
         }

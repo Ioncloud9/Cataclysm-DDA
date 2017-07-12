@@ -9,20 +9,20 @@ namespace Assets.VOX
 {
     public class VOXChunk
     {
-        private Dictionary<Vector3, VOXBlock> _blocks = new Dictionary<Vector3, VOXBlock>();
+        private Dictionary<IVector3, VOXBlock> _blocks = new Dictionary<IVector3, VOXBlock>();
 
-        public VOXChunk(Vector2 location, VOXMap parent)
+        public VOXChunk(IVector2 location, VOXMap parent)
         {
             Location = location;
             Parent = parent;
         }
 
-        public Vector2 Location { get; private set; }
+        public IVector2 Location { get; private set; }
 
         public VOXMap Parent { get; private set; }
         public Mesh CurrentMesh { get; private set; }
 
-        public Dictionary<Vector3, VOXBlock> Blocks
+        public Dictionary<IVector3, VOXBlock> Blocks
         {
             get { return _blocks; }
         }
@@ -31,7 +31,7 @@ namespace Assets.VOX
         {
             foreach (var tile in chunkTiles)
             {
-                _blocks.Add(tile.Location, new VOXBlock(tile.Location, tile.ter, this));
+                _blocks.Add(tile.loc, new VOXBlock(tile.loc, tile.ter, this));
             }
         }
 
@@ -49,7 +49,7 @@ namespace Assets.VOX
                     for (var y = 0; z <= Parent.ChunkSizeY; y++)
                     {
                         VOXBlock block;
-                        if (_blocks.TryGetValue(new Vector3(x, y, z), out block))
+                        if (_blocks.TryGetValue(new IVector3(x, y, z), out block))
                             draft.Add(block.Render());
                     }
                 }

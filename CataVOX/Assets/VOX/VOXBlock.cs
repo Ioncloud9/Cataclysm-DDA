@@ -12,7 +12,7 @@ namespace Assets.VOX
     {
         private readonly Dictionary<Neighbours, VOXBlock> _neighbours = new Dictionary<Neighbours, VOXBlock>();
 
-        public VOXBlock(Vector3 location, string ter, VOXChunk parent)
+        public VOXBlock(IVector3 location, string ter, VOXChunk parent)
         {
             Location = location;
             Parent = parent;
@@ -29,7 +29,7 @@ namespace Assets.VOX
         }
 
         public VOXChunk Parent { get; private set; }
-        public Vector3 Location { get; private set; }
+        public IVector3 Location { get; private set; }
         public string Terrain { get; private set; }
 
         public VOXBlock Neighbour(Neighbours dir)
@@ -37,13 +37,13 @@ namespace Assets.VOX
             return _neighbours[dir];
         }
 
-        public Vector3 WorldLocation
+        public IVector3 WorldLocation
         {
             get
             {
                 var x = Parent.Location.x * Parent.Parent.ChunkSizeX + Location.x;
                 var z = Parent.Location.y * Parent.Parent.ChunkSizeZ + Location.z;
-                return new Vector3(x, Location.y, z);
+                return new IVector3(x, Location.y, z);
             }
         }
 

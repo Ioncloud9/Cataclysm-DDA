@@ -2,6 +2,7 @@ using System;
 using Assets;
 using Assets.Scripts;
 using UnityEngine;
+using System.Runtime.InteropServices;
 
 [Serializable]
 public class GameData
@@ -54,22 +55,47 @@ public class Calendar
 }
 
 [Serializable]
+[StructLayout(LayoutKind.Sequential)]
+public class IVector3
+{
+	public int x;
+	public int y;
+	public int z;
+	public IVector3(int x, int y, int z) 
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	public static implicit operator Vector3(IVector3 v) {
+		return new Vector3 (v.x, v.y, v.z);
+	}
+}
+
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
+public class IVector2
+{
+	public int x;
+	public int y;
+	public IVector2(int x, int y) 
+	{
+		this.x = x;
+		this.y = y;
+	}
+	public static implicit operator Vector2(IVector2 v) {
+		return new Vector2 (v.x, v.y);
+	}
+}
+
+[Serializable]
 public class Tile
 {
     public string ter;
-    public string loc;
+    public IVector3 loc;
     public string furn;
 
-    public Vector3 Location
-    {
-        get
-        {
-            var sp = loc.Split(',');
-            //Unity's Z axis is the Y axis, so convert it from DDA to Unity1
-            return new Vector3(float.Parse(sp[0]), float.Parse(sp[2]), float.Parse(sp[1]));
-        }
-    }
-    public Tile(string terrain, string loc, string furniture)
+    public Tile(string terrain, IVector3 loc, string furniture)
     {
         this.ter = terrain;
         this.furn = furniture;

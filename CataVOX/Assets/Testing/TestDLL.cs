@@ -57,10 +57,12 @@ public class TestDLL : MonoBehaviour
     {
         init(true);
 		GameData data = GetGameData();
-		Debug.Log (data.map.tileAt (5, 5).ter);
+		Tile tile = data.map.tileAt (5, 5);
+		Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
 		doAction ("move_e");
 		data = GetGameData ();
-		Debug.Log (data.map.tileAt (5, 5).ter);
+		tile = data.map.tileAt (5, 5);
+		Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
     }
 
     void OnApplicationQuit()
