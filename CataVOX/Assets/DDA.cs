@@ -5,12 +5,10 @@ public class DDA
 {
 	[DllImport("Cataclysm", EntryPoint = "init")]
 	public static extern void init(bool openMainMenu = false);
-	[DllImport("Cataclysm", EntryPoint = "mainMenu")]
-	public static extern void mainMenu();    
-	[DllImport("Cataclysm", EntryPoint = "noMainMenu")]
-	public static extern void noMainMenu();
+
 	[DllImport("Cataclysm", EntryPoint = "deinit")]
 	public static extern void deinit();
+
 	[DllImport("Cataclysm", EntryPoint = "moveRight")]
 	public static extern void moveRight();
 
