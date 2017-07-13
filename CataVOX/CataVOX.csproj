@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.6.2f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -94,8 +96,10 @@
     <Compile Include="Assets\Controllers\InputController.cs" />
     <Compile Include="Assets\Controllers\PlayerController.cs" />
     <Compile Include="Assets\Controllers\UIController.cs" />
+    <Compile Include="Assets\DDA.cs" />
     <Compile Include="Assets\Enums.cs" />
     <Compile Include="Assets\InputPair.cs" />
+    <Compile Include="Assets\Marshalers.cs" />
     <Compile Include="Assets\MiniMap\Scripts\InnerMap.cs" />
     <Compile Include="Assets\MiniMap\Scripts\MapArrow.cs" />
     <Compile Include="Assets\MiniMap\Scripts\MapCanvasController.cs" />
@@ -227,17 +231,16 @@
     <Compile Include="Assets\Scripts\Inputs\IBindingGroup.cs" />
     <Compile Include="Assets\Scripts\Inputs\KeyboardBinding.cs" />
     <Compile Include="Assets\Scripts\Inputs\MouseButtonBinding.cs" />
+    <Compile Include="Assets\Scripts\Splash.cs" />
     <Compile Include="Assets\Scripts\Tuple.cs" />
     <Compile Include="Assets\Scripts\voxConst.cs" />
-    <Compile Include="Assets\Scripts\zMQCommand.cs" />
-    <Compile Include="Assets\Scripts\zMQResponse.cs" />
-    <Compile Include="Assets\Scripts\zMQThread.cs" />
     <Compile Include="Assets\SendCommandException.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\Atlas.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\AtlasScaler.cs" />
     <Compile Include="Assets\Testing\AtlasStitcher\AtlasTile.cs" />
     <Compile Include="Assets\Testing\MapGen\TilePoint.cs" />
     <Compile Include="Assets\Testing\MapGen\TileRenderer.cs" />
+    <Compile Include="Assets\Testing\TestDLL.cs" />
     <Compile Include="Assets\Utils.cs" />
     <Compile Include="Assets\VOX\GameData.cs" />
     <Compile Include="Assets\VOX\Loader.cs" />
@@ -304,6 +307,32 @@
     <None Include="Assets\ProceduralToolkit\Shaders\Standard Vertex Color.shader" />
     <None Include="Assets\ProceduralToolkit\Shaders\Unlit Vertex Color.shader" />
     <None Include="Assets\Resources\UIImages\extra\Read Me.txt" />
+    <None Include="Assets\plugins\config\fontlist.txt" />
+    <None Include="Assets\plugins\data\CMakeLists.txt" />
+    <None Include="Assets\plugins\data\changelog.txt" />
+    <None Include="Assets\plugins\data\mods\blazemod\PAQ.txt" />
+    <None Include="Assets\plugins\data\raw\sokoban.txt" />
+    <None Include="Assets\plugins\data\sound\Basic\soundpack.txt" />
+    <None Include="Assets\plugins\doc\Blank Building Template.txt" />
+    <None Include="Assets\plugins\gfx\BlockheadTileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\ChestHole16Tileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\ChestHole32Tileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\ChestHole32Tileset_iso\tileset.txt" />
+    <None Include="Assets\plugins\gfx\ChestHoleTileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\DeonTileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\HitButton_iso\tileset.txt" />
+    <None Include="Assets\plugins\gfx\HoderTileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\MShock24TilesetModded\tileset.txt" />
+    <None Include="Assets\plugins\gfx\MShock32TilesetModded\tileset.txt" />
+    <None Include="Assets\plugins\gfx\RetroASCIITileset\tileset.txt" />
+    <None Include="Assets\plugins\gfx\RetroDaysTileset10\tileset.txt" />
+    <None Include="Assets\plugins\gfx\RetroDaysTileset20\tileset.txt" />
+    <None Include="Assets\plugins\gfx\ThuztorTileset@\tileset.txt" />
+    <None Include="Assets\plugins\gfx\TsuTileset\tileset.txt" />
+    <None Include="Assets\plugins\lang\CMakeLists.txt" />
+    <None Include="Assets\plugins\lang\notes\README_all_translators.txt" />
+    <None Include="Assets\plugins\lang\notes\de.txt" />
+    <None Include="Assets\plugins\lua\CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

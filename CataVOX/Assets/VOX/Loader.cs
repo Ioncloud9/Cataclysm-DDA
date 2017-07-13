@@ -28,7 +28,7 @@ public class Loader : GameBase
     GameObject frame, cached;
      Vector2 size = new Vector2(1, 1);
     bool needReload = false;
-    string mapJSON, paintedJSON;
+    private GameData _data;
 
     private void Start()
     {
@@ -36,24 +36,14 @@ public class Loader : GameBase
         try
         {
             var sw = Stopwatch.StartNew();
-            var response = Game.SendCommand("MapData");
             sw.Stop();
             Debug.Log(string.Format("Request sent in {0}ms", sw.ElapsedMilliseconds));
-            ProcessMapData(response.Data);
-            mapJSON = File.ReadAllText("Assets/map.json");
+            _data = DDA.GetGameData();
+            needReload = true;
         }
         catch (Exception ex)
         {
             Debug.Log("Map.json not created yet");
-        }
-    }
-    
-    public void ProcessMapData(string message)
-    {
-        if (message != mapJSON)
-        {
-            mapJSON = message;
-            needReload = true;
         }
     }
 
@@ -104,13 +94,7 @@ public class Loader : GameBase
     {
         if (Input.GetKeyUp(KeyCode.F5))
         {
-            Game.SendCommand("MapData");
-            return;
-        }
-
-        if (mapJSON == null) return;
-        if (paintedJSON != mapJSON)
-        {
+            _data = DDA.GetGameData();
             needReload = true;
         }
 
@@ -125,28 +109,35 @@ public class Loader : GameBase
             objects = new Dictionary<string, GameObject>();
             Game.Player.Reload();
             Game.Camera.MoveTo(Game.Player.transform.position);
-            Debug.Log(mapJSON);
-            var gameData = JsonUtility.FromJson<GameData>(mapJSON);
-            Game.UI.SetUI(gameData.weather, gameData.calendar);
+            try
+            {
+                Game.UI.SetUI(_data.weather, _data.calendar);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
             Debug.Log("reloading...");
             GameObject.Destroy(frame);
             frame = new GameObject("frame");
             frame.transform.parent = this.gameObject.transform;
 
             int i = 0;
-            for (int y = 0; y < gameData.map.height; y++)
+            for (int y = 0; y < _data.map.height; y++)
             {
-                for (int x = 0; x < gameData.map.width; x++)
+                for (int x = 0; x < _data.map.width; x++)
                 {
                     
-                    AddOrInstantiate(x, y, gameData.map.tiles[i].ter == null ? "t_unseen" : gameData.map.tiles[i].ter, "t_unknown");
-                    AddOrInstantiate(x, y, gameData.map.tiles[i].furn, "f_unknown");
+                    AddOrInstantiate(x, y, _data.map.tiles[i].ter == null ? "t_unseen" : _data.map.tiles[i].ter, "t_unknown");
+                    if (_data.map.tiles[i].furn != "f_null")
+                    {
+                        AddOrInstantiate(x, y, _data.map.tiles[i].furn, "f_unknown");
+                    }
                     i++;
                 }
             }
-            frame.transform.SetPositionAndRotation(new Vector3(-gameData.map.width / 2 * size.x, 0, -gameData.map.height / 2 * size.y), Quaternion.identity);
+            frame.transform.SetPositionAndRotation(new Vector3(-_data.map.width / 2 * size.x, 0, -_data.map.height / 2 * size.y), Quaternion.identity);
             needReload = false;
-            paintedJSON = mapJSON;
         }
     }
 }

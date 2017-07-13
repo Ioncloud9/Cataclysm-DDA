@@ -91,7 +91,6 @@
 #include "safemode_ui.h"
 #include "game_constants.h"
 #include "string_input_popup.h"
-//#include "voxMQManager.h"
 
 #include <map>
 #include <set>
@@ -233,7 +232,6 @@ public:
 game::game() :
     map_ptr( new map() ),
     u_ptr( new player() ),
-    //mqSender_ptr(new voxMQManager()),
     liveview_ptr( new live_view() ),
     liveview( *liveview_ptr ),
     scent_ptr( new scent_map( *this ) ),
@@ -241,7 +239,6 @@ game::game() :
     uquit(QUIT_NO),
     m( *map_ptr ),
     u( *u_ptr ),
-    //mqSender(*mqSender_ptr),
     scent( *scent_ptr ),
     critter_tracker( new Creature_tracker() ),
     weather( WEATHER_CLEAR ),
@@ -1571,15 +1568,7 @@ bool game::do_turn()
     sfx::remove_hearing_loss();
     sfx::do_danger_music();
     sfx::do_fatigue();
-    
-    //mqSender.SendCommandResponse();
-    /*
-    if (mqSender.HasCommand()) {
-        if (mqSender.EndProcessing()) { // indicate we've completed processing (this could be done elsewhere
-            mqSender.EndCommand(); // indicate the command has finished and that a response should be sent
-        }
-    }
-    */
+   
     return false;
 }
 
@@ -2074,28 +2063,6 @@ bool game::handle_mouseview(input_context &ctxt, std::string &action)
         
     } while (action == "MOUSE_MOVE"); // Freeze animation when moving the mouse
 
-    //std::string prevAction = action; //save whatever action was
-    //voxMQCommand command;
-    //if (mqSender.GetNextCommand(command)) {
-    //    action = command.Command;
-    //    /*
-    //    if (!mqSender.BeginProcessing(action)) { //if, for whatever reason, we don't begin processing, revert action
-    //        action = prevAction;
-    //    }
-    //    */
-    //}
-    /*
-    action = mqSender.ListenOne();
-    if (action == "nrep") {
-        action = "TIMEOUT";
-    }
-    else if (action == "MapData") {
-        mqSender.RespondMapData();
-    }
-    else {
-        mqSender.RespondOK();
-    }
-    */
 
     if (action != "TIMEOUT" && ctxt.get_raw_input().get_first_input() != ERR) {
         // Keyboard event, break out of animation loop
@@ -2104,20 +2071,6 @@ bool game::handle_mouseview(input_context &ctxt, std::string &action)
     }
 
     return true;
-    /*
-    action = mqSender.ListenOne();
-    if (action == "") {
-        action = "TIMEOUT";
-        return true;
-    }
-
-    if (action == "MapData") {
-        mqSender.RespondMapData();
-    }
-    else {
-        mqSender.RespondOK();
-    }
-    */
 }
 
 #ifdef TILES

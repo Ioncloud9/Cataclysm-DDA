@@ -113,7 +113,6 @@ struct w_point;
 struct explosion_data;
 struct visibility_variables;
 class scent_map;
-//class voxMQManager;
 
 // Note: this is copied from inventory.h
 // Entire inventory.h would also bring item.h here
@@ -170,7 +169,6 @@ class game
         std::unique_ptr<map> map_ptr;
         std::unique_ptr<player> u_ptr;
         std::unique_ptr<live_view> liveview_ptr;
-        //std::unique_ptr<voxMQManager> mqSender_ptr;
         live_view& liveview;
         std::unique_ptr<scent_map> scent_ptr;
     public:
@@ -218,7 +216,6 @@ class game
         /** Make map a reference here, to avoid map.h in game.h */
         map &m;
         player &u;
-        //voxMQManager &mqSender;
         scent_map &scent;
 
         std::unique_ptr<Creature_tracker> critter_tracker;
@@ -723,11 +720,10 @@ class game
         void pldrive(int x, int y); // drive vehicle
                                     // Standard movement; handles attacks, traps, &c. Returns false if auto move
                                     // should be canceled
-        bool plmove(int dx, int dy, int dz = 0);
-
+        void load(std::string worldname, const save_t &name); // Load a player-specific save file
     private:
         // Game-start procedures
-        void load( std::string worldname, const save_t &name ); // Load a player-specific save file
+        bool plmove(int dx, int dy, int dz = 0);
         bool load_master(std::string worldname); // Load the master data file, with factions &c
         void load_weather(std::istream &fin);
         bool start_game(std::string worldname); // Starts a new game in a world

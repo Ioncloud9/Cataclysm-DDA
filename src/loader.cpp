@@ -191,6 +191,25 @@ extern "C" {
         //auto save = world->world_saves[saveGame];
         g->load(world->world_name);
     }
+    void loadSaveGame(char* worldName, char* saveName) {
+        WORLDPTR world = world_generator->get_world(worldName);
+        world_generator->set_active_world(world);
+        try {
+            g->setup();
+        }
+        catch (const std::exception &err) {
+            debugmsg("Error: %s", err.what());
+            g->u = player();
+        }
+
+        std::vector<save_t>::iterator it;
+        for (it = world->world_saves.begin(); it < world->world_saves.end(); it++) {
+            if (it->player_name() == saveName) {
+                g->load(worldName, *it);
+                break;
+            }
+        }
+    }
 
     GameData* getGameData(void) {
         GameData* data = (GameData*)::CoTaskMemAlloc(sizeof(GameData));
