@@ -45,7 +45,7 @@ namespace Assets.Controllers
             if (binding != null)
             {
                 UnityEngine.Debug.Log(string.Format("Command for key is {0}", binding.DDACommand));
-                Game.SendCommand(binding.DDACommand);
+                DDA.doAction(binding.DDACommand);
             }
             sw.Stop();
             //UnityEngine.Debug.Log(string.Format("Found binding in {0}ms", sw.ElapsedMilliseconds));

@@ -59,6 +59,7 @@ extern "C" {
     LOADERDLL_API CStringArray* getWorldSaves(char* worldName);
     LOADERDLL_API void deinit(void);
     LOADERDLL_API void loadGame(char* worldName); // loads first available game for the world
+    LOADERDLL_API void loadSaveGame(char* worldName, char* saveName);
     LOADERDLL_API void doTurn(void);
     LOADERDLL_API int getTurn(void);
     LOADERDLL_API void doAction(char* action);

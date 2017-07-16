@@ -32,7 +32,13 @@ public class DDA
 		[MarshalAs(UnmanagedType.LPStr)] string worldName
 	);
 
-	[DllImport("Cataclysm", EntryPoint = "getWorldNames")]
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadSaveGame")] // loads specific save
+    public static extern void loadSaveGame(
+        [MarshalAs(UnmanagedType.LPStr)] string worldName,
+        [MarshalAs(UnmanagedType.LPStr)] string saveName
+    );
+
+    [DllImport("Cataclysm", EntryPoint = "getWorldNames")]
 	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.CStringArray_Marshaler")] 
 	public static extern string[] GetWorldNames();
 
