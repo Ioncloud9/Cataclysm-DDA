@@ -33,7 +33,7 @@ public class Map
 }
 
 [Serializable]
-public class Weather
+public struct Weather
 {
     public WeatherType Type
     {
@@ -48,7 +48,7 @@ public class Weather
 }
 
 [Serializable]
-public class Calendar
+public struct Calendar
 {
     public string season;
     public string time;
@@ -57,7 +57,7 @@ public class Calendar
 
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public class IVector3
+public struct IVector3
 {
 	public int x;
 	public int y;
@@ -79,7 +79,7 @@ public class IVector3
 
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public class IVector2
+public struct IVector2
 {
 	public int x;
 	public int y;

@@ -223,8 +223,8 @@ extern "C" {
             bottomLeft = to;
             topRight = from;
         }
-        int width = topRight.x - bottomLeft.x;
-        int height = topRight.y - bottomLeft.y;
+        int width = topRight.x - bottomLeft.x + 1;
+        int height = topRight.y - bottomLeft.y + 1;
         map->width = width;
         map->height = height;
         map->tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
@@ -313,12 +313,12 @@ extern "C" {
         return calendar::turn.get_turn();
     }
     
-    IVector3* playerPos(void) {
-        IVector3* pVec = (IVector3*)::CoTaskMemAlloc(sizeof(IVector3));
-        pVec->x = g->u.posx();
-        pVec->y = g->u.posy();
-        pVec->z = g->u.posz();
-        return pVec;
+    IVector3 playerPos(void) {
+        IVector3 res;
+        res.x = g->u.posx();
+        res.y = g->u.posy();
+        res.z = g->u.posz();
+        return res;
     }
 
 

@@ -9,16 +9,15 @@ public class TestDLL : MonoBehaviour
 {
     void Start()
     {
-        DDA.init(true);
-		Debug.Log(DDA.playerPos());
-		// GameData data = GetGameData();
-		// Tile tile = data.map.tileAt (5, 5);
-		// Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
-		// doAction ("move_e");
-		// data = GetGameData ();
-		// tile = data.map.tileAt (5, 5);
-		// Debug.Log (string.Format("terrain at ({0}, {1}, {2}) is {3}", tile.loc.x, tile.loc.y, tile.loc.z, tile.ter));
-    }
+    
+		DDA.init(true);
+		IVector3 ppos = DDA.playerPos();
+		int size = 5;
+		IVector2 from = new IVector2 (ppos.x - size, ppos.y - size);
+		IVector2 to = new IVector2 (ppos.x + size, ppos.y + size);
+		Map map = DDA.GetTilesBetween (from, to);
+		Debug.Log (map);
+	}
 
     void OnApplicationQuit()
     {

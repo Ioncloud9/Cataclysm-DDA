@@ -28,6 +28,7 @@ struct Calendar {
 struct IVector3 {
     int x, y, z;
 };
+
 struct IVector2 {
     int x, y;
 };
@@ -67,7 +68,7 @@ extern "C" {
     LOADERDLL_API void doTurn(void);
     LOADERDLL_API int getTurn(void);
     LOADERDLL_API void doAction(char* action);
-    LOADERDLL_API IVector3* playerPos(void);
+    LOADERDLL_API IVector3 playerPos(void);
     LOADERDLL_API Map* getTilesBetween(IVector2 from, IVector2 to);
     LOADERDLL_API GameData* getGameData(void);
 }
