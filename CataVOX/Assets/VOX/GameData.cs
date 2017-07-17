@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 [Serializable]
 public class GameData
 {
+    public IVector3 playerPosition;
     public Calendar calendar;
     public Weather weather;
     public Map map;

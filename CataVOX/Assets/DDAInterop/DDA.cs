@@ -24,7 +24,7 @@ public class DDA
 	public static extern int getTurn();
 
 	[DllImport("Cataclysm", EntryPoint = "playerPos")]
-	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.IVector3_Marshaler")] 
+	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType= "Assets.DDAInterop.Marshalers.IVector3_Marshaler")] 
 	public static extern IVector3 playerPos();
 
 	[DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")] // loads first save from the world
@@ -39,16 +39,20 @@ public class DDA
     );
 
     [DllImport("Cataclysm", EntryPoint = "getWorldNames")]
-	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.CStringArray_Marshaler")] 
+	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType= "Assets.DDAInterop.Marshalers.CStringArray_Marshaler")] 
 	public static extern string[] GetWorldNames();
 
 	[DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getWorldSaves")]
-	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.CStringArray_Marshaler")] 
+	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType= "Assets.DDAInterop.Marshalers.CStringArray_Marshaler")] 
 	public static extern string[] GetWorldSaves(
 		[MarshalAs(UnmanagedType.LPStr)] string worldName
 	);
 
 	[DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "getGameData")]
-	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType="Marshalers.CGameData_Marshaler")] 
-	public static extern GameData GetGameData();	
+	[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType= "Assets.DDAInterop.Marshalers.CGameData_Marshaler")] 
+	public static extern GameData GetGameData();
+
+    [DllImport("Cataclysm", EntryPoint = "getTilesBetween")]
+    [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "Assets.DDAInterop.Marshalers.CMap_Marshaler")]
+    public static extern Map GetTilesBetween(IVector2 from, IVector2 to);
 }

@@ -27,12 +27,28 @@ namespace Assets.Controllers
             Weather = weather;
             Calendar = calendar;
             txtTime.text = calendar.time;
-            var path = string.Format("UIImages/{0}", Utils.WeatherImage(weather.Type, !calendar.isNight));
-            var seasonPath = string.Format("UIImages/{0}", Utils.SeasonImage(calendar.season));
-            Debug.Log(string.Format("Weather {0}", path));
-            imgWeather.sprite = Resources.Load<Sprite>(path);
-            Debug.Log(string.Format("Season {0}", seasonPath));
-            imgSeason.sprite = Resources.Load<Sprite>(seasonPath);
+
+            try
+            {
+                var path = string.Format("UIImages/{0}", Utils.WeatherImage(weather.Type, !calendar.isNight));
+                Debug.Log(string.Format("Weather {0}", path));
+                imgWeather.sprite = Resources.Load<Sprite>(path);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
+            try
+            {
+                var seasonPath = string.Format("UIImages/{0}", Utils.SeasonImage(calendar.season));
+                Debug.Log(string.Format("Season {0}", seasonPath));
+                imgSeason.sprite = Resources.Load<Sprite>(seasonPath);
+            }
+            catch(Exception ex)
+            {
+                Debug.LogError(ex);
+            }
         }
 
         public void AdjustMiniMap(Direction facing)

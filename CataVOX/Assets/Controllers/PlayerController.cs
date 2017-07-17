@@ -13,21 +13,21 @@ namespace Assets.Controllers
 
         public void Start()
         {
-            CreatePlayer(Game.Global_Scale);
         }
 
-        private void CreatePlayer(float scale)
+        private void CreatePlayer(float scale, Vector3 position)
         {
             _pawn = VOXGameObject.CreateGameObject("Assets/tiles/player.vox", scale);
             _pawn.name = "player";
             _pawn.transform.parent = this.transform;
+            _pawn.transform.position = position;
         }
 
-        public void Reload()
+        public void Reload(Vector3 position)
         {
 
             GameObject.Destroy(_pawn);
-            CreatePlayer(GameMaster.Current.Global_Scale);
+            CreatePlayer(GameMaster.Current.Global_Scale, position);
         }
 
         public void Update()

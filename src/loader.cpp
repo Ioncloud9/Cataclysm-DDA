@@ -211,6 +211,44 @@ extern "C" {
         }
     }
 
+    Map* getTilesBetween(IVector2 from, IVector2 to) {
+        Map* map = (Map*)::CoTaskMemAlloc(sizeof(Map));
+        IVector2 bottomLeft;
+        IVector2 topRight;
+        if (from.x < to.x && from.y < to.y) {
+            bottomLeft = from;
+            topRight = to;
+        }
+        else {
+            bottomLeft = to;
+            topRight = from;
+        }
+        int width = topRight.x - bottomLeft.x;
+        int height = topRight.y - bottomLeft.y;
+        map->width = width;
+        map->height = height;
+        map->tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
+
+        int i = 0;
+        for (int dx = bottomLeft.x; dx <= topRight.x; dx++) {
+            for (int dy = bottomLeft.y; dy <= topRight.y; dy++) {
+                const tripoint p = tripoint(dx, dy, 0);
+                ter_str_id ter = g->m.ter(p)->id;
+                map->tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
+                strcpy(map->tiles[i].ter, ter.c_str());
+                furn_str_id furn = g->m.furn(p)->id;
+                map->tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
+                strcpy(map->tiles[i].furn, furn.c_str());
+                map->tiles[i].loc.x = p.x;
+                map->tiles[i].loc.y = p.z;
+                map->tiles[i].loc.z = p.y; // swap z and y for unity coordinate system
+                i++;
+            }
+        }
+
+        return map;
+    }
+
     GameData* getGameData(void) {
         GameData* data = (GameData*)::CoTaskMemAlloc(sizeof(GameData));
 
@@ -219,6 +257,10 @@ extern "C" {
         const tripoint ppos = g->u.pos();
 
         int width = 10, height = 10;
+
+        data->playerPosition.x = ppos.x;
+        data->playerPosition.y = ppos.z;
+        data->playerPosition.z = ppos.y; // swap z and y for unity coordinate system... should we really do this here?
 
         data->calendar.season = calendar::turn.get_season();
         data->calendar.time = (char*)::CoTaskMemAlloc(calendar::turn.print_time().length() + 1);
