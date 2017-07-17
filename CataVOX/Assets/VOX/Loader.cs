@@ -3,6 +3,7 @@ using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using NetMQ;
 using NetMQ.Sockets;
 using System.Threading;
@@ -26,7 +27,7 @@ public class Loader : GameBase
 {
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
     GameObject frame, cached;
-     Vector2 size = new Vector2(1, 1);
+    Vector2 size = new Vector2(1, 1);
     bool needReload = false;
     private GameData _data;
 
@@ -39,6 +40,7 @@ public class Loader : GameBase
             sw.Stop();
             Debug.Log(string.Format("Request sent in {0}ms", sw.ElapsedMilliseconds));
             _data = DDA.GetGameData();
+
             needReload = true;
         }
         catch (Exception ex)
@@ -47,20 +49,28 @@ public class Loader : GameBase
         }
     }
 
-    private void AddOrInstantiate(float x, float y, string id, string def)
+    private void AddOrInstantiate(Vector3 loc, string id, string def)
     {
         if (id == null) return;
         float d = 0.0f;
         if (objects.ContainsKey(id))
         {
             //Debug.Log(String.Format("found object {0}, cloning", id));
-            GameObject obj = Instantiate(objects[id], new Vector3(x * size.x, 0, y * size.y), Quaternion.identity, frame.transform);
+            GameObject obj = Instantiate(objects[id], loc, Quaternion.identity, frame.transform);
+            var bData = obj.GetComponent<BlockData>();
+            bData.Location = loc;
+            bData.id = id;
+            bData.def = def;
             obj.SetActive(true);
         }
         else
         {
             //Debug.Log(String.Format("object {0} not found, loading", id));
             GameObject newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + id + ".vox", Game.Global_Scale);
+            var bData = newObj.AddComponent<BlockData>();
+            bData.Location = loc;
+            bData.id = id;
+            bData.def = def;
             if (VOXGameObject.model.sizeX == 0 &&
                 VOXGameObject.model.sizeY == 0 &&
                 VOXGameObject.model.sizeZ == 0)
@@ -85,7 +95,7 @@ public class Loader : GameBase
             size.x = VOXGameObject.model.sizeX * (VOXGameObject.scale + d);
             size.y = VOXGameObject.model.sizeZ * (VOXGameObject.scale + d);
 
-            GameObject obj = Instantiate(newObj, new Vector3(x * size.x, 0, y * size.y), Quaternion.identity, frame.transform);
+            GameObject obj = Instantiate(newObj, loc, Quaternion.identity, frame.transform);
             obj.SetActive(true);
         }
     }
@@ -106,9 +116,19 @@ public class Loader : GameBase
             {
                 GameObject.Destroy(obj.Value);
             }
+
             objects = new Dictionary<string, GameObject>();
-            Game.Player.Reload();
-            Game.Camera.MoveTo(Game.Player.transform.position);
+            try
+            {
+                Debug.Log(_data.playerPosition);
+                Game.Player.Reload(_data.playerPosition);
+                Game.Camera.MoveTo(new Vector3(_data.playerPosition.x, 0, _data.playerPosition.z));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
             try
             {
                 Game.UI.SetUI(_data.weather, _data.calendar);
@@ -122,7 +142,15 @@ public class Loader : GameBase
             frame = new GameObject("frame");
             frame.transform.parent = this.gameObject.transform;
 
-            int i = 0;
+            foreach (var tile in _data.map.tiles)
+            {
+                AddOrInstantiate(tile.loc, tile.ter == null ? "t_unseen" : tile.ter, "t_unknown");
+                if (tile.furn != "f_null")
+                {
+                    AddOrInstantiate(tile.loc, tile.furn, "f_unknown");
+                }
+            }
+            /*
             for (int y = 0; y < _data.map.height; y++)
             {
                 for (int x = 0; x < _data.map.width; x++)
@@ -136,8 +164,16 @@ public class Loader : GameBase
                     i++;
                 }
             }
-            frame.transform.SetPositionAndRotation(new Vector3(-_data.map.width / 2 * size.x, 0, -_data.map.height / 2 * size.y), Quaternion.identity);
+            */
+            //frame.transform.SetPositionAndRotation(new Vector3(-_data.map.width / 2 * size.x, 0, -_data.map.height / 2 * size.y), Quaternion.identity);
             needReload = false;
         }
+    }
+
+    public class BlockData : MonoBehaviour
+    {
+        public Vector3 Location;
+        public string id;
+        public string def;
     }
 }

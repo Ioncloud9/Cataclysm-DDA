@@ -68,24 +68,18 @@ namespace Assets.VOX
             {
                 for (var z = 0; z < chunksZ; z++)
                 {
-                    CreateChunk(new IVector2(x, z), data);
+                    CreateChunk(new IVector2(x, z));
                 }
             }
         }
 
-        private void CreateChunk(IVector2 location, GameData data)
+        private void CreateChunk(IVector2 location)
         {
             VOXChunk chunk;
             if (_chunks.TryGetValue(location, out chunk)) return;
-            var chunkStartX = location.x * ChunkSizeX;
-            var chunkStartY = location.y * ChunkSizeZ;
-            var chunkTiles = data.map.tiles.Where(x => x.loc.x >= chunkStartX &&
-                                                       x.loc.x < chunkStartX + ChunkSizeX &&
-                                                       x.loc.z >= chunkStartY &&
-                                                       x.loc.z < chunkStartY + ChunkSizeZ).ToList();
 
             chunk = new VOXChunk(location, this);
-            chunk.Create(chunkTiles);
+            chunk.Create();
             _chunks.Add(location, chunk);
         }
     }

@@ -1,0 +1,8 @@
+config*/
+data*/
+doc*/
+gfx*/
+lang*/
+lua*/
+save*/
+templates*/

@@ -27,9 +27,12 @@ namespace Assets.VOX
             get { return _blocks; }
         }
 
-        public void Create(IEnumerable<Tile> chunkTiles)
+        public void Create()
         {
-            foreach (var tile in chunkTiles)
+            var chunkFrom = new IVector2(Location.x * Parent.ChunkSizeX, Location.y * Parent.ChunkSizeY);
+            var chunkTo = new IVector2(chunkFrom.x + Parent.ChunkSizeX - 1, chunkFrom.y + Parent.ChunkSizeY - 1);
+            var map = DDA.GetTilesBetween(chunkFrom, chunkTo);
+            foreach (var tile in map.tiles)
             {
                 _blocks.Add(tile.loc, new VOXBlock(tile.loc, tile.ter, this));
             }
