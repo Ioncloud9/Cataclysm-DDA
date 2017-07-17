@@ -76,29 +76,6 @@ namespace Assets.VOX
             return obj;
         }
 
-        public void Render()
-        {
-            foreach (var chunk in _chunks)
-            {
-                StartCoroutine(RenderAsync(chunk.Value));
-                //chunk.Value.Render(this.gameObject);
-                //var filter = obj.AddComponent<MeshFilter>();
-                //var renderer = obj.AddComponent<MeshRenderer>();
-                //var mesh = chunk.Value.Render();
-                //filter.sharedMesh = mesh;
-                //obj.transform.parent = this.transform;
-                //_objs.Add(obj);
-                //renderer.sharedMaterial = ?
-            }
-        }
-
-        private IEnumerator RenderAsync(VOXChunk chunk)
-        {
-            chunk.Render(this.gameObject);
-            yield return null;
-        }
-        
-
         public VOXBlock GetBlockAt(Vector3 worldLocation)
         {
             var chunkX = (int)Math.Floor(worldLocation.x / ChunkSizeX);

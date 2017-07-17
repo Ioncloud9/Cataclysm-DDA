@@ -316,8 +316,8 @@ extern "C" {
     IVector3* playerPos(void) {
         IVector3* pVec = (IVector3*)::CoTaskMemAlloc(sizeof(IVector3));
         pVec->x = g->u.posx();
-        pVec->y = g->u.posy();
-        pVec->z = g->u.posz();
+        pVec->y = g->u.posz();
+        pVec->z = g->u.posy(); // swap z and y for unity
         return pVec;
     }
 
