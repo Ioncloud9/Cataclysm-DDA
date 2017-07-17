@@ -150,22 +150,6 @@ public class Loader : GameBase
                     AddOrInstantiate(tile.loc, tile.furn, "f_unknown");
                 }
             }
-            /*
-            for (int y = 0; y < _data.map.height; y++)
-            {
-                for (int x = 0; x < _data.map.width; x++)
-                {
-                    
-                    AddOrInstantiate(x, y, _data.map.tiles[i].ter == null ? "t_unseen" : _data.map.tiles[i].ter, "t_unknown");
-                    if (_data.map.tiles[i].furn != "f_null")
-                    {
-                        AddOrInstantiate(x, y, _data.map.tiles[i].furn, "f_unknown");
-                    }
-                    i++;
-                }
-            }
-            */
-            //frame.transform.SetPositionAndRotation(new Vector3(-_data.map.width / 2 * size.x, 0, -_data.map.height / 2 * size.y), Quaternion.identity);
             needReload = false;
         }
     }

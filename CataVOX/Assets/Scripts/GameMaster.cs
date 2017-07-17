@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Assets.Controllers;
+using Assets.VOX;
 using NetMQ;
 using UnityEngine;
 
@@ -23,7 +24,7 @@ namespace Assets.Scripts
             Input = FindObjectOfType<InputController>();
             Player = FindObjectOfType<PlayerController>();
             UI = FindObjectOfType<UIController>();
-            Loader = FindObjectOfType<Loader>();
+            Map = FindObjectOfType<VOXMap>();
             
             _instance = this;
         }
@@ -41,7 +42,7 @@ namespace Assets.Scripts
         public CameraController Camera { get; private set; }
         public InputController Input { get; private set; }
         public PlayerController Player { get; private set; }
-        public Loader Loader { get; private set; }
+        public VOXMap Map { get; private set; }
         public UIController UI { get; private set; }
     }
 }
