@@ -10,6 +10,7 @@ namespace Assets.VOX
 {
     public class VOXBlock
     {
+        private GameObject _voxel;
         private readonly Dictionary<Neighbours, VOXBlock> _neighbours = new Dictionary<Neighbours, VOXBlock>();
 
         public VOXBlock(IVector3 location, string ter, VOXChunk parent)
@@ -37,21 +38,23 @@ namespace Assets.VOX
             return _neighbours[dir];
         }
 
-        public IVector3 WorldLocation
+        public void Active(bool active)
         {
-            get
-            {
-                var x = Parent.Location.x * Parent.Parent.ChunkSizeX + Location.x;
-                var z = Parent.Location.y * Parent.Parent.ChunkSizeZ + Location.z;
-                return new IVector3(x, Location.y, z);
-            }
+            _voxel.SetActive(active);
         }
 
-        public MeshDraft Render()
+        public void Render(GameObject chunkObj, bool forceRedraw = false)
         {
-            var draft = MeshDraft.Hexahedron(Parent.Parent.BlockSizeX, Parent.Parent.BlockSizeZ, Parent.Parent.BlockSizeY);
-            draft.Move(Location);
-            return draft;
+            if (_voxel == null || forceRedraw)
+            {
+                _voxel = Parent.Parent.AddOrInstantiate(Location, Terrain);
+                _voxel.transform.parent = chunkObj.transform;
+                _voxel.transform.localPosition = Location;
+                _voxel.transform.localRotation = Quaternion.identity;
+            }
+            //var draft = MeshDraft.Hexahedron(Parent.Parent.BlockSizeX, Parent.Parent.BlockSizeZ, Parent.Parent.BlockSizeY);
+            //draft.Move(Location);
+            //return draft;
         }
     }
 }

@@ -20,26 +20,6 @@ namespace Assets.VOX.Editor
             _script = (VOXMap)target;
         }
 
-
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-            if (GUILayout.Button("Gen"))
-            {
-                var data = GetData();
-                if (data != null)
-                {
-                    _script.CreateMap(data);
-                    _script.Render();
-                }
-            }
-        }
-        
-        private GameData GetData()
-        {
-            return DDA.GetGameData();
-        }
-
     }
 
 }

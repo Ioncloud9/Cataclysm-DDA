@@ -1,17 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Assets.Scripts;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.VOX
 {
-    public class VOXMap : MonoBehaviour
+    public class VOXMap : GameBase
     {
         private readonly Dictionary<Vector2, VOXChunk> _chunks = new Dictionary<Vector2, VOXChunk>();
         private GameData _gameData;
         private List<GameObject> _objs;
+        public static readonly Dictionary<string, GameObject> VoxelCache = new Dictionary<string, GameObject>();
+        private GameObject _pfb;
 
         public int ChunkSizeX = 20;
         public int ChunkSizeY = 20; //Not sure what upper bound on DDA's Z (unity Y) axis is.
@@ -20,30 +25,55 @@ namespace Assets.VOX
         public int BlockSizeY = 1;
         public int BlockSizeZ = 1;
 
+        public int InitalLoadChunksRadius = 2; //load x chunks away from player
+
+        private Vector2 size = new Vector2(1, 1);
+
         public VOXMap() { }
 
         public void Awake()
         {
+            _pfb = new GameObject("prefabs");
+            var files = Directory.GetFiles("Assets/tiles", "*.vox");
+            foreach (var file in files)
+            {
+                var fi = new FileInfo(file);
+                var name = fi.Name.ToLower().Replace(".vox", "");
+                var newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + fi.Name, Game.Global_Scale);
+                newObj.SetActive(false);
+                newObj.name = name;
+                newObj.transform.parent = _pfb.transform;
+                VoxelCache.Add(name, newObj);
+            }
         }
 
         public void Start()
         {
+            var playerPos = DDA.playerPos();
+            var fixPos = new Vector3(playerPos.x, playerPos.z, playerPos.y);
+            CreateMap(fixPos);
+            Game.Player.Reload(fixPos);
+            Game.Camera.MoveTo(fixPos);
+            //Render();
+            _pfb.SetActive(false);
         }
 
-        public void Render()
+        public GameObject AddOrInstantiate(Vector3 location, string id)
         {
-            _objs = new List<GameObject>();
-            foreach (var chunk in _chunks)
+            if (id == null) return null;
+            GameObject obj;
+
+            if (VoxelCache.TryGetValue(id, out obj))
             {
-                var obj = new GameObject(string.Format("chunk_{0}-{1}", chunk.Key.x, chunk.Key.y));
-                var filter = obj.AddComponent<MeshFilter>();
-                var renderer = obj.AddComponent<MeshRenderer>();
-                var mesh = chunk.Value.Render();
-                filter.sharedMesh = mesh;
-                obj.transform.parent = this.transform;
-                _objs.Add(obj);
-                //renderer.sharedMaterial = ?
+                obj = Instantiate(VoxelCache[id], location, Quaternion.identity, transform);
             }
+            else
+            {
+                obj = Instantiate(VoxelCache["t_unknown"], location, Quaternion.identity, transform);
+            }
+            obj.name = string.Format("block_{0}.{1}.{2}", location.x, location.y, location.z);
+            obj.SetActive(true);
+            return obj;
         }
 
         public VOXBlock GetBlockAt(Vector3 worldLocation)
@@ -55,32 +85,33 @@ namespace Assets.VOX
             {
                 return null;
             }
-            return chunk.Blocks.Select(x => x.Value).FirstOrDefault(x => x.WorldLocation == worldLocation);
+            return chunk.Blocks.Select(x => x.Value).FirstOrDefault(x => x.Location == worldLocation);
         }
 
-        public void CreateMap(GameData data)
+        public void CreateMap(Vector3 player)
         {
-            var numX = data.map.tiles.Max(x => x.loc.x);
-            var numZ = data.map.tiles.Max(x => x.loc.z);
-            var chunksX = numX / ChunkSizeX;
-            var chunksZ = numZ / ChunkSizeZ;
-            for (var x = 0; x < chunksX; x++)
+            var startX = (int)Math.Floor(player.x / ChunkSizeX);
+            var startY = (int)Math.Floor(player.z / ChunkSizeZ);
+            for (var x = startX - InitalLoadChunksRadius; x <= startX + InitalLoadChunksRadius; x++)
             {
-                for (var z = 0; z < chunksZ; z++)
+                if (x < 0) continue;
+                for (var y = startY - InitalLoadChunksRadius; y <= startY + InitalLoadChunksRadius; y++)
                 {
-                    CreateChunk(new IVector2(x, z));
+                    if (y < 0) continue;
+                    StartCoroutine(CreateChunk(new IVector2(x, y)));
                 }
             }
         }
 
-        private void CreateChunk(IVector2 location)
+        private IEnumerator CreateChunk(IVector2 location)
         {
             VOXChunk chunk;
-            if (_chunks.TryGetValue(location, out chunk)) return;
-
+            if (_chunks.TryGetValue(location, out chunk)) yield break;
             chunk = new VOXChunk(location, this);
             chunk.Create();
             _chunks.Add(location, chunk);
+            //chunk.Render(this.gameObject);
+            yield return null;
         }
     }
 }

@@ -10,6 +10,8 @@ namespace Assets.VOX
     public class VOXChunk
     {
         private Dictionary<IVector3, VOXBlock> _blocks = new Dictionary<IVector3, VOXBlock>();
+        private GameObject _obj;
+        private bool _hasRendered = false;
 
         public VOXChunk(IVector2 location, VOXMap parent)
         {
@@ -29,37 +31,42 @@ namespace Assets.VOX
 
         public void Create()
         {
+            if (_hasRendered) return;
             var chunkFrom = new IVector2(Location.x * Parent.ChunkSizeX, Location.y * Parent.ChunkSizeY);
             var chunkTo = new IVector2(chunkFrom.x + Parent.ChunkSizeX - 1, chunkFrom.y + Parent.ChunkSizeY - 1);
-            var map = DDA.GetTilesBetween(chunkFrom, chunkTo);
-            foreach (var tile in map.tiles)
+            //var map = DDA.GetTilesBetween(chunkFrom.x, chunkFrom.y, chunkTo.x, chunkTo.y);
+            var tiles = new List<Tile>();
+            for (int x = 0; x < Parent.ChunkSizeX; x++)
+            {
+                for (int y = 0; y < Parent.ChunkSizeZ; y++)
+                {
+                    tiles.Add(new Tile("t_dirt", new IVector3(chunkFrom.x + x, 0, chunkFrom.y + y), "f_null"));
+                }
+            }
+
+            foreach (var tile in tiles)
             {
                 _blocks.Add(tile.loc, new VOXBlock(tile.loc, tile.ter, this));
             }
+
+            Render(Parent.gameObject);
+            _hasRendered = true;
         }
 
-        public Mesh Render(bool forceRedraw = false)
+        public void Render(GameObject parent, bool forceRedraw = false)
         {
 
-            if (forceRedraw) CurrentMesh = null;
-            if (CurrentMesh != null) return CurrentMesh;
-
-            var draft = new MeshDraft();
-            for (var x = 0; x <= Parent.ChunkSizeX; x++)
+            if (!forceRedraw && _hasRendered) return;
+            _obj = new GameObject(string.Format("chunk_{0}.{1}", Location.x, Location.y));
+            _obj.transform.parent = parent.transform;
+            //var draft = new MeshDraft();
+            foreach (var block in _blocks)
             {
-                for (var z = 0; z <= Parent.ChunkSizeZ; z++)
-                {
-                    for (var y = 0; z <= Parent.ChunkSizeY; y++)
-                    {
-                        VOXBlock block;
-                        if (_blocks.TryGetValue(new IVector3(x, y, z), out block))
-                            draft.Add(block.Render());
-                    }
-                }
+                block.Value.Render(_obj, forceRedraw);
             }
-            CurrentMesh = draft.ToMesh();
+            //CurrentMesh = draft.ToMesh();
 
-            return CurrentMesh;
+            //return CurrentMesh;
         }
     }
 }
