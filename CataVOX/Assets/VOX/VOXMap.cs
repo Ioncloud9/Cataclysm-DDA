@@ -54,8 +54,6 @@ namespace Assets.VOX
             CreateMap(fixPos);
             Game.Player.Reload(fixPos);
             Game.Camera.MoveTo(fixPos);
-            //Render();
-            _pfb.SetActive(false);
         }
 
         public GameObject AddOrInstantiate(Vector3 location, string id)
@@ -110,7 +108,6 @@ namespace Assets.VOX
             chunk = new VOXChunk(location, this);
             chunk.Create();
             _chunks.Add(location, chunk);
-            //chunk.Render(this.gameObject);
             yield return null;
         }
     }

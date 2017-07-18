@@ -285,6 +285,7 @@ extern "C" {
         for (int dx = -width / 2; dx < width / 2; dx++) {
             for (int dy = -height / 2; dy < height / 2; dy++) {
                 const tripoint p = ppos + tripoint(dx, dy, 0);
+                
                 ter_str_id ter = g->m.ter(p)->id;
                 data->map.tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
                 strcpy(data->map.tiles[i].ter, ter.c_str());

@@ -34,17 +34,9 @@ namespace Assets.VOX
             if (_hasRendered) return;
             var chunkFrom = new IVector2(Location.x * Parent.ChunkSizeX, Location.y * Parent.ChunkSizeY);
             var chunkTo = new IVector2(chunkFrom.x + Parent.ChunkSizeX - 1, chunkFrom.y + Parent.ChunkSizeY - 1);
-            //var map = DDA.GetTilesBetween(chunkFrom.x, chunkFrom.y, chunkTo.x, chunkTo.y);
-            var tiles = new List<Tile>();
-            for (int x = 0; x < Parent.ChunkSizeX; x++)
-            {
-                for (int y = 0; y < Parent.ChunkSizeZ; y++)
-                {
-                    tiles.Add(new Tile("t_dirt", new IVector3(chunkFrom.x + x, 0, chunkFrom.y + y), "f_null"));
-                }
-            }
+            var map = DDA.GetTilesBetween(chunkFrom, chunkTo);
 
-            foreach (var tile in tiles)
+            foreach (var tile in map.tiles)
             {
                 _blocks.Add(tile.loc, new VOXBlock(tile.loc, tile.ter, this));
             }
