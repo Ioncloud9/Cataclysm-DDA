@@ -3,8 +3,6 @@ using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
-using NetMQ;
-using NetMQ.Sockets;
 using System.Threading;
 using System.Net.Sockets;
 using Assets.Scripts;
