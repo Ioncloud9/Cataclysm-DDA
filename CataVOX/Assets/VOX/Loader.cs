@@ -34,11 +34,7 @@ public class Loader : GameBase
         cached = new GameObject("cache");
         try
         {
-            var sw = Stopwatch.StartNew();
-            sw.Stop();
-            Debug.Log(string.Format("Request sent in {0}ms", sw.ElapsedMilliseconds));
             _data = DDA.GetGameData();
-
             needReload = true;
         }
         catch (Exception ex)
