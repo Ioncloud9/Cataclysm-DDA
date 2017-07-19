@@ -317,8 +317,8 @@ extern "C" {
     IVector3 playerPos(void) {
         IVector3 res;
         res.x = g->u.posx();
-        res.y = g->u.posy();
-        res.z = g->u.posz();
+        res.y = g->u.posz();
+        res.z = g->u.posy();
         return res;
     }
 

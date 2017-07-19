@@ -12,22 +12,17 @@ namespace Assets.VOX
 {
     public class VOXMap : GameBase
     {
-        private readonly Dictionary<Vector2, VOXChunk> _chunks = new Dictionary<Vector2, VOXChunk>();
-        private GameData _gameData;
-        private List<GameObject> _objs;
         public static readonly Dictionary<string, GameObject> VoxelCache = new Dictionary<string, GameObject>();
-        private GameObject _pfb;
 
+        private readonly Dictionary<Vector2, VOXChunk> _chunks = new Dictionary<Vector2, VOXChunk>();
+        private readonly Queue<ChunkThread> _chunkThreads = new Queue<ChunkThread>();
+        private GameObject _pfb;
+        
         public int ChunkSizeX = 20;
         public int ChunkSizeY = 20; //Not sure what upper bound on DDA's Z (unity Y) axis is.
         public int ChunkSizeZ = 20;
-        public int BlockSizeX = 1;
-        public int BlockSizeY = 1;
-        public int BlockSizeZ = 1;
 
         public int InitalLoadChunksRadius = 2; //load x chunks away from player
-
-        private Vector2 size = new Vector2(1, 1);
 
         public VOXMap() { }
 
@@ -50,10 +45,31 @@ namespace Assets.VOX
         public void Start()
         {
             var playerPos = DDA.playerPos();
-            var fixPos = new Vector3(playerPos.x, playerPos.z, playerPos.y);
-            CreateMap(fixPos);
-            Game.Player.Reload(fixPos);
-            Game.Camera.MoveTo(fixPos);
+            CreateMap(playerPos);
+            Game.Player.Reload(playerPos);
+            Game.Camera.MoveTo(playerPos);
+        }
+
+        public void Update()
+        {
+            var queueMax = _chunkThreads.Count;
+            for (var i = 0; i < queueMax; i++)
+            {
+                var thread = _chunkThreads.Dequeue();
+                if (!thread.IsRunning)
+                {
+                    if (thread.Result == null) continue; //disgard this chunk, something went wrong?!
+                    var chunk = thread.Result;
+                    chunk.Render(this.gameObject);
+                    _chunks.Add(chunk.Location, chunk);
+                    Debug.Log(string.Format("[{0}] render: {1}ms, create: {2}ms", chunk.Name, chunk.RenderTiming.ElapsedMilliseconds, thread.Timing.ElapsedMilliseconds));
+                }
+                else
+                {
+                    //re-queue chunk, it's still loading
+                    _chunkThreads.Enqueue(thread);
+                }
+            }
         }
 
         public GameObject AddOrInstantiate(Vector3 location, string id)
@@ -74,6 +90,11 @@ namespace Assets.VOX
             return obj;
         }
 
+        public GameObject CreateObject()
+        {
+            return new GameObject();
+        }
+
         public VOXBlock GetBlockAt(Vector3 worldLocation)
         {
             var chunkX = (int)Math.Floor(worldLocation.x / ChunkSizeX);
@@ -90,25 +111,25 @@ namespace Assets.VOX
         {
             var startX = (int)Math.Floor(player.x / ChunkSizeX);
             var startY = (int)Math.Floor(player.z / ChunkSizeZ);
+            Debug.Log(string.Format("start: {0},{1}", startX, startY));
+            _chunkThreads.Enqueue(CreateChunk(new IVector2(startX, startY)));
             for (var x = startX - InitalLoadChunksRadius; x <= startX + InitalLoadChunksRadius; x++)
             {
                 if (x < 0) continue;
                 for (var y = startY - InitalLoadChunksRadius; y <= startY + InitalLoadChunksRadius; y++)
                 {
                     if (y < 0) continue;
-                    StartCoroutine(CreateChunk(new IVector2(x, y)));
+                    if (x == startX && y == startY) continue;
+                    _chunkThreads.Enqueue(CreateChunk(new IVector2(x, y)));
                 }
             }
         }
 
-        private IEnumerator CreateChunk(IVector2 location)
+        private ChunkThread CreateChunk(IVector2 location)
         {
             VOXChunk chunk;
-            if (_chunks.TryGetValue(location, out chunk)) yield break;
-            chunk = new VOXChunk(location, this);
-            chunk.Create();
-            _chunks.Add(location, chunk);
-            yield return null;
+            if (_chunks.TryGetValue(location, out chunk)) return null;
+            return ChunkThread.StartNew(location, this, new Vector3(ChunkSizeX, ChunkSizeY, ChunkSizeZ));
         }
     }
 }

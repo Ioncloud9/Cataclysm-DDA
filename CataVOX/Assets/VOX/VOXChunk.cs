@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ProceduralToolkit;
@@ -12,28 +13,37 @@ namespace Assets.VOX
         private Dictionary<IVector3, VOXBlock> _blocks = new Dictionary<IVector3, VOXBlock>();
         private GameObject _obj;
         private bool _hasRendered = false;
+        private bool _created = false;
 
-        public VOXChunk(IVector2 location, VOXMap parent)
+        public VOXChunk(VOXMap parent, IVector2 location)
         {
             Location = location;
             Parent = parent;
         }
 
+        public string Name
+        {
+            get { return string.Format("chunk_{0},{1}", Location.x, Location.y); }
+        }
+
         public IVector2 Location { get; private set; }
 
-        public VOXMap Parent { get; private set; }
         public Mesh CurrentMesh { get; private set; }
+        public VOXMap Parent { get; private set; }
+        public Stopwatch RenderTiming { get; private set; }
+        public Stopwatch CreateTiming { get; private set; }
 
         public Dictionary<IVector3, VOXBlock> Blocks
         {
             get { return _blocks; }
         }
 
-        public void Create()
+        public void Create(Vector2 chunkSize)
         {
-            if (_hasRendered) return;
-            var chunkFrom = new IVector2(Location.x * Parent.ChunkSizeX, Location.y * Parent.ChunkSizeY);
-            var chunkTo = new IVector2(chunkFrom.x + Parent.ChunkSizeX - 1, chunkFrom.y + Parent.ChunkSizeY - 1);
+            if (_created) return;
+            var sw = new Stopwatch();
+            var chunkFrom = new IVector2((int)(Location.x * chunkSize.x), (int)(Location.y * chunkSize.y));
+            var chunkTo = new IVector2((int)(chunkFrom.x + chunkSize.x - 1), (int)(chunkFrom.y + chunkSize.y - 1));
             var map = DDA.GetTilesBetween(chunkFrom, chunkTo);
 
             foreach (var tile in map.tiles)
@@ -41,21 +51,25 @@ namespace Assets.VOX
                 _blocks.Add(tile.loc, new VOXBlock(tile.loc, tile.ter, this));
             }
 
-            Render(Parent.gameObject);
-            _hasRendered = true;
+            _created = true;
+            sw.Stop();
+            CreateTiming = sw;
         }
 
         public void Render(GameObject parent, bool forceRedraw = false)
         {
-
             if (!forceRedraw && _hasRendered) return;
+            var sw = Stopwatch.StartNew();
             _obj = new GameObject(string.Format("chunk_{0}.{1}", Location.x, Location.y));
             _obj.transform.parent = parent.transform;
             //var draft = new MeshDraft();
             foreach (var block in _blocks)
             {
-                block.Value.Render(_obj, forceRedraw);
+                block.Value.Render(_obj);
             }
+            _hasRendered = true;
+            sw.Stop();
+            RenderTiming = sw;
             //CurrentMesh = draft.ToMesh();
 
             //return CurrentMesh;
