@@ -60,9 +60,10 @@ namespace Assets.VOX
                 {
                     if (thread.Result == null) continue; //disgard this chunk, something went wrong?!
                     var chunk = thread.Result;
-                    chunk.Render(this.gameObject);
+                    StartCoroutine(chunk.Render(this.gameObject));
+                    //chunk.Render(this.gameObject);
                     _chunks.Add(chunk.Location, chunk);
-                    Debug.Log(string.Format("[{0}] render: {1}ms, create: {2}ms", chunk.Name, chunk.RenderTiming.ElapsedMilliseconds, thread.Timing.ElapsedMilliseconds));
+                    //Debug.Log(string.Format("[{0}] render: {1}ms, create: {2}ms", chunk.Name, chunk.RenderTiming.ElapsedMilliseconds, thread.Timing.ElapsedMilliseconds));
                 }
                 else
                 {

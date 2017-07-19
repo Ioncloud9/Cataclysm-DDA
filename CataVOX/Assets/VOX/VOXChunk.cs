@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace Assets.VOX
         private Dictionary<IVector3, VOXBlock> _blocks = new Dictionary<IVector3, VOXBlock>();
         private GameObject _obj;
         private bool _hasRendered = false;
+        private bool _isRendering = false;
         private bool _created = false;
 
         public VOXChunk(VOXMap parent, IVector2 location)
@@ -56,9 +58,11 @@ namespace Assets.VOX
             CreateTiming = sw;
         }
 
-        public void Render(GameObject parent, bool forceRedraw = false)
+        public IEnumerator Render(GameObject parent, bool forceRedraw = false)
         {
-            if (!forceRedraw && _hasRendered) return;
+            if (_isRendering || (!forceRedraw && _hasRendered)) yield break;
+            _isRendering = true;
+
             var sw = Stopwatch.StartNew();
             _obj = new GameObject(string.Format("chunk_{0}.{1}", Location.x, Location.y));
             _obj.transform.parent = parent.transform;
@@ -66,10 +70,12 @@ namespace Assets.VOX
             foreach (var block in _blocks)
             {
                 block.Value.Render(_obj);
+                yield return null;
             }
             _hasRendered = true;
             sw.Stop();
             RenderTiming = sw;
+            _isRendering = false;
             //CurrentMesh = draft.ToMesh();
 
             //return CurrentMesh;
