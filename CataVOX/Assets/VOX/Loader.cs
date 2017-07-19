@@ -4,8 +4,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using NetMQ;
-using NetMQ.Sockets;
 using System.Threading;
 using System.Net.Sockets;
 using Assets;
