@@ -33,9 +33,8 @@ namespace Assets.VOX
             var files = Directory.GetFiles("Assets/tiles", "*.vox");
             foreach (var file in files)
             {
-                var fi = new FileInfo(file);
-                var name = fi.Name.ToLower().Replace(".vox", "");
-                var newObj = VOXGameObject.CreateGameObject("Assets/tiles/" + fi.Name, Game.Global_Scale);
+				var name = Path.GetFileNameWithoutExtension(file).ToLower();
+                var newObj = VOXGameObject.CreateGameObject(file, Game.Global_Scale);
                 newObj.SetActive(false);
                 newObj.name = name;
                 newObj.transform.parent = _pfb.transform;

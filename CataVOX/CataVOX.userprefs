@@ -1,11 +1,12 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Testing\TestDLL.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\VOX\VOXBlock.cs">
     <Files>
-      <File FileName="Assets\VOX\Loader.cs" Line="1" Column="1" />
-      <File FileName="Assets\VOX\VOXGameObject.cs" Line="1" Column="1" />
-      <File FileName="Assets\Testing\TestDLL.cs" Line="12" Column="46" />
-      <File FileName="Assets\Testing\Marshalers.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Splash.cs" Line="51" Column="34" />
+      <File FileName="Assets\VOX\VOXMap.cs" Line="18" Column="73" />
+      <File FileName="Assets\VOX\VOXMapVolume.cs" Line="1" Column="1" />
+      <File FileName="Assets\VOX\VOXChunk.cs" Line="1" Column="1" />
+      <File FileName="Assets\VOX\VOXBlock.cs" Line="25" Column="42" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
