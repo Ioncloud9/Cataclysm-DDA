@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Assets.Framework;
 using ProceduralToolkit;
 using UnityEngine;
 
 namespace Assets.VOX
 {
-    public class VOXChunk
+    public class VOXChunk : IChunk
     {
-        private Dictionary<IVector3, VOXBlock> _blocks = new Dictionary<IVector3, VOXBlock>();
+        private Dictionary<IVector3, IBlock> _blocks = new Dictionary<IVector3, IBlock>();
         private GameObject _obj;
         private bool _hasRendered = false;
         private bool _isRendering = false;
@@ -31,16 +32,16 @@ namespace Assets.VOX
         public IVector2 Location { get; private set; }
 
         public Mesh CurrentMesh { get; private set; }
-        public VOXMap Parent { get; private set; }
+        public IMap Parent { get; private set; }
         public Stopwatch RenderTiming { get; private set; }
         public Stopwatch CreateTiming { get; private set; }
 
-        public Dictionary<IVector3, VOXBlock> Blocks
+        public Dictionary<IVector3, IBlock> Blocks
         {
             get { return _blocks; }
         }
 
-        public void Create(Vector2 chunkSize)
+        public void Create(IVector3 chunkSize)
         {
             if (_created) return;
             var sw = new Stopwatch();
@@ -50,7 +51,7 @@ namespace Assets.VOX
 
             foreach (var tile in map.tiles)
             {
-                _blocks.Add(tile.loc, new VOXBlock(tile.loc, tile.ter, this));
+                _blocks.Add(tile.loc, BlockLoader.CreateBlock(tile.ter, tile.loc, this));
             }
 
             _created = true;
@@ -64,11 +65,12 @@ namespace Assets.VOX
             _isRendering = true;
 
             var sw = Stopwatch.StartNew();
-            _obj = new GameObject(string.Format("chunk_{0}.{1}", Location.x, Location.y));
+            _obj = new GameObject(Name);
             _obj.transform.parent = parent.transform;
             //var draft = new MeshDraft();
             foreach (var block in _blocks)
             {
+                UnityEngine.Debug.Log(string.Format(block.Value.Name));
                 block.Value.Render(_obj);
                 yield return null;
             }

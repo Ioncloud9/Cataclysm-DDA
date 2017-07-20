@@ -4,17 +4,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Assets.Framework;
 using Assets.Scripts;
 using UnityEditor;
 using UnityEngine;
 
 namespace Assets.VOX
 {
-    public class VOXMap : GameBase
+    public class VOXMap : GameBase, IMap
     {
         public static readonly Dictionary<string, GameObject> VoxelCache = new Dictionary<string, GameObject>();
 
-        private readonly Dictionary<Vector2, VOXChunk> _chunks = new Dictionary<Vector2, VOXChunk>();
+        private readonly Dictionary<IVector2, IChunk> _chunks = new Dictionary<IVector2, IChunk>();
         private readonly Queue<ChunkThread> _chunkThreads = new Queue<ChunkThread>();
         private GameObject _pfb;
         
@@ -73,7 +74,8 @@ namespace Assets.VOX
             }
         }
 
-        public GameObject AddOrInstantiate(Vector3 location, string id)
+        public Dictionary<IVector2, IChunk> Chunks { get { return _chunks; } }
+        public GameObject Instantiate(IVector3 location, string id)
         {
             if (id == null) return null;
             GameObject obj;
@@ -96,12 +98,12 @@ namespace Assets.VOX
             return new GameObject();
         }
 
-        public VOXBlock GetBlockAt(Vector3 worldLocation)
+        public IBlock GetBlockAt(Vector3 worldLocation)
         {
             var chunkX = (int)Math.Floor(worldLocation.x / ChunkSizeX);
             var chunkY = (int)Math.Floor(worldLocation.z / ChunkSizeZ);
-            VOXChunk chunk;
-            if (!_chunks.TryGetValue(new Vector2(chunkX, chunkY), out chunk))
+            IChunk chunk;
+            if (!_chunks.TryGetValue(new IVector2(chunkX, chunkY), out chunk))
             {
                 return null;
             }
@@ -128,9 +130,9 @@ namespace Assets.VOX
 
         private ChunkThread CreateChunk(IVector2 location)
         {
-            VOXChunk chunk;
+            IChunk chunk;
             if (_chunks.TryGetValue(location, out chunk)) return null;
-            return ChunkThread.StartNew(location, this, new Vector3(ChunkSizeX, ChunkSizeY, ChunkSizeZ));
+            return ChunkThread.StartNew(location, this, new IVector3(ChunkSizeX, ChunkSizeY, ChunkSizeZ));
         }
     }
 }

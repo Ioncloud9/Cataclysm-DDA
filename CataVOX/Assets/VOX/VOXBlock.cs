@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.Framework;
 using Assets.Scripts;
 using ProceduralToolkit;
 using UnityEngine;
 
 namespace Assets.VOX
 {
-    public class VOXBlock
+    /*
+    public class VOXBlock : IBlock
     {
         private GameObject _voxel;
         private readonly Dictionary<Neighbours, VOXBlock> _neighbours = new Dictionary<Neighbours, VOXBlock>();
@@ -29,7 +31,11 @@ namespace Assets.VOX
             };
         }
 
-        public VOXChunk Parent { get; private set; }
+        public string Name
+        {
+            get { return string.Format("block_{0},{1},{2}", Location.x, Location.y,Location.z); }
+        }
+        public IChunk Parent { get; private set; }
         public IVector3 Location { get; private set; }
         public string Terrain { get; private set; }
 
@@ -47,7 +53,7 @@ namespace Assets.VOX
         {
             if (_voxel == null || forceRedraw)
             {
-                _voxel = Parent.Parent.AddOrInstantiate(Location, Terrain);
+                _voxel = Parent.Parent.Instantiate(Location, Terrain);
                 _voxel.transform.parent = chunkObj.transform;
                 _voxel.transform.localPosition = Location;
                 _voxel.transform.localRotation = Quaternion.identity;
@@ -57,4 +63,5 @@ namespace Assets.VOX
             //return draft;
         }
     }
+    */
 }
