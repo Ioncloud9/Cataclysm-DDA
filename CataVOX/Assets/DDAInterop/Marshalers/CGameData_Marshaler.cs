@@ -54,7 +54,7 @@ namespace Assets.DDAInterop.Marshalers
             Marshal.FreeCoTaskMem(data.calendar.time);
             int size = data.map.width * data.map.height;
 
-            for (int i = 0; i < data.map.width * data.map.height; i++)
+            for (int i = 0; i < size; i++)
             {
                 IntPtr p = new IntPtr(data.map.tiles.ToInt64() + i * Marshal.SizeOf(typeof(CTile)));
                 CTile tile = (CTile)Marshal.PtrToStructure(p, typeof(CTile));

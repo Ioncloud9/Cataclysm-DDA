@@ -15,7 +15,9 @@ namespace Assets.VOX
         static BlockLoader()
         {
             var ass = Assembly.GetExecutingAssembly();
-            foreach (var type in ass.GetTypes().Where(x => !x.IsAbstract && x.GetInterfaces().Contains(typeof(IBlock))))
+			var allBlockTypes = ass.GetTypes().Where(x => !x.IsAbstract && x.GetInterfaces().Contains(typeof(IBlock)));
+
+            foreach (var type in allBlockTypes)
             {
                 var attrib = (BlockTypeAttribute[])type.GetCustomAttributes(typeof(BlockTypeAttribute), true);
                 if (attrib.Length == 0) continue;

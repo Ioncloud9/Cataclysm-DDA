@@ -66,17 +66,17 @@ namespace Assets.Scripts.Inputs
         /// <summary>
         /// Maps keypad input to a transform
         /// </summary>
-        private static Dictionary<KeyCode, Func<KeyCode, KeyCode>> _keyTransforms = new Dictionary<KeyCode, Func<KeyCode, KeyCode>>()
-        {
-            {KeyCode.Keypad1, MoveTransform },
-            {KeyCode.Keypad2, MoveTransform },
-            {KeyCode.Keypad3, MoveTransform },
-            {KeyCode.Keypad4, MoveTransform },
-            {KeyCode.Keypad6, MoveTransform },
-            {KeyCode.Keypad7, MoveTransform },
-            {KeyCode.Keypad8, MoveTransform },
-            {KeyCode.Keypad9, MoveTransform }
-        };
+//        private static Dictionary<KeyCode, Func<KeyCode, KeyCode>> _keyTransforms = new Dictionary<KeyCode, Func<KeyCode, KeyCode>>()
+//        {
+//            {KeyCode.Keypad1, MoveTransform },
+//            {KeyCode.Keypad2, MoveTransform },
+//            {KeyCode.Keypad3, MoveTransform },
+//            {KeyCode.Keypad4, MoveTransform },
+//            {KeyCode.Keypad6, MoveTransform },
+//            {KeyCode.Keypad7, MoveTransform },
+//            {KeyCode.Keypad8, MoveTransform },
+//            {KeyCode.Keypad9, MoveTransform }
+//        };
 
         /// <summary>
         /// Transforms the keypress into a different keypress based on the Camera's facing

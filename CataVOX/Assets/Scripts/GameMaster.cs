@@ -10,7 +10,7 @@ namespace Assets.Scripts
 {
     public class GameMaster : MonoBehaviour
     {
-        private static readonly object _locker = new object();
+        //private static readonly object _locker = new object();
         private static GameMaster _instance;
 
        
@@ -23,7 +23,7 @@ namespace Assets.Scripts
             Input = FindObjectOfType<InputController>();
             Player = FindObjectOfType<PlayerController>();
             UI = FindObjectOfType<UIController>();
-            Map = FindObjectOfType<VOXMap>();
+            Map = FindObjectOfType<VOX.Map>();
             
             _instance = this;
         }
@@ -41,7 +41,7 @@ namespace Assets.Scripts
         public CameraController Camera { get; private set; }
         public InputController Input { get; private set; }
         public PlayerController Player { get; private set; }
-        public VOXMap Map { get; private set; }
+        public VOX.Map Map { get; private set; }
         public UIController UI { get; private set; }
     }
 }
