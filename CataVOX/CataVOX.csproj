@@ -258,14 +258,14 @@
     <Compile Include="Assets\VOX\BlockLoader.cs" />
     <Compile Include="Assets\VOX\Blocks\CustomBlock.cs" />
     <Compile Include="Assets\VOX\Blocks\Dirt.cs" />
+    <Compile Include="Assets\VOX\Chunk.cs" />
+    <Compile Include="Assets\VOX\File.cs" />
     <Compile Include="Assets\VOX\GameData.cs" />
     <Compile Include="Assets\VOX\Loader.cs" />
-    <Compile Include="Assets\VOX\VOXChunk.cs" />
-    <Compile Include="Assets\VOX\VOXFile.cs" />
-    <Compile Include="Assets\VOX\VOXGameObject.cs" />
-    <Compile Include="Assets\VOX\VOXMap.cs" />
-    <Compile Include="Assets\VOX\VOXMapVolume.cs" />
-    <Compile Include="Assets\VOX\VOXTile.cs" />
+    <Compile Include="Assets\VOX\Map.cs" />
+    <Compile Include="Assets\VOX\Old\VOXGameObject.cs" />
+    <Compile Include="Assets\VOX\Old\VOXMapVolume.cs" />
+    <Compile Include="Assets\VOX\Tile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
@@ -349,6 +349,7 @@
     <None Include="Assets\plugins\lang\notes\de.txt" />
     <None Include="Assets\plugins\lua\CMakeLists.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
