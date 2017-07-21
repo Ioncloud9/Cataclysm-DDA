@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Assets.VOX
 {
-    public class VOXMap : GameBase, IMap
+    public class Map : GameBase, IMap
     {
         public static readonly Dictionary<string, GameObject> VoxelCache = new Dictionary<string, GameObject>();
 
@@ -25,7 +25,7 @@ namespace Assets.VOX
 
         public int InitalLoadChunksRadius = 2; //load x chunks away from player
 
-        public VOXMap() { }
+        public Map() { }
 
         public void Awake()
         {

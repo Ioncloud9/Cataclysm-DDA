@@ -2,9 +2,9 @@
 
 namespace AssemblyCSharp
 {
-	public class VOXTile
+	public class Tile
 	{
-		public VOXTile ()
+		public Tile()
 		{
 		}
 	}

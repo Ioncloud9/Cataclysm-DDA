@@ -8,14 +8,14 @@ using UnityEngine;
 
 namespace Assets.VOX.Editor
 {
-    [CustomEditor(typeof(VOXMap))]
-    public class VOXMapEditor : UnityEditor.Editor
+    [CustomEditor(typeof(Map))]
+    public class MapEditor : UnityEditor.Editor
     {
-        private VOXMap _script;
+        private Map _script;
 
         public void OnEnable()
         {
-            _script = (VOXMap)target;
+            _script = (Map)target;
         }
 
     }
