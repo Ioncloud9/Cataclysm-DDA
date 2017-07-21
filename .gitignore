@@ -155,6 +155,7 @@ WinDepend
 CataVOX/*.csproj
 CataVOX/*.sln
 CataVOX/Assets/plugins/*.meta
+*.userprefs
 
 # Transifex Client
 .tx/
