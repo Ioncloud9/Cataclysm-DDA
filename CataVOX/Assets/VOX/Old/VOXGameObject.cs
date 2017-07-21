@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
-using VOXFile;
+using Assets.VOX;
 
 public static class VOXGameObject
 {
     public static string voxPath;
     public static float scale;
-    public static VOXFile.Model model;
+    public static File.Model model;
     public static UnityEngine.Material[] uMaterials;
     private static Mesh mesh;
     private static List<Vector3> allVertices = new List<Vector3>();
@@ -22,7 +22,7 @@ public static class VOXGameObject
         }
         VOXGameObject.voxPath = path;
         VOXGameObject.scale = scale;
-        VOXGameObject.model = new VOXFile.Model(path);
+        VOXGameObject.model = new File.Model(path);
         if (VOXGameObject.model.sizeX == 0 &&
             VOXGameObject.model.sizeY == 0 &&
             VOXGameObject.model.sizeZ == 0) return new GameObject();

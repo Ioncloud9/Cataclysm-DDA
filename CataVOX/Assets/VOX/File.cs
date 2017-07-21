@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-namespace VOXFile
+namespace File
 {
     public struct Voxel
     {
@@ -42,7 +42,7 @@ namespace VOXFile
             this.path = path;
             try
             {
-                byte[] data = File.ReadAllBytes(path);
+				byte[] data = System.IO.File.ReadAllBytes(path);
                 using (MemoryStream ms = new MemoryStream(data, false)) // read-only
                 {
                     BinaryReader br = new BinaryReader(ms);

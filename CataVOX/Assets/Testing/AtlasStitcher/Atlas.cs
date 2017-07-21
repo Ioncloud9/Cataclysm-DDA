@@ -75,9 +75,9 @@ namespace Assets.AtlasStitcher
                 //Material.SetTexture("_ParallaxMap", _stitchedTextures.Height);
                 Material.SetFloat("_SmoothnessTextureChannel", 1f);
                 var albedoBytes = _stitchedTextures.Albedo.EncodeToPNG();
-                var normalBytes = _stitchedTextures.Normal.EncodeToPNG();
-                var occulsionBytes = _stitchedTextures.Occulsion.EncodeToPNG();
-                using (var file = File.Open(Application.dataPath + "/" + "diffuseAtlas.png", FileMode.Create))
+                //var normalBytes = _stitchedTextures.Normal.EncodeToPNG();
+                //var occulsionBytes = _stitchedTextures.Occulsion.EncodeToPNG();
+				using (var file = System.IO.File.Open(Application.dataPath + "/" + "diffuseAtlas.png", FileMode.Create))
                 {
                     var bw = new BinaryWriter(file);
                     bw.Write(albedoBytes);

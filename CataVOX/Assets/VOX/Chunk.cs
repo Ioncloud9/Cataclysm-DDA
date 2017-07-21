@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Assets.VOX
 {
-    public class VOXChunk : IChunk
+    public class Chunk : IChunk
     {
         private Dictionary<IVector3, IBlock> _blocks = new Dictionary<IVector3, IBlock>();
         private GameObject _obj;
@@ -18,7 +18,7 @@ namespace Assets.VOX
         private bool _isRendering = false;
         private bool _created = false;
 
-        public VOXChunk(VOXMap parent, IVector2 location)
+        public Chunk(VOX.Map parent, IVector2 location)
         {
             Location = location;
             Parent = parent;

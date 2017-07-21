@@ -21,17 +21,17 @@ namespace Assets.Scripts
         }
 
         public bool IsRunning { get; private set; }
-        public VOXChunk Result { get; private set; }
+        public Chunk Result { get; private set; }
         public Stopwatch Timing { get; private set; }
 
-        public static ChunkThread StartNew(IVector2 chunkLocation, VOXMap map, IVector3 chunkSize)
+        public static ChunkThread StartNew(IVector2 chunkLocation, VOX.Map map, IVector3 chunkSize)
         {
             var thread = new ChunkThread();
             thread.Start(chunkLocation, map, chunkSize);
             return thread;
         }
 
-        public void Start(IVector2 chunkLocation, VOXMap map, IVector3 chunkSize)
+        public void Start(IVector2 chunkLocation, VOX.Map map, IVector3 chunkSize)
         {
             if (IsRunning) return;
             lock (locker)
@@ -52,13 +52,13 @@ namespace Assets.Scripts
         {
             public IVector3 chunkSize;
             public IVector2 location;
-            public VOXMap map;
+            public VOX.Map map;
         }
         private void Main(object args)
         {
             var sw = Stopwatch.StartNew();
             var tsArgs = (ThreadStartArgs) args;
-            var chunk = new VOXChunk(tsArgs.map, tsArgs.location);
+            var chunk = new Chunk(tsArgs.map, tsArgs.location);
             chunk.Create(tsArgs.chunkSize);
             Result = chunk;
             IsRunning = false;

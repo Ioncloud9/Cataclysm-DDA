@@ -41,7 +41,7 @@ public class Loader : GameBase
 
             needReload = true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Debug.Log("Map.json not created yet");
         }
