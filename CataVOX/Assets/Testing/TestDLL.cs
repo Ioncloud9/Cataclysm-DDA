@@ -11,10 +11,10 @@ public class TestDLL : MonoBehaviour
     {
     
 		DDA.init(true);
-		IVector3 ppos = DDA.playerPos();
+		Vector3Int ppos = DDA.playerPos();
 		int size = 5;
-		IVector2 from = new IVector2 (ppos.x - size, ppos.y - size);
-		IVector2 to = new IVector2 (ppos.x + size, ppos.y + size);
+		Vector2Int from = new Vector2Int (ppos.x - size, ppos.y - size);
+		Vector2Int to = new Vector2Int (ppos.x + size, ppos.y + size);
 		Map map = DDA.GetTilesBetween (from, to);
 		Debug.Log (map);
 	}

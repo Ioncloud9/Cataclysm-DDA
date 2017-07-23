@@ -8,7 +8,7 @@ namespace Assets.Framework
 {
     public interface IMap
     {
-        Dictionary<IVector2, IChunk> Chunks { get; }
-        GameObject Instantiate(IVector3 location, string type);
+        Dictionary<Vector2Int, IChunk> Chunks { get; }
+        GameObject Instantiate(Vector3Int location, string type);
     }
 }

@@ -15,7 +15,7 @@ namespace Assets.VOX
     {
         public static readonly Dictionary<string, GameObject> VoxelCache = new Dictionary<string, GameObject>();
 
-        private readonly Dictionary<IVector2, IChunk> _chunks = new Dictionary<IVector2, IChunk>();
+        private readonly Dictionary<Vector2Int, IChunk> _chunks = new Dictionary<Vector2Int, IChunk>();
         private readonly Queue<ChunkThread> _chunkThreads = new Queue<ChunkThread>();
         private GameObject _pfb;
         
@@ -73,8 +73,8 @@ namespace Assets.VOX
             }
         }
 
-        public Dictionary<IVector2, IChunk> Chunks { get { return _chunks; } }
-        public GameObject Instantiate(IVector3 location, string id)
+        public Dictionary<Vector2Int, IChunk> Chunks { get { return _chunks; } }
+        public GameObject Instantiate(Vector3Int location, string id)
         {
             if (id == null) return null;
             GameObject obj;
@@ -102,7 +102,7 @@ namespace Assets.VOX
             var chunkX = (int)Math.Floor(worldLocation.x / ChunkSizeX);
             var chunkY = (int)Math.Floor(worldLocation.z / ChunkSizeZ);
             IChunk chunk;
-            if (!_chunks.TryGetValue(new IVector2(chunkX, chunkY), out chunk))
+            if (!_chunks.TryGetValue(new Vector2Int(chunkX, chunkY), out chunk))
             {
                 return null;
             }
@@ -114,7 +114,7 @@ namespace Assets.VOX
             var startX = (int)Math.Floor(player.x / ChunkSizeX);
             var startY = (int)Math.Floor(player.z / ChunkSizeZ);
             Debug.Log(string.Format("start: {0},{1}", startX, startY));
-            _chunkThreads.Enqueue(CreateChunk(new IVector2(startX, startY)));
+            _chunkThreads.Enqueue(CreateChunk(new Vector2Int(startX, startY)));
             for (var x = startX - InitalLoadChunksRadius; x <= startX + InitalLoadChunksRadius; x++)
             {
                 if (x < 0) continue;
@@ -122,16 +122,16 @@ namespace Assets.VOX
                 {
                     if (y < 0) continue;
                     if (x == startX && y == startY) continue;
-                    _chunkThreads.Enqueue(CreateChunk(new IVector2(x, y)));
+                    _chunkThreads.Enqueue(CreateChunk(new Vector2Int(x, y)));
                 }
             }
         }
 
-        private ChunkThread CreateChunk(IVector2 location)
+        private ChunkThread CreateChunk(Vector2Int location)
         {
             IChunk chunk;
             if (_chunks.TryGetValue(location, out chunk)) return null;
-            return ChunkThread.StartNew(location, this, new IVector3(ChunkSizeX, ChunkSizeY, ChunkSizeZ));
+            return ChunkThread.StartNew(location, this, new Vector3Int(ChunkSizeX, ChunkSizeY, ChunkSizeZ));
         }
     }
 }

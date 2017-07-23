@@ -38,7 +38,7 @@ namespace Assets.VOX
             }
         }
 
-        public static IBlock CreateBlock(string type, IVector3 location, IChunk parent)
+        public static IBlock CreateBlock(string type, Vector3Int location, IChunk parent)
         {
             IBlock t;
             if (!BlockMap.TryGetValue(type, out t)) t = BlockMap["t_unknown"];

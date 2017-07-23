@@ -12,13 +12,13 @@ namespace Assets.VOX
 {
     public class Chunk : IChunk
     {
-        private Dictionary<IVector3, IBlock> _blocks = new Dictionary<IVector3, IBlock>();
+        private Dictionary<Vector3Int, IBlock> _blocks = new Dictionary<Vector3Int, IBlock>();
         private GameObject _obj;
         private bool _hasRendered = false;
         private bool _isRendering = false;
         private bool _created = false;
 
-        public Chunk(VOX.Map parent, IVector2 location)
+        public Chunk(VOX.Map parent, Vector2Int location)
         {
             Location = location;
             Parent = parent;
@@ -29,24 +29,24 @@ namespace Assets.VOX
             get { return string.Format("chunk_{0},{1}", Location.x, Location.y); }
         }
 
-        public IVector2 Location { get; private set; }
+        public Vector2Int Location { get; private set; }
 
         public Mesh CurrentMesh { get; private set; }
         public IMap Parent { get; private set; }
         public Stopwatch RenderTiming { get; private set; }
         public Stopwatch CreateTiming { get; private set; }
 
-        public Dictionary<IVector3, IBlock> Blocks
+        public Dictionary<Vector3Int, IBlock> Blocks
         {
             get { return _blocks; }
         }
 
-        public void Create(IVector3 chunkSize)
+        public void Create(Vector3Int chunkSize)
         {
             if (_created) return;
             var sw = new Stopwatch();
-            var chunkFrom = new IVector2((int)(Location.x * chunkSize.x), (int)(Location.y * chunkSize.y));
-            var chunkTo = new IVector2((int)(chunkFrom.x + chunkSize.x - 1), (int)(chunkFrom.y + chunkSize.y - 1));
+            var chunkFrom = new Vector2Int((int)(Location.x * chunkSize.x), (int)(Location.y * chunkSize.y));
+            var chunkTo = new Vector2Int((int)(chunkFrom.x + chunkSize.x - 1), (int)(chunkFrom.y + chunkSize.y - 1));
             var map = DDA.GetTilesBetween(chunkFrom, chunkTo);
 
             foreach (var tile in map.tiles)

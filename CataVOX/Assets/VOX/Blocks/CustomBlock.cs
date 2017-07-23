@@ -11,7 +11,7 @@ namespace Assets.VOX.Blocks
     {
         protected GameObject _gameObject;
 
-        public IBlock Create(string type, IVector3 location, IChunk parent)
+        public IBlock Create(string type, Vector3Int location, IChunk parent)
         {
             return new CustomBlock()
             {
@@ -33,7 +33,7 @@ namespace Assets.VOX.Blocks
             _gameObject.SetActive(active);
         }
 
-        public virtual IVector3 Location { get; private set; }
+        public virtual Vector3Int Location { get; private set; }
         public virtual IChunk Parent { get; private set; }
 
         public virtual void Render(GameObject chunkObj, bool forceRedraw = false)

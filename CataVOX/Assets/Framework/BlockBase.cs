@@ -10,7 +10,7 @@ namespace Assets.Framework
     {
         protected GameObject _gameObject;
 
-        public IBlock Create(string type, IVector3 location, IChunk parent)
+        public IBlock Create(string type, Vector3Int location, IChunk parent)
         {
             var block = (BlockBase)Create();
 
@@ -35,7 +35,7 @@ namespace Assets.Framework
             _gameObject.SetActive(active);
         }
 
-        public virtual IVector3 Location { get; protected set; }
+        public virtual Vector3Int Location { get; protected set; }
         public virtual IChunk Parent { get; protected set; }
 
         public virtual void Render(GameObject chunkObj, bool forceRedraw = false)

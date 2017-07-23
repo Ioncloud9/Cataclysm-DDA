@@ -24,7 +24,7 @@ public class DDA
 	public static extern int getTurn();
 
 	[DllImport("Cataclysm", EntryPoint = "playerPos")]
-	public static extern IVector3 playerPos();
+	public static extern Vector3Int playerPos();
 
 	[DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")] // loads first save from the world
 	public static extern void loadGame(
@@ -53,5 +53,5 @@ public class DDA
 
     [DllImport("Cataclysm", EntryPoint = "getTilesBetween", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "Assets.DDAInterop.Marshalers.CMap_Marshaler")]
-    public static extern Map GetTilesBetween(IVector2 from, IVector2 to);
+    public static extern Map GetTilesBetween(Vector2Int from, Vector2Int to);
 }

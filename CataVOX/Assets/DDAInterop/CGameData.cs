@@ -7,7 +7,7 @@ namespace Assets.DDAInterop
 {
     public struct CGameData
     {
-        public IVector3 playerPosition;
+        public Vector3Int playerPosition;
         public CCalendar calendar;
         public CWeather weather;
         public CMap map;

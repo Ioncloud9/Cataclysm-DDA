@@ -24,14 +24,14 @@ namespace Assets.Scripts
         public Chunk Result { get; private set; }
         public Stopwatch Timing { get; private set; }
 
-        public static ChunkThread StartNew(IVector2 chunkLocation, VOX.Map map, IVector3 chunkSize)
+        public static ChunkThread StartNew(Vector2Int chunkLocation, VOX.Map map, Vector3Int chunkSize)
         {
             var thread = new ChunkThread();
             thread.Start(chunkLocation, map, chunkSize);
             return thread;
         }
 
-        public void Start(IVector2 chunkLocation, VOX.Map map, IVector3 chunkSize)
+        public void Start(Vector2Int chunkLocation, VOX.Map map, Vector3Int chunkSize)
         {
             if (IsRunning) return;
             lock (locker)
@@ -50,8 +50,8 @@ namespace Assets.Scripts
 
         private class ThreadStartArgs
         {
-            public IVector3 chunkSize;
-            public IVector2 location;
+            public Vector3Int chunkSize;
+            public Vector2Int location;
             public VOX.Map map;
         }
         private void Main(object args)

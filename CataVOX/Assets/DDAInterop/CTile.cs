@@ -9,6 +9,6 @@ namespace Assets.DDAInterop
     {
         public IntPtr /* char* */ ter;
         public IntPtr /* char* */ furn;
-        public IVector3 loc;
+        public Vector3Int loc;
     }
 }

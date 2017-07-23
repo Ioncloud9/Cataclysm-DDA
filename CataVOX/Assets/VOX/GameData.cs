@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [Serializable]
 public class GameData
 {
-    public IVector3 playerPosition;
+    public Vector3Int playerPosition;
     public Calendar calendar;
     public Weather weather;
     public Map map;
@@ -57,18 +57,18 @@ public struct Calendar
 
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct IVector3
+public struct Vector3Int
 {
 	public int x;
 	public int y;
 	public int z;
-	public IVector3(int x, int y, int z) 
+	public Vector3Int(int x, int y, int z) 
 	{
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
-	public static implicit operator Vector3(IVector3 v) {
+	public static implicit operator Vector3(Vector3Int v) {
 		return new Vector3 (v.x, v.y, v.z);
 	}
 
@@ -79,16 +79,16 @@ public struct IVector3
 
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
-public struct IVector2
+public struct Vector2Int
 {
 	public int x;
 	public int y;
-	public IVector2(int x, int y) 
+	public Vector2Int(int x, int y) 
 	{
 		this.x = x;
 		this.y = y;
 	}
-	public static implicit operator Vector2(IVector2 v) {
+	public static implicit operator Vector2(Vector2Int v) {
 		return new Vector2 (v.x, v.y);
 	}
 
@@ -101,10 +101,10 @@ public struct IVector2
 public class Tile
 {
     public string ter;
-    public IVector3 loc;
+    public Vector3Int loc;
     public string furn;
 
-    public Tile(string terrain, IVector3 loc, string furniture)
+    public Tile(string terrain, Vector3Int loc, string furniture)
     {
         this.ter = terrain;
         this.furn = furniture;

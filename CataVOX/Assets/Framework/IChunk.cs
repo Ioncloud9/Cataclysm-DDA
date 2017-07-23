@@ -10,10 +10,10 @@ namespace Assets.Framework
     public interface IChunk
     {
         string Name { get; }
-        Dictionary<IVector3, IBlock> Blocks { get; }
-        IVector2 Location { get; }
+        Dictionary<Vector3Int, IBlock> Blocks { get; }
+        Vector2Int Location { get; }
         IMap Parent { get; }
-        void Create(IVector3 chunkSize);
+        void Create(Vector3Int chunkSize);
         IEnumerator Render(GameObject mapObj, bool forceRedraw = false);
     }
 }
