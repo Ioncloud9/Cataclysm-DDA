@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 
-namespace File
+namespace VOX
 {
     public struct Voxel
     {

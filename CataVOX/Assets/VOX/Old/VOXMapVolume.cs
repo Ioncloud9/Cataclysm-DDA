@@ -17,17 +17,17 @@ public enum Neighbours: byte
 
 public class VOXMapVolume {
     public GameData gameData;
-    public Dictionary<string, File.Model> tilesCache;
+    public Dictionary<string, VOX.Model> tilesCache;
     public string tilesPath;
     public int tileSizeX, tileSizeY, tileSizeZ;
     public int sizeX, sizeY, sizeZ;
-    public Dictionary<File.Material, UnityEngine.Material> materials =
-        new Dictionary<File.Material, UnityEngine.Material>();
+    public Dictionary<VOX.Material, UnityEngine.Material> materials =
+        new Dictionary<VOX.Material, UnityEngine.Material>();
 
     public VOXMapVolume(GameData gameData, string tilesPath) {
         this.gameData = gameData;
         this.tilesPath = tilesPath;
-        tilesCache = new Dictionary<string, File.Model>();
+        tilesCache = new Dictionary<string, VOX.Model>();
         LoadTiles();
         sizeX = tileSizeX * gameData.map.width;
         sizeZ = tileSizeZ * gameData.map.height;
@@ -51,20 +51,20 @@ public class VOXMapVolume {
     }
 
     private void AddToTilesCache(string code) {
-        File.Model vox = new File.Model(Path.Combine(tilesPath, code + ".vox"));
+        VOX.Model vox = new VOX.Model(Path.Combine(tilesPath, code + ".vox"));
         if (tileSizeX == 0 && vox.sizeX != 0 && vox.sizeY != 0 && vox.sizeZ != 0) {
             tileSizeX = vox.sizeX;
             tileSizeY = vox.sizeY;
             tileSizeZ = vox.sizeZ;
         } else if (vox.sizeX == 0) {
-            vox = new File.Model(Path.Combine(tilesPath, "t_unknown.vox"));
+            vox = new VOX.Model(Path.Combine(tilesPath, "t_unknown.vox"));
             tilesCache.Add(code, vox);
         } else {
             tilesCache.Add(code, vox);
         }
     }
 
-    public Nullable<File.Material> VoxelAt(int x, int y, int z) {
+    public Nullable<VOX.Material> VoxelAt(int x, int y, int z) {
         if (x < 0 || y < 0 || z < 0 || x >= sizeX || y >= sizeY || z >= sizeZ) return null;
         int tileX = x / tileSizeX;
         int tileZ = z / tileSizeZ;
@@ -76,7 +76,7 @@ public class VOXMapVolume {
         if (index < 0 || index >= gameData.map.tiles.Length) return null;
 
         Tile tile = gameData.map.tiles[mapWidth * tileZ + tileX];
-        Nullable<File.Material> mat = null;
+        Nullable<VOX.Material> mat = null;
         if (tile.furn != null)
            mat = tilesCache[tile.furn].VoxelAt(voxX, voxY, voxZ);
         if (mat == null && tile.ter != null) {
@@ -136,8 +136,8 @@ public class VOXMapVolume {
         List<Vector3> vertices = new List<Vector3>();
         //List<Color> colors = new List<Color>();
         UnityEngine.Material uMat;
-        Dictionary<File.Material, List<int>> trianglesByMat =
-            new Dictionary<File.Material, List<int>>();
+        Dictionary<VOX.Material, List<int>> trianglesByMat =
+            new Dictionary<VOX.Material, List<int>>();
         List<Vector3> normals = new List<Vector3>();
         int vi = 0;
         int xStart = cx * tileSizeX;
@@ -149,9 +149,9 @@ public class VOXMapVolume {
             for (int y = 0; y < sizeY; y++)
                 for (int z = zStart; z < zEnd; z++)
         {
-            File.Material? matn = VoxelAt(x, y, z);
+            VOX.Material? matn = VoxelAt(x, y, z);
             if (matn == null) continue;
-            File.Material mat = matn.Value;
+            VOX.Material mat = matn.Value;
 
             if (!trianglesByMat.ContainsKey(mat))
                 trianglesByMat[mat] = new List<int>();
@@ -291,7 +291,7 @@ Out:
         mesh.subMeshCount = trianglesByMat.Count;
         int i = 0;
         List<UnityEngine.Material> uMaterials = new List<UnityEngine.Material>();
-        foreach (KeyValuePair<File.Material, List<int>> triangles in trianglesByMat)
+        foreach (KeyValuePair<VOX.Material, List<int>> triangles in trianglesByMat)
         {
             if (triangles.Value.Count > 0)
             {
