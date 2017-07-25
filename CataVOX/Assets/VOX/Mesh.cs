@@ -1,7 +1,11 @@
+using ProceduralToolkit;
+
 namespace VOX
 {
-    public class Mesh
+    public static class Mesh
     {
-
+        public static MeshDraft FromModel(VOX.Model model) {
+            return null;
+        }
     }
 }
