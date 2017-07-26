@@ -6,7 +6,7 @@ namespace VOX
 {
     public static class Texture
     {
-        public static Texture2D FromModel(VOX.Model model, int tileSizePx = 1)
+        public static Texture2D FromModel(VOX.Model model, int tileSizePx = 1, bool enableGrid = false)
         {
             Texture2D texture = new Texture2D(16, 16);
             texture.SetPixels(model.materials.Select(mat => mat.color).ToArray());
