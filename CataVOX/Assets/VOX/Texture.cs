@@ -12,6 +12,7 @@ namespace VOX
             texture.SetPixels(model.materials.Select(mat => mat.color).ToArray());
             TextureScale.Point(texture, tileSizePx * 16, tileSizePx * 16);
             texture.filterMode = FilterMode.Point;
+            texture.wrapMode = TextureWrapMode.Clamp;
             return texture;            
         }
     }

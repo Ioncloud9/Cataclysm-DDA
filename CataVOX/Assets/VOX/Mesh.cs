@@ -167,7 +167,12 @@ namespace VOX
                 int vi = mesh.vertices.Count;
                 bool order = true;
 
-                // TODO: add minX, minY
+                float x1 = maxFace[1];
+                float y1 = maxFace[0];
+
+                float x2 = maxFace[3] + 1;
+                float y2 = maxFace[2] + 1;
+
                 if (pos.normal.y == -1)
                 {
                     mesh.vertices.Add(new Vector3(maxFace[1], pos.pos + 1, maxFace[0]));
@@ -175,19 +180,16 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(maxFace[3] + 1, pos.pos + 1, maxFace[2] + 1));
                     mesh.vertices.Add(new Vector3(maxFace[1], pos.pos + 1, maxFace[2] + 1));
 
-                    float x1 = maxFace[1];
-                    float x2 = maxFace[3] + 1;
-                    float y1 = maxFace[0];
-                    float y2 = maxFace[2] + 1;
-                    x1 /= model.sizeX;
-                    x2 /= model.sizeX;
-                    y1 /= model.sizeY;
-                    y2 /= model.sizeY;
+                    x1 *= 1.0f / model.sizeX / 16.0f;
+                    y1 *= 1.0f / model.sizeZ / 16.0f;
 
-                    // mesh.uv.Add(new Vector2(x2, y1));
-                    // mesh.uv.Add(new Vector2(x1, y1));
-                    // mesh.uv.Add(new Vector2(x1, y2));
-                    // mesh.uv.Add(new Vector2(x2, y2));
+                    x2 *= 1.0f / model.sizeX / 16.0f;
+                    y2 *= 1.0f / model.sizeZ / 16.0f;
+
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));
                 }
                 else if (pos.normal.y == 1)
                 {
@@ -196,6 +198,17 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(maxFace[3] + 1, pos.pos, maxFace[2] + 1));
                     mesh.vertices.Add(new Vector3(maxFace[1], pos.pos, maxFace[2] + 1));
                     order = false;
+
+                    x1 *= 1.0f / model.sizeX / 16.0f;
+                    y1 *= 1.0f / model.sizeZ / 16.0f;
+
+                    x2 *= 1.0f / model.sizeX / 16.0f;
+                    y2 *= 1.0f / model.sizeZ / 16.0f;
+
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                    
                 }
                 else if (pos.normal.z == -1)
                 {
@@ -203,6 +216,17 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(maxFace[3] + 1, maxFace[0], pos.pos));
                     mesh.vertices.Add(new Vector3(maxFace[3] + 1, maxFace[2] + 1, pos.pos));
                     mesh.vertices.Add(new Vector3(maxFace[1], maxFace[2] + 1, pos.pos));
+
+                    x1 *= 1.0f / model.sizeX / 16.0f;
+                    y1 *= 1.0f / model.sizeY / 16.0f;
+
+                    x2 *= 1.0f / model.sizeX / 16.0f;
+                    y2 *= 1.0f / model.sizeY / 16.0f;
+
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                    
                 }
                 else if (pos.normal.z == 1)
                 {
@@ -211,6 +235,17 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(maxFace[3] + 1, maxFace[2] + 1, pos.pos + 1));
                     mesh.vertices.Add(new Vector3(maxFace[1], maxFace[2] + 1, pos.pos + 1));
                     order = false;
+
+                    x1 *= 1.0f / model.sizeX / 16.0f;
+                    y1 *= 1.0f / model.sizeY / 16.0f;
+
+                    x2 *= 1.0f / model.sizeX / 16.0f;
+                    y2 *= 1.0f / model.sizeY / 16.0f;
+
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                    
                 }
                 else if (pos.normal.x == -1)
                 {
@@ -219,6 +254,17 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(pos.pos, maxFace[2] + 1, maxFace[3] + 1));
                     mesh.vertices.Add(new Vector3(pos.pos, maxFace[2] + 1, maxFace[1]));
                     order = false;
+
+                    x1 *= 1.0f / model.sizeY / 16.0f;
+                    y1 *= 1.0f / model.sizeZ / 16.0f;
+
+                    x2 *= 1.0f / model.sizeY / 16.0f;
+                    y2 *= 1.0f / model.sizeZ / 16.0f;
+
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));
                 }
                 else if (pos.normal.x == 1)
                 {
@@ -226,20 +272,18 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(pos.pos + 1, maxFace[0], maxFace[3] + 1));
                     mesh.vertices.Add(new Vector3(pos.pos + 1, maxFace[2] + 1, maxFace[3] + 1));
                     mesh.vertices.Add(new Vector3(pos.pos + 1, maxFace[2] + 1, maxFace[1]));
+
+                    x1 *= 1.0f / model.sizeY / 16.0f;
+                    y1 *= 1.0f / model.sizeZ / 16.0f;
+
+                    x2 *= 1.0f / model.sizeY / 16.0f;
+                    y2 *= 1.0f / model.sizeZ / 16.0f;
+
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
+                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
+                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                      
                 }
-
-                // if (pos.normal.y != -1)
-                // {
-                //     mesh.uv.Add(new Vector2(1, 0));
-                //     mesh.uv.Add(new Vector2(0, 0));
-                //     mesh.uv.Add(new Vector2(0, 1));
-                //     mesh.uv.Add(new Vector2(1, 1));
-                // }
-
-                mesh.uv.Add(new Vector2(uvEnd.x, uvStart.y));
-                mesh.uv.Add(new Vector2(uvStart.x, uvStart.y));
-                mesh.uv.Add(new Vector2(uvStart.x, uvEnd.y));
-                mesh.uv.Add(new Vector2(uvEnd.x, uvEnd.y));
 
                 if (order)
                 {
