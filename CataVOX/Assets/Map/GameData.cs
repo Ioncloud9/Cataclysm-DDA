@@ -25,11 +25,12 @@ public class Map
         this.height = height;
         this.tiles = tiles;
     }
-	public Tile tileAt(int x, int y) {
-		if (x >=0 && y >= 0 && x < width && y < height)
-			return this.tiles [width * y + x];
-		return null;
-	}
+    public Tile tileAt(int x, int y)
+    {
+        if (x >= 0 && y >= 0 && x < width && y < height)
+            return this.tiles[width * y + x];
+        return null;
+    }
 }
 
 [Serializable]
@@ -37,7 +38,7 @@ public struct Weather
 {
     public WeatherType Type
     {
-        get { return (WeatherType) type; }
+        get { return (WeatherType)type; }
     }
     public int type;
     public double temprature;
@@ -59,20 +60,27 @@ public struct Calendar
 [StructLayout(LayoutKind.Sequential)]
 public struct Vector3Int
 {
-	public int x;
-	public int y;
-	public int z;
-	public Vector3Int(int x, int y, int z) 
-	{
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	public static implicit operator Vector3(Vector3Int v) {
-		return new Vector3 (v.x, v.y, v.z);
-	}
+    public int x;
+    public int y;
+    public int z;
+    public Vector3Int(int x, int y, int z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+    public static implicit operator Vector3(Vector3Int v)
+    {
+        return new Vector3(v.x, v.y, v.z);
+    }
 
-    public override string ToString() {
+    public static Vector3Int operator +(Vector3Int v1, Vector3Int v2)
+    {
+        return new Vector3Int(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+    }
+
+    public override string ToString()
+    {
         return string.Format("({0}, {1}, {2})", x, y, z);
     }
 }
@@ -81,18 +89,20 @@ public struct Vector3Int
 [StructLayout(LayoutKind.Sequential)]
 public struct Vector2Int
 {
-	public int x;
-	public int y;
-	public Vector2Int(int x, int y) 
-	{
-		this.x = x;
-		this.y = y;
-	}
-	public static implicit operator Vector2(Vector2Int v) {
-		return new Vector2 (v.x, v.y);
-	}
+    public int x;
+    public int y;
+    public Vector2Int(int x, int y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    public static implicit operator Vector2(Vector2Int v)
+    {
+        return new Vector2(v.x, v.y);
+    }
 
-    public override string ToString() {
+    public override string ToString()
+    {
         return string.Format("({0}, {1})", x, y);
     }
 }

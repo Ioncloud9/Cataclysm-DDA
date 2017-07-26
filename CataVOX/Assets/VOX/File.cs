@@ -128,6 +128,8 @@ namespace VOX
                                 materials = new Material[256];
                                 chunkSize = br.ReadInt32();
                                 childrenSize = br.ReadInt32();
+                                materials[0].color = Color.black;
+                                
                                 for (int i = 1; i < 256; i++)
                                 {
                                     materials[i].color.r = br.ReadByte() / 255.0f;
@@ -189,6 +191,10 @@ namespace VOX
             byte m = voxels[sizeX * sizeY * z + sizeX * y + x];
             if (m == 0) return null;
             return materials[m];
+        }
+
+        public Nullable<Material> VoxelAt(Vector3Int v) {
+            return VoxelAt(v.x, v.y, v.z);
         }
 
         public byte MaterialIDAt(int x, int y, int z) {
