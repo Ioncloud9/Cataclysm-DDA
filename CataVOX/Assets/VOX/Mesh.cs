@@ -109,7 +109,6 @@ namespace VOX
             int matIdX = plane.matID % 16;
             int matIdY = plane.matID / 16;
             Vector2 uvStart = new Vector2(matIdX / 16.0f, matIdY / 16.0f);
-            Vector2 uvEnd = uvStart + new Vector2(1 / 16.0f, 1 / 16.0f);
 
             int[,] h, w;
             h = new int[plane.sizeX, plane.sizeY];
@@ -256,10 +255,10 @@ namespace VOX
                     order = false;
 
                     x1 *= 1.0f / model.sizeY / 16.0f;
-                    y1 *= 1.0f / model.sizeZ / 16.0f;
+                    y1 *= 1.0f / model.sizeY / 16.0f;
 
                     x2 *= 1.0f / model.sizeY / 16.0f;
-                    y2 *= 1.0f / model.sizeZ / 16.0f;
+                    y2 *= 1.0f / model.sizeY / 16.0f;
 
                     mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
                     mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
@@ -274,10 +273,10 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(pos.pos + 1, maxFace[2] + 1, maxFace[1]));
 
                     x1 *= 1.0f / model.sizeY / 16.0f;
-                    y1 *= 1.0f / model.sizeZ / 16.0f;
+                    y1 *= 1.0f / model.sizeY / 16.0f;
 
                     x2 *= 1.0f / model.sizeY / 16.0f;
-                    y2 *= 1.0f / model.sizeZ / 16.0f;
+                    y2 *= 1.0f / model.sizeY / 16.0f;
 
                     mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
                     mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
