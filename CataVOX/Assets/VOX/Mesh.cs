@@ -106,6 +106,10 @@ namespace VOX
         private static MeshDraft SplitToRects(VOX.Model model, bool[,] matrix, ColorPlanePos pos, ColorPlane plane, int count)
         {
             MeshDraft mesh = new MeshDraft();
+            int matIdX = plane.matID % 16;
+            int matIdY = plane.matID / 16;
+            Vector2 uvStart = new Vector2(matIdX / 16.0f, matIdY / 16.0f);
+            Vector2 uvEnd = uvStart + new Vector2(1 / 16.0f, 1 / 16.0f);
 
             int[,] h, w;
             h = new int[plane.sizeX, plane.sizeY];
@@ -180,10 +184,10 @@ namespace VOX
                     y1 /= model.sizeY;
                     y2 /= model.sizeY;
 
-                    mesh.uv.Add(new Vector2(x2, y1));
-                    mesh.uv.Add(new Vector2(x1, y1));
-                    mesh.uv.Add(new Vector2(x1, y2));
-                    mesh.uv.Add(new Vector2(x2, y2));
+                    // mesh.uv.Add(new Vector2(x2, y1));
+                    // mesh.uv.Add(new Vector2(x1, y1));
+                    // mesh.uv.Add(new Vector2(x1, y2));
+                    // mesh.uv.Add(new Vector2(x2, y2));
                 }
                 else if (pos.normal.y == 1)
                 {
@@ -224,13 +228,18 @@ namespace VOX
                     mesh.vertices.Add(new Vector3(pos.pos + 1, maxFace[2] + 1, maxFace[1]));
                 }
 
-                if (pos.normal.y != -1)
-                {
-                    mesh.uv.Add(new Vector2(1, 0));
-                    mesh.uv.Add(new Vector2(0, 0));
-                    mesh.uv.Add(new Vector2(0, 1));
-                    mesh.uv.Add(new Vector2(1, 1));
-                }
+                // if (pos.normal.y != -1)
+                // {
+                //     mesh.uv.Add(new Vector2(1, 0));
+                //     mesh.uv.Add(new Vector2(0, 0));
+                //     mesh.uv.Add(new Vector2(0, 1));
+                //     mesh.uv.Add(new Vector2(1, 1));
+                // }
+
+                mesh.uv.Add(new Vector2(uvEnd.x, uvStart.y));
+                mesh.uv.Add(new Vector2(uvStart.x, uvStart.y));
+                mesh.uv.Add(new Vector2(uvStart.x, uvEnd.y));
+                mesh.uv.Add(new Vector2(uvEnd.x, uvEnd.y));
 
                 if (order)
                 {

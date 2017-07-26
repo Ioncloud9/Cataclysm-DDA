@@ -11,7 +11,7 @@ public class TestVOXMesh: MonoBehaviour
         model = new VOX.Model("Assets/Testing/table.vox");
         if (texture == null)
         {
-            texture = VOX.Texture.FromModel(model);
+            texture = VOX.Texture.FromModel(model, 16);
         }
         MeshDraft mesh = VOX.Mesh.FromModel(model);
         MeshRenderer mr = this.gameObject.AddComponent<MeshRenderer>();
