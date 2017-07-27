@@ -94,9 +94,12 @@ public class TestMap : MonoBehaviour
 
     public void ClearGameObject()
     {
-        foreach (Transform child in gameObject.transform)
+        while (gameObject.transform.childCount != 0) 
         {
-            DestroyImmediate(child.gameObject);
+            foreach (Transform child in gameObject.transform)
+            {
+                DestroyImmediate(child.gameObject);
+            }
         }
     }
 
@@ -113,6 +116,7 @@ public class TestMap : MonoBehaviour
                 chunk.start = new Vector2Int(startingPoint.x - chunkSize / 2 + chunkStart.x, startingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
                 chunk.end = new Vector2Int(startingPoint.x + chunkSize / 2 + chunkStart.x, startingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
                 chunk.transform.Translate(new Vector3(tileSize * chunkStart.x, 0, tileSize * chunkStart.y));
+                chunk.needRebuild = true;
                 obj.transform.parent = gameObject.transform;
             }
         }
