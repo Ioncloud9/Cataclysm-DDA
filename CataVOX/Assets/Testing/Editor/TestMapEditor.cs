@@ -45,6 +45,11 @@ public class TestMapEditor : Editor
         {
             obj.Rebuild();
         }
+
+        if (GUILayout.Button("Rebuild tiles cache"))
+        {
+            obj.RebuildCache();
+        }
         serializedObject.ApplyModifiedProperties();
     }
 }

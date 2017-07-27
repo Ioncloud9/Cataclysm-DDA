@@ -47,6 +47,12 @@ public class TestMap : MonoBehaviour
 
     public void Awake()
     {
+        RebuildCache();
+    }
+
+    public void RebuildCache()
+    {
+        tilesCache.Clear();
         var files = Directory.GetFiles(tilesFolder, "*.vox");
         Texture2D terrainTexture = null;
         foreach (var file in files)
@@ -106,6 +112,8 @@ public class TestMap : MonoBehaviour
     public void Rebuild()
     {
         ClearGameObject();
+        //gameObject.transform.position = new Vector3(startingPoint.x * tileSize, 0, startingPoint.y * tileSize);
+
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {
             for (int y = -chunkRadius; y <= chunkRadius; y++)

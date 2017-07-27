@@ -44,7 +44,7 @@ public class TestChunk : MonoBehaviour
     {
         mapData = DDA.GetTilesBetween(start, end);
         if (mapData == null) return;
-        var tilesCache = parentMap.tilesCache;
+        var tilesCache = parentMap.tilesCache; // need to do it here in Unity main thread
         float tileSize = parentMap.tileSize;
 
         new Thread(() =>
@@ -88,14 +88,14 @@ public class TestChunk : MonoBehaviour
     {
         UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
-            if (childName == null)
-            {
-                Debug.Log("Assign mesh for " + this.gameObject.name);
-            }
-            else
-            {
-                Debug.Log("Assign mesh for " + this.gameObject.name + " : " + childName);
-            }
+            // if (childName == null)
+            // {
+            //     Debug.Log("Assign mesh for " + this.gameObject.name);
+            // }
+            // else
+            // {
+            //     Debug.Log("Assign mesh for " + this.gameObject.name + " : " + childName);
+            // }
 
             GameObject obj = this.gameObject;
             if (childName != null)
