@@ -19,6 +19,11 @@ public class TestChunk : MonoBehaviour
         parentMap = gameObject.GetComponentInParent<TestMap>();
     }
 
+    public void Start()
+    {
+        parentMap = gameObject.GetComponentInParent<TestMap>();
+    }
+
     public void Update()
     {
         if (TestMap.gameStarted && needRebuild)
@@ -31,9 +36,7 @@ public class TestChunk : MonoBehaviour
 
     public void Rebuild()
     {
-        Debug.Log("rebuilding..");
         if (mapData == null) return;
-        Debug.Log("actually rebuilding..");
         DestroyImmediate(gameObject.GetComponent<MeshFilter>());
         DestroyImmediate(gameObject.GetComponent<MeshRenderer>());        
         foreach (Transform child in gameObject.transform)
@@ -53,7 +56,7 @@ public class TestChunk : MonoBehaviour
                 if (chunkMesh.vertexCount + tileMesh.vertexCount < 65000)
                 {
                     MeshDraft tileMeshCopy = tileMesh.Clone();
-                    tileMeshCopy.Move(new Vector3(tile.loc.x * tileSize, tile.loc.y * tileSize, tile.loc.z * tileSize));
+                    tileMeshCopy.Move(new Vector3((tile.loc.x - start.x) * tileSize, tile.loc.y * tileSize, (tile.loc.z - start.y) * tileSize));
                     chunkMesh.Add(tileMeshCopy);
                 }
                 else

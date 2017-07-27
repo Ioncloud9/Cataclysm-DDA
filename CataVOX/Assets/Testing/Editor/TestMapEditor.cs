@@ -7,7 +7,10 @@ public class TestMapEditor : Editor
     SerializedProperty tilesFolder;
     SerializedProperty enableGrid;
     SerializedProperty scale;
+    SerializedProperty chunkSize;
+    SerializedProperty chunkRadius;
     SerializedProperty terrainMaterial;
+    SerializedProperty startingPoint;    
 
     void OnEnable()
     {
@@ -15,6 +18,9 @@ public class TestMapEditor : Editor
         enableGrid = serializedObject.FindProperty("enableGrid");
         scale = serializedObject.FindProperty("scale");
         terrainMaterial = serializedObject.FindProperty("terrainMaterial");
+        chunkSize = serializedObject.FindProperty("chunkSize");
+        chunkRadius = serializedObject.FindProperty("chunkRadius");
+        startingPoint = serializedObject.FindProperty("startingPoint");
     }
 
     public override void OnInspectorGUI()
@@ -24,6 +30,9 @@ public class TestMapEditor : Editor
 
         EditorGUILayout.PropertyField(tilesFolder);
         EditorGUILayout.PropertyField(scale);
+        EditorGUILayout.PropertyField(chunkSize);
+        EditorGUILayout.PropertyField(chunkRadius);
+        EditorGUILayout.PropertyField(startingPoint, true);
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(enableGrid);
         if (EditorGUI.EndChangeCheck())
@@ -32,6 +41,10 @@ public class TestMapEditor : Editor
             obj.UpdateGrid();
         }
         EditorGUILayout.PropertyField(terrainMaterial);
+        if (GUILayout.Button("Rebuild"))
+        {
+            obj.Rebuild();
+        }
         serializedObject.ApplyModifiedProperties();
     }
 }
