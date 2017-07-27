@@ -6,13 +6,13 @@ public class TestVOXMeshEditor : Editor
 {
     SerializedProperty voxPath;
     SerializedProperty enableGrid;
-    SerializedProperty texture;
+//    SerializedProperty texture;
 
     void OnEnable()
     {
         voxPath = serializedObject.FindProperty("voxPath");
         enableGrid = serializedObject.FindProperty("enableGrid");
-        texture = serializedObject.FindProperty("texture");
+        //texture = serializedObject.FindProperty("texture");
     }
 
     public override void OnInspectorGUI()

@@ -112,7 +112,6 @@ public class TestMap : MonoBehaviour
     public void Rebuild()
     {
         ClearGameObject();
-        //gameObject.transform.position = new Vector3(startingPoint.x * tileSize, 0, startingPoint.y * tileSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {

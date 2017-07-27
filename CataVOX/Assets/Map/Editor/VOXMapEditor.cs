@@ -11,11 +11,11 @@ namespace Assets.VOX.Editor
     [CustomEditor(typeof(Map))]
     public class MapEditor : UnityEditor.Editor
     {
-        private Map _script;
+        //private Map _script;
 
         public void OnEnable()
         {
-            _script = (Map)target;
+          //  _script = (Map)target;
         }
 
     }
