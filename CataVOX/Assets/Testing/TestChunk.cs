@@ -33,6 +33,7 @@ public class TestChunk : MonoBehaviour
     {
         Debug.Log("rebuilding..");
         if (mapData == null) return;
+        Debug.Log("actually rebuilding..");
         DestroyImmediate(gameObject.GetComponent<MeshFilter>());
         DestroyImmediate(gameObject.GetComponent<MeshRenderer>());        
         foreach (Transform child in gameObject.transform)

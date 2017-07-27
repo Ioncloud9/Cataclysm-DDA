@@ -70,4 +70,22 @@ public class TestMap : MonoBehaviour
         terrainMaterial.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
         terrainMaterial.SetFloat("_SpecularHighlights", 0f);
     }
+
+    public void UpdateGrid()
+    {
+        if (enableGrid)
+        {
+            var hlines = Resources.Load("hlines_tr") as UnityEngine.Texture;
+            terrainMaterial.SetTexture("_DetailAlbedoMap", hlines);
+            terrainMaterial.SetTextureScale("_DetailAlbedoMap", new Vector2(16f, 16f));
+            terrainMaterial.EnableKeyword("_DETAIL_MULX2");
+            terrainMaterial.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f)); // To lower brightness of additional hlines texture
+        }
+        else
+        {
+            terrainMaterial.DisableKeyword("_DETAIL_MULX2");
+            terrainMaterial.SetTexture("_DetailAlbedoMap", null);
+            terrainMaterial.SetColor("_Color", Color.white);
+        }
+    }
 }
