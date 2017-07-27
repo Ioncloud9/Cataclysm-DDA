@@ -9,8 +9,9 @@ using ProceduralToolkit;
 public class TestMap : MonoBehaviour
 {
     public string tilesFolder = "Assets/tiles";
-    public Texture2D terrainTexture;
     public float scale = 0.25f;
+    public bool enableGrid = true;
+    public Material terrainMaterial;
 
     [HideInInspector]
     public static bool gameStarted { get; private set; }
@@ -44,6 +45,7 @@ public class TestMap : MonoBehaviour
     public void Awake()
     {
         var files = Directory.GetFiles(tilesFolder, "*.vox");
+        Texture2D terrainTexture = null;
         foreach (var file in files)
         {
             var name = Path.GetFileNameWithoutExtension(file).ToLower();
@@ -56,5 +58,16 @@ public class TestMap : MonoBehaviour
             }
             tilesCache.Add(name, mesh);
         }
+
+        terrainMaterial = new UnityEngine.Material(Shader.Find("Standard"));
+        terrainMaterial.SetTexture("_MainTex", terrainTexture);
+
+        var hlines = Resources.Load("hlines_tr") as UnityEngine.Texture;
+        terrainMaterial.SetTexture("_DetailAlbedoMap", hlines);
+        terrainMaterial.SetTextureScale("_DetailAlbedoMap", new Vector2(16f, 16f));
+        terrainMaterial.EnableKeyword("_DETAIL_MULX2");
+        terrainMaterial.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
+        terrainMaterial.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+        terrainMaterial.SetFloat("_SpecularHighlights", 0f);
     }
 }

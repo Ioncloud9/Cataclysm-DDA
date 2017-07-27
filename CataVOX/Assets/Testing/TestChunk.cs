@@ -80,8 +80,6 @@ public class TestChunk : MonoBehaviour
 
     private void AssignMeshToGameObject(GameObject obj, MeshDraft mesh)
     {
-        var texture = parentMap.terrainTexture;
-
         MeshRenderer mr;
         MeshFilter mf;
 
@@ -97,16 +95,7 @@ public class TestChunk : MonoBehaviour
             mf = obj.AddComponent<MeshFilter>();
         }
 
-        mr.sharedMaterial = new UnityEngine.Material(Shader.Find("Standard"));
-        mr.sharedMaterial.SetTexture("_MainTex", texture);
-
-        var hlines = Resources.Load("hlines_tr") as UnityEngine.Texture;
-        mr.sharedMaterial.SetTexture("_DetailAlbedoMap", hlines);
-        mr.sharedMaterial.SetTextureScale("_DetailAlbedoMap", new Vector2(16f, 16f));
-        mr.sharedMaterial.EnableKeyword("_DETAIL_MULX2");
-        mr.sharedMaterial.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
-        mr.sharedMaterial.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
-        mr.sharedMaterial.SetFloat("_SpecularHighlights", 0f);
+        mr.sharedMaterial = parentMap.terrainMaterial;
         mf.sharedMesh = mesh.ToMesh();
         mf.sharedMesh.RecalculateNormals(); // TODO: generate meshdraft already with calculated normals
     }
