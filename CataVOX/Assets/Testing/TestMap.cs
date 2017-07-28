@@ -16,6 +16,8 @@ public class TestMap : MonoBehaviour
     public Vector2Int startingPoint = new Vector2Int(0,0);
     public Material terrainMaterial;
 
+    public static string WorldName = "";
+
     [HideInInspector]
     public static bool gameStarted { get; private set; }
 
@@ -30,9 +32,11 @@ public class TestMap : MonoBehaviour
         DDA.init();
         var worlds = DDA.GetWorldNames();
         Debug.Log("Found " + worlds.Length + " worlds");
-        Debug.Log("Loading " + worlds[0]);
+        WorldName = worlds[0];
 
-        DDA.loadGame(worlds[0]);
+        Debug.Log("Loading " + WorldName);
+
+        DDA.loadGame(WorldName);
         Debug.Log("Game loaded");
         gameStarted = true;
     }
@@ -112,6 +116,13 @@ public class TestMap : MonoBehaviour
     public void Rebuild()
     {
         ClearGameObject();
+        if (tilesCache.Count == 0)
+        {
+            RebuildCache();
+        }
+
+        Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);
+        gameObject.transform.position = new Vector3(startingPoint.x * tileSize * scale, 0, startingPoint.y * tileSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {
@@ -120,11 +131,11 @@ public class TestMap : MonoBehaviour
                 var obj = new GameObject("chunk_" + (x + chunkRadius).ToString("D2") + "_" + (y + chunkRadius).ToString("D2"));
                 var chunk = obj.AddComponent<TestChunk>();
                 var chunkStart = new Vector2Int(x * chunkSize, y * chunkSize);
-                chunk.start = new Vector2Int(startingPoint.x - chunkSize / 2 + chunkStart.x, startingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
-                chunk.end = new Vector2Int(startingPoint.x + chunkSize / 2 + chunkStart.x, startingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
-                chunk.transform.Translate(new Vector3(tileSize * chunkStart.x, 0, tileSize * chunkStart.y));
-                chunk.needRebuild = true;
+                chunk.start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
+                chunk.end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
                 obj.transform.parent = gameObject.transform;
+                chunk.transform.localPosition = new Vector3(tileSize * chunkStart.x, 0, tileSize * chunkStart.y);
+                chunk.needRebuild = true;                
                 chunk.Rebuild();
             }
         }

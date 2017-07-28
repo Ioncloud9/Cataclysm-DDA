@@ -90,6 +90,10 @@ public class TestChunk : MonoBehaviour
     // runs in Unity main thread
     private void AssignMesh(MeshDraft mesh, string childName = null)
     {
+        var meshVar = mesh;
+        var childNameVar = childName;
+        var thisVar = this;
+
         UnityMainThreadDispatcher.Instance().Enqueue(() =>
         {
             // if (childName == null)
@@ -102,10 +106,10 @@ public class TestChunk : MonoBehaviour
             // }
 
             GameObject obj = this.gameObject;
-            if (childName != null)
+            if (childNameVar != null)
             {
-                obj = new GameObject(childName);
-                obj.transform.parent = this.gameObject.transform;
+                obj = new GameObject(childNameVar);
+                obj.transform.parent = thisVar.gameObject.transform;
             }
             MeshRenderer mr;
             MeshFilter mf;
@@ -123,7 +127,7 @@ public class TestChunk : MonoBehaviour
             }
 
             mr.sharedMaterial = GetComponentInParent<TestMap>().terrainMaterial;
-            mf.sharedMesh = mesh.ToMesh();
+            mf.sharedMesh = meshVar.ToMesh();
             mf.sharedMesh.RecalculateNormals(); // TODO: generate meshdraft already with calculated normals
         });
     }

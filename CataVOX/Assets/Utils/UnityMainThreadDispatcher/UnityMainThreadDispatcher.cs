@@ -85,9 +85,14 @@ public class UnityMainThreadDispatcher : MonoBehaviour {
 		}
 	}
 
-	void OnDestroy() {
-			_instance = null;
+	void Start() {
+		if (_instance == null) {
+			_instance = this;
+			//DontDestroyOnLoad(this.gameObject);
+		}
 	}
 
-
+	void OnDestroy() {
+		_instance = null;
+	}
 }

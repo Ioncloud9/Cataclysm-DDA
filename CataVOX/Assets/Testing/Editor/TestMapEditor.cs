@@ -28,6 +28,7 @@ public class TestMapEditor : Editor
         var obj = (TestMap)target;
         serializedObject.Update();
 
+        EditorGUILayout.LabelField("Loaded world: " + TestMap.WorldName);
         EditorGUILayout.PropertyField(tilesFolder);
         EditorGUILayout.PropertyField(scale);
         EditorGUILayout.PropertyField(chunkSize);
@@ -46,10 +47,6 @@ public class TestMapEditor : Editor
             obj.Rebuild();
         }
 
-        if (GUILayout.Button("Rebuild tiles cache"))
-        {
-            obj.RebuildCache();
-        }
         serializedObject.ApplyModifiedProperties();
     }
 }
