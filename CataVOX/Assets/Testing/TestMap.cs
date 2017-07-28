@@ -143,12 +143,13 @@ public class TestMap : MonoBehaviour
         {
             for (int y = -chunkRadius; y <= chunkRadius; y++)
             {
-                var obj = new GameObject("chunk_" + (x + chunkRadius).ToString("D2") + "_" + (y + chunkRadius).ToString("D2"));
+                var obj = new GameObject();
                 var chunk = obj.AddComponent<TestChunk>();
                 var chunkStart = new Vector2Int(x * chunkSize, y * chunkSize);
                 chunk.start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
                 chunk.end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
                 obj.transform.parent = gameObject.transform;
+                obj.name = "chunk_" + chunk.start.x.ToString("D2") + "_" + chunk.start.y.ToString("D2");
                 chunk.transform.localPosition = new Vector3(chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 0, chunkStart.y * tileSize + truncStartingPoint.y);
                 chunk.needRebuild = true;                
                 chunk.Rebuild();
