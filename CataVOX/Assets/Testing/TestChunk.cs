@@ -11,19 +11,18 @@ public class TestChunk : MonoBehaviour
     public Vector2Int end = new Vector2Int(10, 10);
     
     public bool needRebuild = true;
-    private TestMap parentMap;
 
     private Map mapData = null;
+    private Thread thread = null;
 
-    public void Awake()
-    {
-        parentMap = gameObject.GetComponentInParent<TestMap>();
-    }
 
-    public void Start()
+    public void Update()
     {
-        parentMap = gameObject.GetComponentInParent<TestMap>();
-        if (needRebuild) Rebuild();
+        if (needRebuild)
+        {
+            Rebuild();
+            needRebuild = false;
+        }
     }
 
     public void ClearGameObject()
@@ -42,12 +41,16 @@ public class TestChunk : MonoBehaviour
 
     public void Rebuild()
     {
-        mapData = DDA.GetTilesBetween(start, end);
+        var parentMap = gameObject.GetComponentInParent<TestMap>();
+        mapData = DDA.GetTilesBetween(start, end);        
+
         if (mapData == null) return;
         var tilesCache = parentMap.tilesCache; // need to do it here in Unity main thread
         float tileSize = parentMap.tileSize;
 
-        new Thread(() =>
+        if (thread != null && thread.IsAlive) return;
+
+        thread = new Thread(() =>
         {
             MeshDraft chunkMesh = new MeshDraft();
             int gameObjectCount = 0;
@@ -80,7 +83,8 @@ public class TestChunk : MonoBehaviour
             {
                 AssignMesh(chunkMesh, "subchunk" + gameObjectCount.ToString("D2"));
             }
-        }).Start();
+        });
+        thread.Start();
     }
 
     // runs in Unity main thread
@@ -118,7 +122,7 @@ public class TestChunk : MonoBehaviour
                 mf = obj.AddComponent<MeshFilter>();
             }
 
-            mr.sharedMaterial = parentMap.terrainMaterial;
+            mr.sharedMaterial = GetComponentInParent<TestMap>().terrainMaterial;
             mf.sharedMesh = mesh.ToMesh();
             mf.sharedMesh.RecalculateNormals(); // TODO: generate meshdraft already with calculated normals
         });

@@ -125,6 +125,7 @@ public class TestMap : MonoBehaviour
                 chunk.transform.Translate(new Vector3(tileSize * chunkStart.x, 0, tileSize * chunkStart.y));
                 chunk.needRebuild = true;
                 obj.transform.parent = gameObject.transform;
+                chunk.Rebuild();
             }
         }
     }
