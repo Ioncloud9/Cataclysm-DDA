@@ -137,7 +137,7 @@ public class TestMap : MonoBehaviour
         if (tilesCache.Count == 0) RebuildCache();
 
         Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);
-        gameObject.transform.position = new Vector3(startingPoint.x * tileSize * scale, 0, startingPoint.y * tileSize);
+        //gameObject.transform.position = new Vector3((truncStartingPoint.x * tileSize - chunkSize) * scale, 0, truncStartingPoint.y * tileSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {
@@ -149,7 +149,7 @@ public class TestMap : MonoBehaviour
                 chunk.start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
                 chunk.end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
                 obj.transform.parent = gameObject.transform;
-                chunk.transform.localPosition = new Vector3(tileSize * chunkStart.x, 0, tileSize * chunkStart.y);
+                chunk.transform.localPosition = new Vector3(chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 0, chunkStart.y * tileSize + truncStartingPoint.y);
                 chunk.needRebuild = true;                
                 chunk.Rebuild();
             }

@@ -18,9 +18,9 @@ namespace VOX
             var planes = new Dictionary<ColorPlanePos, ColorPlane>();
             ColorPlane plane;
             int xStart = withoutEdge ? 1 : 0;
-            int xEnd = withoutEdge ? model.sizeX - 1 : model.sizeX;
+            //int xEnd = withoutEdge ? model.sizeX - 1 : model.sizeX;
             int zStart = withoutEdge ? 1 : 0;
-            int zEnd = withoutEdge ? model.sizeZ - 1 : model.sizeZ;
+            //int zEnd = withoutEdge ? model.sizeZ - 1 : model.sizeZ;
             
             for (int x = xStart; x < model.sizeX; x++)
                 for (int y = 0; y < model.sizeY; y++)
