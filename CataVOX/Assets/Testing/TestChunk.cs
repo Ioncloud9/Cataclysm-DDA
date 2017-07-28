@@ -116,15 +116,9 @@ public class TestChunk : MonoBehaviour
 
             mr = obj.GetComponent<MeshRenderer>();
             mf = obj.GetComponent<MeshFilter>();
-            if (mr == null)
-            {
-                mr = obj.AddComponent<MeshRenderer>();
-            }
-
-            if (mf == null)
-            {
-                mf = obj.AddComponent<MeshFilter>();
-            }
+            
+            if (mr == null) mr = obj.AddComponent<MeshRenderer>();
+            if (mf == null) mf = obj.AddComponent<MeshFilter>();
 
             mr.sharedMaterial = GetComponentInParent<TestMap>().terrainMaterial;
             mf.sharedMesh = meshVar.ToMesh();

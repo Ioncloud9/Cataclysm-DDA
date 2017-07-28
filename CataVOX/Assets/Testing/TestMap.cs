@@ -5,12 +5,42 @@ using System.IO;
 using System.Linq;
 using ProceduralToolkit;
 
+public static class TestGame
+{
+    public static bool Started = false;
+    public static string WorldName = "";
+
+    [MenuItem("DDA/Start")]
+    public static void StartDdaGame()
+    {
+        DDA.init();
+        var worlds = DDA.GetWorldNames();
+        Debug.Log("Found " + worlds.Length + " worlds");
+        WorldName = worlds[0];
+
+        Debug.Log("Loading " + WorldName);
+
+        DDA.loadGame(WorldName);
+        Debug.Log("Game loaded");
+        Started = true;
+    }
+
+    [MenuItem("DDA/Stop")]
+    public static void StopDdaGame()
+    {
+        Started = false;
+        DDA.deinit();
+        Debug.Log("Game unloaded");
+    }
+}
+
 [ExecuteInEditMode]
 public class TestMap : MonoBehaviour
 {
     public string tilesFolder = "Assets/tiles";
     public float scale = 0.25f;
     public bool enableGrid = true;
+    public bool removeEdges = false;
     public int chunkSize = 20;
     public int chunkRadius = 2;
     public Vector2Int startingPoint = new Vector2Int(0,0);
@@ -26,29 +56,6 @@ public class TestMap : MonoBehaviour
     [HideInInspector]
     public float tileSize = 1.0f;
 
-    [MenuItem("DDA/Start")]
-    static void StartDdaGame()
-    {
-        DDA.init();
-        var worlds = DDA.GetWorldNames();
-        Debug.Log("Found " + worlds.Length + " worlds");
-        WorldName = worlds[0];
-
-        Debug.Log("Loading " + WorldName);
-
-        DDA.loadGame(WorldName);
-        Debug.Log("Game loaded");
-        gameStarted = true;
-    }
-
-    [MenuItem("DDA/Stop")]
-    static void StopDdaGame()
-    {
-        gameStarted = false;
-        DDA.deinit();
-        Debug.Log("Game unloaded");
-    }
-
     public void Awake()
     {
         RebuildCache();
@@ -63,7 +70,7 @@ public class TestMap : MonoBehaviour
         {
             var name = Path.GetFileNameWithoutExtension(file).ToLower();
             var model = new VOX.Model(file);
-            var mesh = VOX.Mesh.FromModel(model, scale);
+            var mesh = VOX.Mesh.FromModel(model, scale, removeEdges);
             if (terrainTexture == null)
             {
                 tileSize = model.sizeX * scale;
@@ -102,7 +109,7 @@ public class TestMap : MonoBehaviour
         }
     }
 
-    public void ClearGameObject()
+    private void ClearGameObject()
     {
         while (gameObject.transform.childCount != 0) 
         {
@@ -113,13 +120,21 @@ public class TestMap : MonoBehaviour
         }
     }
 
+    private void ReattachMainDispatch()
+    {
+        var dispatcher = GameObject.Find("UnityMainThreadDispatcher");
+        DestroyImmediate(dispatcher.GetComponent<UnityMainThreadDispatcher>());
+        dispatcher.AddComponent<UnityMainThreadDispatcher>();
+    }
+
     public void Rebuild()
     {
+        //if (TestGame.Started == false) return;
+
+        ReattachMainDispatch();
         ClearGameObject();
-        if (tilesCache.Count == 0)
-        {
-            RebuildCache();
-        }
+
+        if (tilesCache.Count == 0) RebuildCache();
 
         Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);
         gameObject.transform.position = new Vector3(startingPoint.x * tileSize * scale, 0, startingPoint.y * tileSize);

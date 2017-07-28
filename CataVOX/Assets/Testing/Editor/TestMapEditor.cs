@@ -6,6 +6,7 @@ public class TestMapEditor : Editor
 {
     SerializedProperty tilesFolder;
     SerializedProperty enableGrid;
+    SerializedProperty removeEdges;
     SerializedProperty scale;
     SerializedProperty chunkSize;
     SerializedProperty chunkRadius;
@@ -16,6 +17,7 @@ public class TestMapEditor : Editor
     {
         tilesFolder = serializedObject.FindProperty("tilesFolder");
         enableGrid = serializedObject.FindProperty("enableGrid");
+        removeEdges = serializedObject.FindProperty("removeEdges");
         scale = serializedObject.FindProperty("scale");
         terrainMaterial = serializedObject.FindProperty("terrainMaterial");
         chunkSize = serializedObject.FindProperty("chunkSize");
@@ -28,7 +30,7 @@ public class TestMapEditor : Editor
         var obj = (TestMap)target;
         serializedObject.Update();
 
-        EditorGUILayout.LabelField("Loaded world: " + TestMap.WorldName);
+        EditorGUILayout.LabelField("Loaded world: " + TestGame.WorldName);
         EditorGUILayout.PropertyField(tilesFolder);
         EditorGUILayout.PropertyField(scale);
         EditorGUILayout.PropertyField(chunkSize);
@@ -41,11 +43,17 @@ public class TestMapEditor : Editor
             obj.enableGrid = enableGrid.boolValue;
             obj.UpdateGrid();
         }
-        EditorGUILayout.PropertyField(terrainMaterial);
-        if (GUILayout.Button("Rebuild"))
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(removeEdges);
+        if (EditorGUI.EndChangeCheck())
         {
-            obj.Rebuild();
-        }
+            obj.removeEdges = removeEdges.boolValue;
+            obj.RebuildCache();
+        }        
+        EditorGUILayout.PropertyField(terrainMaterial);
+        
+        if (GUILayout.Button("Rebuild")) obj.Rebuild();
+        //if (GUILayout.Button("Rebuild Cache")) obj.RebuildCache();
 
         serializedObject.ApplyModifiedProperties();
     }

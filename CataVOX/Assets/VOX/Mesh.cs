@@ -7,19 +7,24 @@ namespace VOX
 {
     public static class Mesh
     {
-        public static MeshDraft FromModel(VOX.Model model, float scale = 1.0f)
+        public static MeshDraft FromModel(VOX.Model model, float scale = 1.0f, bool withoutEdge = false)
         {
-            var planes = CreateColorPlanes(model);
+            var planes = CreateColorPlanes(model, withoutEdge);
             return CreateMesh(model, planes, scale);
         }
 
-        private static Dictionary<ColorPlanePos, ColorPlane> CreateColorPlanes(VOX.Model model)
+        private static Dictionary<ColorPlanePos, ColorPlane> CreateColorPlanes(VOX.Model model, bool withoutEdge)
         {
             var planes = new Dictionary<ColorPlanePos, ColorPlane>();
             ColorPlane plane;
-            for (int x = 0; x < model.sizeX; x++)
+            int xStart = withoutEdge ? 1 : 0;
+            int xEnd = withoutEdge ? model.sizeX - 1 : model.sizeX;
+            int zStart = withoutEdge ? 1 : 0;
+            int zEnd = withoutEdge ? model.sizeZ - 1 : model.sizeZ;
+            
+            for (int x = xStart; x < model.sizeX; x++)
                 for (int y = 0; y < model.sizeY; y++)
-                    for (int z = 0; z < model.sizeZ; z++)
+                    for (int z = zStart; z < model.sizeZ; z++)
                     {
                         if (model.VoxelAt(x, y, z) == null) continue;
                         byte i = model.MaterialIDAt(x, y, z);
