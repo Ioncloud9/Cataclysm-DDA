@@ -53,7 +53,8 @@ public class TestMapEditor : Editor
         EditorGUILayout.PropertyField(terrainMaterial);
         
         if (GUILayout.Button("Rebuild")) obj.Rebuild();
-        //if (GUILayout.Button("Rebuild Cache")) obj.RebuildCache();
+        if (GUILayout.Button("Rebuild All")) obj.RebuildAll();
+        if (GUILayout.Button("Remove old chunks")) obj.RemoveOldChunks();
 
         serializedObject.ApplyModifiedProperties();
     }

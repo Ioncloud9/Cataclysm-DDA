@@ -120,6 +120,28 @@ public class TestMap : MonoBehaviour
         }
     }
 
+    public void RemoveOldChunks()
+    {
+        foreach (Transform child in gameObject.transform)
+        {
+            var chunk = child.gameObject.GetComponent<TestChunk>();
+
+            Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);            
+            Vector2Int chunkStart = new Vector2Int(truncStartingPoint.x - chunkSize / 2 - chunkRadius * chunkSize, truncStartingPoint.y - chunkSize / 2 - 1 - chunkRadius * chunkSize);
+            Vector2Int chunkEnd = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkRadius * chunkSize, truncStartingPoint.y + chunkSize / 2 - 1 + chunkRadius * chunkSize);            
+            
+            if (chunk.start.x < chunkStart.x || chunk.start.y < chunkStart.y ||
+                chunk.end.x > chunkEnd.x || chunk.end.y > chunkEnd.y)
+            {   
+                // for some reason some children do not destroys immediately, so remove them later
+                UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                {             
+                    DestroyImmediate(child.gameObject);
+                });
+            }    
+        }
+    }
+
     private void ReattachMainDispatch()
     {
         var dispatcher = GameObject.Find("UnityMainThreadDispatcher");
@@ -127,12 +149,18 @@ public class TestMap : MonoBehaviour
         dispatcher.AddComponent<UnityMainThreadDispatcher>();
     }
 
+    public void RebuildAll()
+    {
+        ClearGameObject();
+        Rebuild();
+    }
+
     public void Rebuild()
     {
         //if (TestGame.Started == false) return;
 
         ReattachMainDispatch();
-        ClearGameObject();
+        RemoveOldChunks();
 
         if (tilesCache.Count == 0) RebuildCache();
 
