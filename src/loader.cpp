@@ -3,6 +3,9 @@
 #include "path_info.h"
 #include "mapsharing.h"
 #include "mapdata.h"
+#include "mapbuffer.h"
+#include "overmap.h"
+#include "submap.h"
 #include "debug.h"
 #include "options.h"
 #include "translations.h"
@@ -191,6 +194,7 @@ extern "C" {
         //auto save = world->world_saves[saveGame];
         g->load(world->world_name);
     }
+
     void loadSaveGame(char* worldName, char* saveName) {
         WORLDPTR world = world_generator->get_world(worldName);
         world_generator->set_active_world(world);
@@ -223,26 +227,61 @@ extern "C" {
             bottomLeft = to;
             topRight = from;
         }
+
         int width = topRight.x - bottomLeft.x + 1;
         int height = topRight.y - bottomLeft.y + 1;
         map->width = width;
         map->height = height;
         map->tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
 
-        int i = 0;
-        for (int dx = bottomLeft.x; dx <= topRight.x; dx++) {
-            for (int dy = bottomLeft.y; dy <= topRight.y; dy++) {
-                const tripoint p = tripoint(dx, dy, 0);
-                ter_str_id ter = g->m.ter(p)->id;
-                map->tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
-                strcpy(map->tiles[i].ter, ter.c_str());
-                furn_str_id furn = g->m.furn(p)->id;
-                map->tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
-                strcpy(map->tiles[i].furn, furn.c_str());
-                map->tiles[i].loc.x = p.x;
-                map->tiles[i].loc.y = p.z;
-                map->tiles[i].loc.z = p.y; // swap z and y for unity coordinate system
-                i++;
+        int z = 0;
+        submap *sm;
+        IVector2 submapFrom = { bottomLeft.x / SEEX, bottomLeft.y / SEEY };
+        IVector2 submapTo = { topRight.x / SEEX, topRight.y / SEEY };
+
+        IVector2 submapFromS = { bottomLeft.x % SEEX, bottomLeft.y % SEEY };
+        IVector2 submapToS = { topRight.x % SEEX, topRight.y % SEEY };
+
+        for (int x = submapFrom.x; x <= submapTo.x; x++) {
+            for (int y = submapFrom.y; y <= submapTo.y; y++) {
+                sm = MAPBUFFER.lookup_submap(x, y, z);
+                if (sm == nullptr) {
+                    sm = g->m.generateSubmap(x, y, z);
+                }
+                IVector2 sfrom = { 0,0 };
+                IVector2 sto = { SEEX - 1, SEEY - 1};
+              
+                if (x == submapFrom.x) {
+                    sfrom.x = submapFromS.x;
+                }
+
+                if (y == submapFrom.y) {
+                    sfrom.y = submapFromS.y;
+                }
+
+                if (x == submapTo.x) {
+                    sto.x = submapToS.x;
+                }
+
+                if (y == submapTo.y) {
+                    sto.y = submapToS.y;
+                }
+
+                for (int sx = sfrom.x; sx <= sto.x; sx++) {
+                    for (int sy = sfrom.y; sy <= sto.y; sy++) {
+                        int i = (y * SEEY + sy - from.y) * width + x * SEEX + sx - from.x;
+                        ter_str_id ter = sm->get_ter(sx, sy)->id;
+                        furn_str_id furn = sm->get_furn(sx, sy)->id;
+                        map->tiles[i].ter = (char*)::CoTaskMemAlloc(ter.str().length() + 1);
+                        strcpy(map->tiles[i].ter, ter.c_str());
+                        map->tiles[i].furn = (char*)::CoTaskMemAlloc(furn.str().length() + 1);
+                        strcpy(map->tiles[i].furn, furn.c_str());
+
+                        map->tiles[i].loc.x = x * SEEX + sx;
+                        map->tiles[i].loc.y = z;
+                        map->tiles[i].loc.z = y * SEEY + sy; // swap z and y for unity coordinate system
+                    }
+                }
             }
         }
 
@@ -319,6 +358,15 @@ extern "C" {
         res.x = g->u.posx();
         res.y = g->u.posz();
         res.z = g->u.posy();
+        return res;
+    }
+
+    IVector3 playerSubmap(void) {
+        IVector3 res;
+        tripoint sub = g->m.get_abs_sub();
+        res.x = sub.x;
+        res.y = sub.y;
+        res.z = sub.z;
         return res;
     }
 
