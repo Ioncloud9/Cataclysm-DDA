@@ -215,6 +215,57 @@ extern "C" {
         }
     }
 
+    Entity* getEntities(IVector2 from, IVector2 to) {
+        IVector2 bottomLeft;
+        IVector2 topRight;
+        if (from.x < to.x && from.y < to.y) {
+            bottomLeft = from;
+            topRight = to;
+        }
+        else {
+            bottomLeft = to;
+            topRight = from;
+        }
+
+        int i = 0;
+        std::vector<Entity> ent;
+        Entity* entities;
+        for (int dx = bottomLeft.x; dx <= topRight.x; dx++) {
+            for (int dy = bottomLeft.y; dy <= topRight.y; dy++) {
+                tripoint p = tripoint(dx, dy, 0);
+                Creature* crit = g->critter_at(p, true);
+                if (crit->is_player) continue;
+                sm_to_om(p);
+                Entity e;
+                e.hp = crit->get_hp;
+                e.maxHp = crit->get_hp_max;
+                e.isMonster = crit->is_monster;
+                e.isNpc = crit->is_npc;
+                Creature::Attitude attitude = crit->attitude_to;
+                std::string strAtt = "";
+                if (attitude == Creature::Attitude::A_FRIENDLY) {
+                    e.attitude = "friendly";
+                }
+                else if (attitude == Creature::Attitude::A_HOSTILE) {
+                    e.attitude = "hostile";
+                }
+                else if (attitude == Creature::Attitude::A_NEUTRAL) {
+                    e.attitude = "neutral";
+                }
+                else {
+                    e.attitude = "any";
+                }
+                ent.push_back(e);
+            }
+        }
+        entities = (Entity*)::CoTaskMemAlloc(ent.size() * sizeof(Entity));
+        for (i = 0; i <= ent.size(); i++)
+        {
+            entities[i] = ent.at(i);
+        }
+        return entities;
+    }
+
     Map* getTilesBetween(IVector2 from, IVector2 to) {
         Map* map = (Map*)::CoTaskMemAlloc(sizeof(Map));
         IVector2 bottomLeft;
