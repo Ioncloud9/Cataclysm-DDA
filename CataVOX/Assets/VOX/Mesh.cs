@@ -17,14 +17,10 @@ namespace VOX
         {
             var planes = new Dictionary<ColorPlanePos, ColorPlane>();
             ColorPlane plane;
-            int xStart = withoutEdge ? 1 : 0;
-            int xEnd = withoutEdge ? model.sizeX - 1 : model.sizeX;
-            int zStart = withoutEdge ? 1 : 0;
-            int zEnd = withoutEdge ? model.sizeZ - 1 : model.sizeZ;
             
-            for (int x = xStart; x < xEnd; x++)
+            for (int x = 0; x < model.sizeX; x++)
                 for (int y = 0; y < model.sizeY; y++)
-                    for (int z = zStart; z < zEnd; z++)
+                    for (int z = 0; z < model.sizeZ; z++)
                     {
                         if (model.VoxelAt(x, y, z) == null) continue;
                         byte i = model.MaterialIDAt(x, y, z);
@@ -39,26 +35,33 @@ namespace VOX
                         if (model.VoxelAt(x, y - 1, z) == null)
                             plane.AddDot(x, z);
 
-                        // front
-                        plane = GetColorPlaneFor(planes, z, i, new Vector3(0, 0, -1f));
-                        if (model.VoxelAt(x, y, z - 1) == null)
-                            plane.AddDot(x, y);
+                        if (z > 0 || !withoutEdge) {
+                            // front
+                            plane = GetColorPlaneFor(planes, z, i, new Vector3(0, 0, -1f));
+                            if (model.VoxelAt(x, y, z - 1) == null)
+                                plane.AddDot(x, y);
+                        }
 
-                        // back
-                        plane = GetColorPlaneFor(planes, z, i, new Vector3(0, 0, 1f));
-                        if (model.VoxelAt(x, y, z + 1) == null)
-                            plane.AddDot(x, y);
+                        if (z < model.sizeZ - 1 || !withoutEdge) {
+                            // back
+                            plane = GetColorPlaneFor(planes, z, i, new Vector3(0, 0, 1f));
+                            if (model.VoxelAt(x, y, z + 1) == null)
+                                plane.AddDot(x, y);
+                        }
 
-                        // left
-                        plane = GetColorPlaneFor(planes, x, i, new Vector3(-1f, 0, 0));
-                        if (model.VoxelAt(x - 1, y, z) == null)
-                            plane.AddDot(z, y);
+                        if (x > 0 || !withoutEdge) {
+                            // left
+                            plane = GetColorPlaneFor(planes, x, i, new Vector3(-1f, 0, 0));
+                            if (model.VoxelAt(x - 1, y, z) == null)
+                                plane.AddDot(z, y);
+                        }
 
-                        // right
-                        plane = GetColorPlaneFor(planes, x, i, new Vector3(1f, 0, 0));
-                        if (model.VoxelAt(x + 1, y, z) == null)
-                            plane.AddDot(z, y);
-
+                        if (x < model.sizeX - 1 || !withoutEdge) {
+                            // right
+                            plane = GetColorPlaneFor(planes, x, i, new Vector3(1f, 0, 0));
+                            if (model.VoxelAt(x + 1, y, z) == null)
+                                plane.AddDot(z, y);
+                        }
                     }
             return planes;
         }
