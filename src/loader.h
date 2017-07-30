@@ -6,6 +6,15 @@
 #endif
 #include "game.h"
 #include "calendar.h"
+#include "coordinate_conversions.h"
+
+struct Entity {
+    int hp;
+    int maxHp;
+    bool isMonster;
+    bool isNpc;
+    std::string attitude;
+};
 
 struct Weather {
     weather_type type;
