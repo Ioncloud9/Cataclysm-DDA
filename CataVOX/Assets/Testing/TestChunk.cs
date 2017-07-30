@@ -54,7 +54,7 @@ public class TestChunk : MonoBehaviour
         {
             MeshDraft chunkMesh = new MeshDraft();
             int gameObjectCount = 0;
-            float size = tileSize / 2.0f;
+            float size = tileSize; // / 2.0f;
             foreach (var tile in mapData.tiles)
             {
                 MeshDraft tileMesh = parentMap.GetCachedTerMesh(tile.ter); // probably will not work in non main thread
