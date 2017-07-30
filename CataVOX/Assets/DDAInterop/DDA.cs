@@ -26,6 +26,9 @@ public class DDA
 	[DllImport("Cataclysm", EntryPoint = "playerPos")]
 	public static extern Vector3Int playerPos();
 
+	[DllImport("Cataclysm", EntryPoint = "playerSubmap")]
+	public static extern Vector3Int playerSubmap();
+
 	[DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadGame")] // loads first save from the world
 	public static extern void loadGame(
 		[MarshalAs(UnmanagedType.LPStr)] string worldName

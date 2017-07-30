@@ -9,6 +9,7 @@ public static class TestGame
 {
     public static bool Started = false;
     public static string WorldName = "";
+    public static Vector3Int SubmapCoord = new Vector3Int(0, 0, 0);
 
     [MenuItem("DDA/Start")]
     public static void StartDdaGame()
@@ -21,6 +22,7 @@ public static class TestGame
         Debug.Log("Loading " + WorldName);
 
         DDA.loadGame(WorldName);
+        SubmapCoord = DDA.playerSubmap();
         Debug.Log("Game loaded");
         Started = true;
     }
@@ -171,16 +173,23 @@ public class TestMap : MonoBehaviour
         {
             for (int y = -chunkRadius; y <= chunkRadius; y++)
             {
-                var obj = new GameObject();
-                var chunk = obj.AddComponent<TestChunk>();
                 var chunkStart = new Vector2Int(x * chunkSize, y * chunkSize);
-                chunk.start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
-                chunk.end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
-                obj.transform.parent = gameObject.transform;
-                obj.name = "chunk_" + chunk.start.x.ToString("D2") + "_" + chunk.start.y.ToString("D2");
-                chunk.transform.localPosition = new Vector3(chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 0, chunkStart.y * tileSize + truncStartingPoint.y);
-                chunk.needRebuild = true;                
-                chunk.Rebuild();
+                Vector2Int start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
+                Vector2Int end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
+                string chunkName = "chunk_" + start.x.ToString("D2") + "_" + start.y.ToString("D2");
+
+                if (GameObject.Find("Map/" + chunkName) == null)
+                {
+                    var obj = new GameObject();
+                    var chunk = obj.AddComponent<TestChunk>();
+
+                    chunk.start = start;
+                    chunk.end = end;
+                    obj.transform.parent = gameObject.transform;
+                    obj.name = chunkName;
+                    chunk.transform.localPosition = new Vector3(chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 0, chunkStart.y * tileSize + truncStartingPoint.y);
+                    chunk.Rebuild();
+                }
             }
         }
     }

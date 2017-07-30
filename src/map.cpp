@@ -6660,11 +6660,45 @@ static void generate_uniform( const int x, const int y, const int z, const oter_
     }
 }
 
+submap* map::generateSubmap(const int absx, const int absy, const int gridz)
+{
+    submap* tmpsub;
+    static const oter_id rock("empty_rock");
+    static const oter_id air("open_air");
+
+    // It doesn't exist; we must generate it!
+    dbg(D_INFO | D_WARNING) << "map::loadn: Missing mapbuffer data. Regenerating.";
+
+    // Each overmap square is two nonants; to prevent overlap, generate only at
+    //  squares divisible by 2.
+    const int newmapx = absx - (abs(absx) % 2);
+    const int newmapy = absy - (abs(absy) % 2);
+    // Short-circuit if the map tile is uniform
+    int overx = newmapx;
+    int overy = newmapy;
+    sm_to_omt(overx, overy);
+    oter_id terrain_type = overmap_buffer.ter(overx, overy, gridz);
+    if (terrain_type == rock || terrain_type == air) {
+        generate_uniform(newmapx, newmapy, gridz, terrain_type);
+    }
+    else {
+        tinymap tmp_map;
+        tmp_map.generate(newmapx, newmapy, gridz, calendar::turn);
+    }
+
+    // This is the same call to MAPBUFFER as above!
+    tmpsub = MAPBUFFER.lookup_submap(absx, absy, gridz);
+    if (tmpsub == nullptr) {
+        dbg(D_ERROR) << "failed to generate a submap at " << absx << absy << abs_sub.z;
+        debugmsg("failed to generate a submap at %d,%d,%d", absx, absy, abs_sub.z);
+        return nullptr;
+    }
+    return tmpsub;
+}
+
 void map::loadn( const int gridx, const int gridy, const int gridz, const bool update_vehicles )
 {
     // Cache empty overmap types
-    static const oter_id rock("empty_rock");
-    static const oter_id air("open_air");
 
     dbg(D_INFO) << "map::loadn(game[" << g << "], worldx[" << abs_sub.x << "], worldy[" << abs_sub.y << "], gridx["
                 << gridx << "], gridy[" << gridy << "], gridz[" << gridz << "])";
@@ -6680,33 +6714,9 @@ void map::loadn( const int gridx, const int gridy, const int gridz, const bool u
     abs_sub.z = gridz;
 
     submap *tmpsub = MAPBUFFER.lookup_submap(absx, absy, gridz);
+
     if( tmpsub == nullptr ) {
-        // It doesn't exist; we must generate it!
-        dbg( D_INFO | D_WARNING ) << "map::loadn: Missing mapbuffer data. Regenerating.";
-
-        // Each overmap square is two nonants; to prevent overlap, generate only at
-        //  squares divisible by 2.
-        const int newmapx = absx - ( abs( absx ) % 2 );
-        const int newmapy = absy - ( abs( absy ) % 2 );
-        // Short-circuit if the map tile is uniform
-        int overx = newmapx;
-        int overy = newmapy;
-        sm_to_omt( overx, overy );
-        oter_id terrain_type = overmap_buffer.ter( overx, overy, gridz );
-        if( terrain_type == rock || terrain_type == air ) {
-            generate_uniform( newmapx, newmapy, gridz, terrain_type );
-        } else {
-            tinymap tmp_map;
-            tmp_map.generate( newmapx, newmapy, gridz, calendar::turn );
-        }
-
-        // This is the same call to MAPBUFFER as above!
-        tmpsub = MAPBUFFER.lookup_submap( absx, absy, gridz );
-        if( tmpsub == nullptr ) {
-            dbg( D_ERROR ) << "failed to generate a submap at " << absx << absy << abs_sub.z;
-            debugmsg( "failed to generate a submap at %d,%d,%d", absx, absy, abs_sub.z );
-            return;
-        }
+        tmpsub = generateSubmap(absx, absy, gridz);
     }
 
     // New submap changes the content of the map and all caches must be recalculated

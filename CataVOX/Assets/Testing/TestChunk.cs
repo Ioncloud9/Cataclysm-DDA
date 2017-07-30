@@ -41,6 +41,7 @@ public class TestChunk : MonoBehaviour
 
     public void Rebuild()
     {
+        if (!needRebuild) return;
         var parentMap = gameObject.GetComponentInParent<TestMap>();
         mapData = DDA.GetTilesBetween(start, end);        
 

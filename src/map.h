@@ -1225,6 +1225,8 @@ private:
     // Helper #2 - spawns monsters on one submap and from one group on this submap
     void spawn_monsters_submap_group( const tripoint &gp, mongroup &group, bool ignore_sight );
 
+public:
+    submap* generateSubmap(const int absx, const int absy, const int gridz);
 protected:
         void saven( int gridx, int gridy, int gridz );
         void loadn( int gridx, int gridy, bool update_vehicles );

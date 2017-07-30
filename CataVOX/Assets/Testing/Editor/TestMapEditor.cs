@@ -11,7 +11,7 @@ public class TestMapEditor : Editor
     SerializedProperty chunkSize;
     SerializedProperty chunkRadius;
     SerializedProperty terrainMaterial;
-    SerializedProperty startingPoint;    
+    SerializedProperty startingPoint;
 
     void OnEnable()
     {
@@ -31,6 +31,8 @@ public class TestMapEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.LabelField("Loaded world: " + TestGame.WorldName);
+        Vector3Int sm = new Vector3Int(TestGame.SubmapCoord.x * 12, TestGame.SubmapCoord.y * 12, 0);
+        EditorGUILayout.LabelField("Submap global coord: " + sm);
         EditorGUILayout.PropertyField(tilesFolder);
         EditorGUILayout.PropertyField(scale);
         EditorGUILayout.PropertyField(chunkSize);
