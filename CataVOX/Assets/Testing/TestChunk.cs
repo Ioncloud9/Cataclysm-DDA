@@ -43,7 +43,7 @@ public class TestChunk : MonoBehaviour
     {
         if (!needRebuild) return;
         var parentMap = gameObject.GetComponentInParent<TestMap>();
-        mapData = DDA.GetTilesBetween(start, end);        
+        mapData = DDA.GetTilesBetween(start, end);
 
         if (mapData == null) return;
         float tileSize = parentMap.tileSize;
@@ -54,7 +54,6 @@ public class TestChunk : MonoBehaviour
         {
             MeshDraft chunkMesh = new MeshDraft();
             int gameObjectCount = 0;
-            float size = tileSize; // / 2.0f;
             foreach (var tile in mapData.tiles)
             {
                 MeshDraft tileMesh = parentMap.GetCachedTerMesh(tile.ter); // probably will not work in non main thread
@@ -64,7 +63,7 @@ public class TestChunk : MonoBehaviour
                     {
                         
                         MeshDraft tileMeshCopy = tileMesh.Clone();
-                        tileMeshCopy.Move(new Vector3((tile.loc.x - start.x) * size, tile.loc.y * size, (tile.loc.z - start.y) * size));
+                        tileMeshCopy.Move(new Vector3((tile.loc.x - start.x) * tileSize, tile.loc.y * tileSize, (tile.loc.z - start.y) * tileSize));
                         chunkMesh.Add(tileMeshCopy);
                     }
                     else

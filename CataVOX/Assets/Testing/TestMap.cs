@@ -203,7 +203,10 @@ public class TestMap : MonoBehaviour
                     chunk.end = end;
                     obj.transform.parent = gameObject.transform;
                     obj.name = chunkName;
-                    chunk.transform.localPosition = new Vector3(chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 0, chunkStart.y * tileSize + truncStartingPoint.y);
+                    chunk.transform.localPosition = new Vector3(
+                        chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 
+                        0, 
+                        chunkStart.y * tileSize  + truncStartingPoint.y * tileSize);
                     chunk.Rebuild();
                 }
             }
