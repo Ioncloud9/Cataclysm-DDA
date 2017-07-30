@@ -46,7 +46,6 @@ public class TestChunk : MonoBehaviour
         mapData = DDA.GetTilesBetween(start, end);        
 
         if (mapData == null) return;
-        var tilesCache = parentMap.tilesCache; // need to do it here in Unity main thread
         float tileSize = parentMap.tileSize;
 
         if (thread != null && thread.IsAlive) return;
@@ -55,16 +54,17 @@ public class TestChunk : MonoBehaviour
         {
             MeshDraft chunkMesh = new MeshDraft();
             int gameObjectCount = 0;
+            float size = tileSize / 2.0f;
             foreach (var tile in mapData.tiles)
             {
-                MeshDraft tileMesh;
-                tilesCache.TryGetValue(tile.ter, out tileMesh);
+                MeshDraft tileMesh = parentMap.GetCachedTerMesh(tile.ter); // probably will not work in non main thread
                 if (tileMesh != null)
                 {
                     if (chunkMesh.vertexCount + tileMesh.vertexCount < 65000)
                     {
+                        
                         MeshDraft tileMeshCopy = tileMesh.Clone();
-                        tileMeshCopy.Move(new Vector3((tile.loc.x - start.x) * tileSize, tile.loc.y * tileSize, (tile.loc.z - start.y) * tileSize));
+                        tileMeshCopy.Move(new Vector3((tile.loc.x - start.x) * size, tile.loc.y * size, (tile.loc.z - start.y) * size));
                         chunkMesh.Add(tileMeshCopy);
                     }
                     else
@@ -111,6 +111,7 @@ public class TestChunk : MonoBehaviour
             {
                 obj = new GameObject(childNameVar);
                 obj.transform.parent = thisVar.gameObject.transform;
+                obj.transform.localPosition = new Vector3(0, 0, 0);
             }
             MeshRenderer mr;
             MeshFilter mf;

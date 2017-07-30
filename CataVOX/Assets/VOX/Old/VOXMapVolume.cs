@@ -17,7 +17,7 @@ public enum Neighbours: byte
 
 public class VOXMapVolume {
     public GameData gameData;
-    public Dictionary<string, VOX.Model> tilesCache;
+    public Dictionary<int, VOX.Model> tilesCache;
     public string tilesPath;
     public int tileSizeX, tileSizeY, tileSizeZ;
     public int sizeX, sizeY, sizeZ;
@@ -27,7 +27,7 @@ public class VOXMapVolume {
     public VOXMapVolume(GameData gameData, string tilesPath) {
         this.gameData = gameData;
         this.tilesPath = tilesPath;
-        tilesCache = new Dictionary<string, VOX.Model>();
+        tilesCache = new Dictionary<int, VOX.Model>();
         LoadTiles();
         sizeX = tileSizeX * gameData.map.width;
         sizeZ = tileSizeZ * gameData.map.height;
@@ -41,16 +41,16 @@ public class VOXMapVolume {
 
     protected void LoadTiles() {
         foreach (Tile tile in gameData.map.tiles) {
-            if (tile.ter != null && !tilesCache.ContainsKey(tile.ter)) {
+            if (tile.ter != 0 && !tilesCache.ContainsKey(tile.ter)) {
                 AddToTilesCache(tile.ter);
             }
-            if (tile.furn != null && !tilesCache.ContainsKey(tile.furn)) {
+            if (tile.furn != 0 && !tilesCache.ContainsKey(tile.furn)) {
                 AddToTilesCache(tile.furn);
             }
         }
     }
 
-    private void AddToTilesCache(string code) {
+    private void AddToTilesCache(int code) {
         VOX.Model vox = new VOX.Model(Path.Combine(tilesPath, code + ".vox"));
         if (tileSizeX == 0 && vox.sizeX != 0 && vox.sizeY != 0 && vox.sizeZ != 0) {
             tileSizeX = vox.sizeX;
@@ -77,9 +77,9 @@ public class VOXMapVolume {
 
         Tile tile = gameData.map.tiles[mapWidth * tileZ + tileX];
         Nullable<VOX.Material> mat = null;
-        if (tile.furn != null)
+        if (tile.furn != 0)
            mat = tilesCache[tile.furn].VoxelAt(voxX, voxY, voxZ);
-        if (mat == null && tile.ter != null) {
+        if (mat == null && tile.ter != 0) {
             mat = tilesCache[tile.ter].VoxelAt(voxX, voxY, voxZ);
         }
         return mat;

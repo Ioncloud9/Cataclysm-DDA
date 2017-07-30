@@ -51,7 +51,7 @@ namespace Assets.VOX
 
             foreach (var tile in map.tiles)
             {
-                _blocks.Add(tile.loc, BlockLoader.CreateBlock(tile.ter, tile.loc, this));
+               // _blocks.Add(tile.loc, BlockLoader.CreateBlock(tile.ter, tile.loc, this)); // tymalu: changed tile.ter to int type, so this does not work anymore
             }
 
             _created = true;

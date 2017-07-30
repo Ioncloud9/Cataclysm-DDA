@@ -1,6 +1,5 @@
 using System;
 using Assets;
-using Assets.Scripts;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
@@ -110,11 +109,11 @@ public struct Vector2Int
 [Serializable]
 public class Tile
 {
-    public string ter;
     public Vector3Int loc;
-    public string furn;
+    public int ter;
+    public int furn;
 
-    public Tile(string terrain, Vector3Int loc, string furniture)
+    public Tile(int terrain, Vector3Int loc, int furniture)
     {
         this.ter = terrain;
         this.furn = furniture;

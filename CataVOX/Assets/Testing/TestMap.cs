@@ -53,19 +53,32 @@ public class TestMap : MonoBehaviour
     [HideInInspector]
     public static bool gameStarted { get; private set; }
 
-    [HideInInspector]
-    public readonly Dictionary<string, MeshDraft> tilesCache = new Dictionary<string, MeshDraft>();
+    protected readonly Dictionary<string, MeshDraft> tilesCache = new Dictionary<string, MeshDraft>();
+    protected readonly Dictionary<int, string> terIds = new Dictionary<int, string>();
+
     [HideInInspector]
     public float tileSize = 1.0f;
 
     public void Awake()
     {
-        RebuildCache();
+        //RebuildCache();
+    }
+
+    public MeshDraft GetCachedTerMesh(int ter_id)
+    {
+        string str_id;
+        terIds.TryGetValue(ter_id, out str_id);
+        if (str_id == null) return null;
+        MeshDraft mesh;
+        tilesCache.TryGetValue(str_id, out mesh);
+        return mesh;
     }
 
     public void RebuildCache()
     {
         tilesCache.Clear();
+        terIds.Clear();
+        if (!Directory.Exists(tilesFolder)) return;
         var files = Directory.GetFiles(tilesFolder, "*.vox");
         Texture2D terrainTexture = null;
         foreach (var file in files)
@@ -78,7 +91,10 @@ public class TestMap : MonoBehaviour
                 tileSize = model.sizeX * scale;
                 terrainTexture = VOX.Texture.FromModel(model);
             }
-            tilesCache.Add(name, mesh);
+            tilesCache[name] = mesh;
+            terIds[0] = "t_null";
+            int terId = DDA.intForStrTerId(name);
+            if (terId != 0) terIds[terId] = name;
         }
 
         terrainMaterial = new UnityEngine.Material(Shader.Find("Standard"));

@@ -23,7 +23,7 @@ public class UnknownTile : MonoBehaviour
 
 public class Loader : GameBase
 {
-    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
+    Dictionary<int, GameObject> objects = new Dictionary<int, GameObject>();
     GameObject frame, cached;
     Vector2 size = new Vector2(1, 1);
     bool needReload = false;
@@ -47,9 +47,9 @@ public class Loader : GameBase
         }
     }
 
-    private void AddOrInstantiate(Vector3 loc, string id, string def)
+    private void AddOrInstantiate(Vector3 loc, int id, string def)
     {
-        if (id == null) return;
+        if (id == 0) return;
         float d = 0.0f;
         if (objects.ContainsKey(id))
         {
@@ -87,7 +87,7 @@ public class Loader : GameBase
             }
             newObj.transform.parent = cached.transform;
             newObj.SetActive(false);
-            newObj.name = id;
+            newObj.name = id.ToString();
 
             objects[id] = newObj;
             size.x = VOXGameObject.model.sizeX * (VOXGameObject.scale + d);
@@ -115,7 +115,7 @@ public class Loader : GameBase
                 GameObject.Destroy(obj.Value);
             }
 
-            objects = new Dictionary<string, GameObject>();
+            objects = new Dictionary<int, GameObject>();
             try
             {
                 Debug.Log(_data.playerPosition);
@@ -142,11 +142,12 @@ public class Loader : GameBase
 
             foreach (var tile in _data.map.tiles)
             {
-                AddOrInstantiate(tile.loc, tile.ter == null ? "t_unseen" : tile.ter, "t_unknown");
-                if (tile.furn != "f_null")
+                AddOrInstantiate(tile.loc, tile.ter, "t_unknown");
+                if (tile.furn != 0)
                 {
                     AddOrInstantiate(tile.loc, tile.furn, "f_unknown");
-                }
+                } 
+                // tyomalu: changed tile.ter to int
             }
             needReload = false;
         }
@@ -155,7 +156,7 @@ public class Loader : GameBase
     public class BlockData : MonoBehaviour
     {
         public Vector3 Location;
-        public string id;
+        public int id;
         public string def;
     }
 }

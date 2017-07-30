@@ -34,8 +34,8 @@ struct IVector2 {
 };
 
 struct Tile {
-    char* ter;
-    char* furn;
+    int ter;
+    int furn;
     IVector3 loc;
 };
 
@@ -62,6 +62,7 @@ extern "C" {
     LOADERDLL_API void init(bool openMainMenu);
     LOADERDLL_API CStringArray* getWorldNames(void);
     LOADERDLL_API CStringArray* getWorldSaves(char* worldName);
+    LOADERDLL_API int intForStrTerId(char* str);
     LOADERDLL_API void deinit(void);
     LOADERDLL_API void loadGame(char* worldName); // loads first available game for the world
     LOADERDLL_API void loadSaveGame(char* worldName, char* saveName);

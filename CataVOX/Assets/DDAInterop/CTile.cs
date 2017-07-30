@@ -7,8 +7,8 @@ namespace Assets.DDAInterop
 {
     public struct CTile
     {
-        public IntPtr /* char* */ ter;
-        public IntPtr /* char* */ furn;
+        public int ter;
+        public int furn;
         public Vector3Int loc;
     }
 }

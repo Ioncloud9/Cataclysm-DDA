@@ -41,9 +41,7 @@ namespace Assets.DDAInterop.Marshalers
             {
                 IntPtr p = new IntPtr(data.map.tiles.ToInt64() + i * Marshal.SizeOf(typeof(CTile)));
                 CTile tile = (CTile)Marshal.PtrToStructure(p, typeof(CTile));
-                string ter = Marshal.PtrToStringAnsi(tile.ter);
-                string furn = Marshal.PtrToStringAnsi(tile.furn);
-                resData.map.tiles[i] = new Tile(ter, tile.loc, furn);
+                resData.map.tiles[i] = new Tile(tile.ter, tile.loc, tile.furn);
             }
             return resData;
         }
@@ -52,15 +50,6 @@ namespace Assets.DDAInterop.Marshalers
         {
             CGameData data = (CGameData)Marshal.PtrToStructure(pNativeData, typeof(CGameData));
             Marshal.FreeCoTaskMem(data.calendar.time);
-            int size = data.map.width * data.map.height;
-
-            for (int i = 0; i < size; i++)
-            {
-                IntPtr p = new IntPtr(data.map.tiles.ToInt64() + i * Marshal.SizeOf(typeof(CTile)));
-                CTile tile = (CTile)Marshal.PtrToStructure(p, typeof(CTile));
-                Marshal.FreeCoTaskMem(tile.furn);
-                Marshal.FreeCoTaskMem(tile.ter);
-            }
             Marshal.FreeCoTaskMem(data.map.tiles);
             Marshal.FreeCoTaskMem(pNativeData);
         }
