@@ -112,11 +112,13 @@ public class Tile
     public Vector3Int loc;
     public int ter;
     public int furn;
+    public bool seen; // seen by player
 
-    public Tile(int terrain, Vector3Int loc, int furniture)
+    public Tile(int terrain, Vector3Int loc, int furniture, bool seen)
     {
         this.ter = terrain;
         this.furn = furniture;
         this.loc = loc;
+        this.seen = seen;
     }
 }

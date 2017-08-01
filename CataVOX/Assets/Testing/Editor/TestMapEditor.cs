@@ -59,7 +59,10 @@ public class TestMapEditor : Editor
         
         if (GUILayout.Button("Rebuild")) obj.Rebuild();
         if (GUILayout.Button("Rebuild All")) obj.RebuildAll();
-        if (GUILayout.Button("Remove old chunks")) obj.RemoveOldChunks();
+		if (GUILayout.Button("doAction"))
+		{
+			DDA.doAction("move_n");
+		}
 
         serializedObject.ApplyModifiedProperties();
     }

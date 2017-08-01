@@ -269,7 +269,7 @@ extern "C" {
     IVector3 playerPos()
     {
         tripoint pos = g->u.global_square_location();
-        IVector3 res = { pos.x, pos.y, pos.z };
+        IVector3 res = { pos.x, pos.z, pos.y }; // swap z and y for Unity coord system
         return res;
     }
 
@@ -334,15 +334,16 @@ extern "C" {
                         map->tiles[i].loc.y = z;
                         map->tiles[i].loc.z = y * SEEY + sy; // swap z and y for unity coordinate system
 
-                        IVector2 localPos = { ppos.x - map->tiles[i].loc.x, 
-                                              ppos.y - map->tiles[i].loc.y };
+                        IVector2 localPos = { map->tiles[i].loc.x - ppos.x + g->u.posx(), 
+                                              map->tiles[i].loc.z - ppos.z + g->u.posy()};
                         
                         map->tiles[i].ter = sm->get_ter(sx, sy);
                         map->tiles[i].furn = sm->get_furn(sx, sy);
                         map->tiles[i].seen = false;
                         if (localPos.x >= 0 && localPos.y >= 0 &&
                             localPos.x < 120 && localPos.y < 120) {
-                            map->tiles[i].seen = g->u.sees(localPos.x, localPos.y);
+                            tripoint tpos(localPos.x, localPos.y, z);
+                            map->tiles[i].seen = g->u.sees(tpos, true);
                         }
                     }
                 }

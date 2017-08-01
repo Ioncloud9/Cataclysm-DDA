@@ -46,7 +46,7 @@ struct Tile {
     int ter;
     int furn;
     IVector3 loc;
-    bool seen;
+    int seen;
 };
 
 struct Map {

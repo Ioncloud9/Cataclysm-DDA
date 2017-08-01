@@ -42,6 +42,8 @@ public class TestChunk : MonoBehaviour
     {
         if (!needRebuild) return;
         var parentMap = gameObject.GetComponentInParent<TestMap>();
+		if (start.x < 0 || start.y < 0 || end.x < 0 || end.y < 0)
+			return; // will cause fatal error
         mapData = DDA.GetTilesBetween(start, end);
 
         if (mapData == null) return;
@@ -55,6 +57,7 @@ public class TestChunk : MonoBehaviour
             int gameObjectCount = 0;
             foreach (var tile in mapData.tiles)
             {
+                if (!tile.seen) continue;
                 MeshDraft tileMesh = parentMap.GetCachedTerMesh(tile.ter); // probably will not work in non main thread
                 if (tileMesh != null)
                 {

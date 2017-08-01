@@ -45,7 +45,7 @@ public class TestMap : Assets.Scripts.GameBase
     {
         RebuildCache();
         startingPoint = DDA.playerPos();
-        Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.y * tileSize);
+        Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.z * tileSize);
         Game.Camera.MoveTo(cameraPos);
         RebuildAll();
     }
@@ -138,7 +138,7 @@ public class TestMap : Assets.Scripts.GameBase
         {
             var chunk = child.gameObject.GetComponent<TestChunk>();
 
-            Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);            
+            Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.z / chunkSize * chunkSize);            
             Vector2Int chunkStart = new Vector2Int(truncStartingPoint.x - chunkSize / 2 - chunkRadius * chunkSize, truncStartingPoint.y - chunkSize / 2 - 1 - chunkRadius * chunkSize);
             Vector2Int chunkEnd = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkRadius * chunkSize, truncStartingPoint.y + chunkSize / 2 - 1 + chunkRadius * chunkSize);            
             
@@ -180,7 +180,7 @@ public class TestMap : Assets.Scripts.GameBase
 
         if (tilesCache.Count == 0) RebuildCache();
 
-        Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);
+        Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.z / chunkSize * chunkSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {

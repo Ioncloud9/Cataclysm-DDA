@@ -41,7 +41,7 @@ namespace Assets.DDAInterop.Marshalers
             {
                 IntPtr p = new IntPtr(data.map.tiles.ToInt64() + i * Marshal.SizeOf(typeof(CTile)));
                 CTile tile = (CTile)Marshal.PtrToStructure(p, typeof(CTile));
-                resData.map.tiles[i] = new Tile(tile.ter, tile.loc, tile.furn);
+                resData.map.tiles[i] = new Tile(tile.ter, tile.loc, tile.furn, tile.seen != 0);
             }
             return resData;
         }
