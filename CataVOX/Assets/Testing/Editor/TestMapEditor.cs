@@ -30,9 +30,6 @@ public class TestMapEditor : Editor
         var obj = (TestMap)target;
         serializedObject.Update();
 
-        EditorGUILayout.LabelField("Loaded world: " + TestGame.WorldName);
-        Vector3Int sm = new Vector3Int(TestGame.SubmapCoord.x * 12, TestGame.SubmapCoord.y * 12, 0);
-        EditorGUILayout.LabelField("Submap global coord: " + sm);
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(tilesFolder);
         if (EditorGUI.EndChangeCheck())

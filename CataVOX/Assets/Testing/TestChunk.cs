@@ -4,7 +4,6 @@ using ProceduralToolkit;
 using Utils;
 using System.Threading;
 
-[ExecuteInEditMode]
 public class TestChunk : MonoBehaviour
 {
     public Vector2Int start = new Vector2Int(0, 0);
@@ -104,6 +103,7 @@ public class TestChunk : MonoBehaviour
             // {
             //     Debug.Log("Assign mesh for " + this.gameObject.name + " : " + childName);
             // }
+
 
             GameObject obj = this.gameObject;
             if (childNameVar != null)

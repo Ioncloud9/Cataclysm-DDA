@@ -23,14 +23,9 @@ namespace Assets.Scripts
             Input = FindObjectOfType<InputController>();
             Player = FindObjectOfType<PlayerController>();
             UI = FindObjectOfType<UIController>();
-            Map = FindObjectOfType<VOX.Map>();
+            Map = FindObjectOfType<TestMap>();
             
             _instance = this;
-        }
-
-        void OnApplicationQuit()
-        {
-            DDA.deinit();
         }
 
         public static GameMaster Current
@@ -41,7 +36,7 @@ namespace Assets.Scripts
         public CameraController Camera { get; private set; }
         public InputController Input { get; private set; }
         public PlayerController Player { get; private set; }
-        public VOX.Map Map { get; private set; }
+        public TestMap Map { get; private set; }
         public UIController UI { get; private set; }
     }
 }

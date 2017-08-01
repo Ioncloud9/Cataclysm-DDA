@@ -5,39 +5,7 @@ using System.IO;
 using System.Linq;
 using ProceduralToolkit;
 
-public static class TestGame
-{
-    public static bool Started = false;
-    public static string WorldName = "";
-    public static Vector3Int SubmapCoord = new Vector3Int(0, 0, 0);
-
-    [MenuItem("DDA/Start")]
-    public static void StartDdaGame()
-    {
-        DDA.init();
-        var worlds = DDA.GetWorldNames();
-        Debug.Log("Found " + worlds.Length + " worlds");
-        WorldName = worlds[0];
-
-        Debug.Log("Loading " + WorldName);
-
-        DDA.loadGame(WorldName);
-        SubmapCoord = DDA.playerSubmap();
-        Debug.Log("Game loaded");
-        Started = true;
-    }
-
-    [MenuItem("DDA/Stop")]
-    public static void StopDdaGame()
-    {
-        Started = false;
-        DDA.deinit();
-        Debug.Log("Game unloaded");
-    }
-}
-
-[ExecuteInEditMode]
-public class TestMap : MonoBehaviour
+public class TestMap : Assets.Scripts.GameBase
 {
     public string tilesFolder = "Assets/tiles";
     public float scale = 0.25f;
@@ -45,7 +13,7 @@ public class TestMap : MonoBehaviour
     public bool removeEdges = false;
     public int chunkSize = 20;
     public int chunkRadius = 2;
-    public Vector2Int startingPoint = new Vector2Int(0,0);
+    public Vector3Int startingPoint = new Vector3Int(0,0,0);
     public Material terrainMaterial;
 
     public static string WorldName = "";
@@ -59,9 +27,35 @@ public class TestMap : MonoBehaviour
     [HideInInspector]
     public float tileSize = 1.0f;
 
-    public void Awake()
+    [MenuItem("DDA/Start")]
+    public static void StartDdaGame()
     {
-        //RebuildCache();
+        DDA.init();
+        var worlds = DDA.GetWorldNames();
+        Debug.Log("Found " + worlds.Length + " worlds");
+        WorldName = worlds[0];
+
+        Debug.Log("Loading " + WorldName);
+
+        DDA.loadGame(WorldName);
+        Debug.Log("Game loaded");
+    }
+
+    void Start()
+    {
+        RebuildCache();
+        Vector3Int playerPos = DDA.playerSubmap();
+        startingPoint = new Vector3Int(playerPos.x * 12, playerPos.y * 12, playerPos.z * 12);
+        Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.y * tileSize);
+        Game.Camera.MoveTo(cameraPos);
+        RebuildAll();
+    }
+
+    [MenuItem("DDA/Stop")]
+    public static void StopDdaGame()
+    {
+        DDA.deinit();
+        Debug.Log("Game unloaded");
     }
 
     public MeshDraft GetCachedTerMesh(int ter_id)
@@ -78,6 +72,7 @@ public class TestMap : MonoBehaviour
     {
         tilesCache.Clear();
         terIds.Clear();
+        tilesFolder = tilesFolder.Trim();
         if (!Directory.Exists(tilesFolder)) return;
         var files = Directory.GetFiles(tilesFolder, "*.vox");
         Texture2D terrainTexture = null;
