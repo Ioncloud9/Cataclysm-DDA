@@ -44,8 +44,7 @@ public class TestMap : Assets.Scripts.GameBase
     void Start()
     {
         RebuildCache();
-        Vector3Int playerPos = DDA.playerSubmap();
-        startingPoint = new Vector3Int(playerPos.x * 12, playerPos.y * 12, playerPos.z * 12);
+        startingPoint = DDA.playerPos();
         Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.y * tileSize);
         Game.Camera.MoveTo(cameraPos);
         RebuildAll();
@@ -88,7 +87,7 @@ public class TestMap : Assets.Scripts.GameBase
             }
             tilesCache[name] = mesh;
             terIds[0] = "t_null";
-            int terId = DDA.intForStrTerId(name);
+            int terId = DDA.terId(name);
             if (terId != 0) terIds[terId] = name;
         }
 
@@ -157,6 +156,8 @@ public class TestMap : Assets.Scripts.GameBase
 
     private void ReattachMainDispatch()
     {
+        // need for editor mode
+        // when Unity recompiles the scripts, it losts link to UnityMainThreadDispatcher
         var dispatcher = GameObject.Find("UnityMainThreadDispatcher");
         DestroyImmediate(dispatcher.GetComponent<UnityMainThreadDispatcher>());
         dispatcher.AddComponent<UnityMainThreadDispatcher>();
@@ -172,13 +173,14 @@ public class TestMap : Assets.Scripts.GameBase
     {
         //if (TestGame.Started == false) return;
 
-        ReattachMainDispatch();
+        // only for editor mode:
+        // ReattachMainDispatch();
+        
         RemoveOldChunks();
 
         if (tilesCache.Count == 0) RebuildCache();
 
         Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.y / chunkSize * chunkSize);
-        //gameObject.transform.position = new Vector3((truncStartingPoint.x * tileSize - chunkSize) * scale, 0, truncStartingPoint.y * tileSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {

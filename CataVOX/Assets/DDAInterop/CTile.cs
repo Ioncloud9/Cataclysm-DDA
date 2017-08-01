@@ -10,5 +10,6 @@ namespace Assets.DDAInterop
         public int ter;
         public int furn;
         public Vector3Int loc;
+        public bool seen;
     }
 }

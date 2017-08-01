@@ -234,14 +234,14 @@ extern "C" {
             for (int dy = bottomLeft.y; dy <= topRight.y; dy++) {
                 tripoint p = tripoint(dx, dy, 0);
                 Creature* crit = g->critter_at(p, true);
-                if (crit->is_player) continue;
+                if (crit->is_player()) continue;
                 sm_to_om(p);
                 Entity e;
-                e.hp = crit->get_hp;
-                e.maxHp = crit->get_hp_max;
-                e.isMonster = crit->is_monster;
-                e.isNpc = crit->is_npc;
-                Creature::Attitude attitude = crit->attitude_to;
+                e.hp = crit->get_hp();
+                e.maxHp = crit->get_hp_max();
+                e.isMonster = crit->is_monster();
+                e.isNpc = crit->is_npc();
+                Creature::Attitude attitude = crit->attitude_to(g->u);
                 std::string strAtt = "";
                 if (attitude == Creature::Attitude::A_FRIENDLY) {
                     e.attitude = "friendly";
@@ -264,6 +264,13 @@ extern "C" {
             entities[i] = ent.at(i);
         }
         return entities;
+    }
+
+    IVector3 playerPos()
+    {
+        tripoint pos = g->u.global_square_location();
+        IVector3 res = { pos.x, pos.y, pos.z };
+        return res;
     }
 
     Map* getTilesBetween(IVector2 from, IVector2 to) {
@@ -293,6 +300,8 @@ extern "C" {
         IVector2 submapFromS = { bottomLeft.x % SEEX, bottomLeft.y % SEEY };
         IVector2 submapToS = { topRight.x % SEEX, topRight.y % SEEY };
 
+        IVector3 ppos = playerPos();
+
         for (int x = submapFrom.x; x <= submapTo.x; x++) {
             for (int y = submapFrom.y; y <= submapTo.y; y++) {
                 sm = MAPBUFFER.lookup_submap(x, y, z);
@@ -321,12 +330,20 @@ extern "C" {
                 for (int sx = sfrom.x; sx <= sto.x; sx++) {
                     for (int sy = sfrom.y; sy <= sto.y; sy++) {
                         int i = (y * SEEY + sy - from.y) * width + x * SEEX + sx - from.x;
-                        map->tiles[i].ter = sm->get_ter(sx, sy);
-                        map->tiles[i].furn = sm->get_furn(sx, sy);
-
                         map->tiles[i].loc.x = x * SEEX + sx;
                         map->tiles[i].loc.y = z;
                         map->tiles[i].loc.z = y * SEEY + sy; // swap z and y for unity coordinate system
+
+                        IVector2 localPos = { ppos.x - map->tiles[i].loc.x, 
+                                              ppos.y - map->tiles[i].loc.y };
+                        
+                        map->tiles[i].ter = sm->get_ter(sx, sy);
+                        map->tiles[i].furn = sm->get_furn(sx, sy);
+                        map->tiles[i].seen = false;
+                        if (localPos.x >= 0 && localPos.y >= 0 &&
+                            localPos.x < 120 && localPos.y < 120) {
+                            map->tiles[i].seen = g->u.sees(localPos.x, localPos.y);
+                        }
                     }
                 }
             }
@@ -335,7 +352,7 @@ extern "C" {
         return map;
     }
 
-    int intForStrTerId(char* str) {
+    int terId(char* str) {
         bool prevTestMode = test_mode;
         test_mode = true;
         ter_id id(str);
@@ -403,24 +420,6 @@ extern "C" {
         return calendar::turn.get_turn();
     }
     
-    IVector3 playerPos(void) {
-        IVector3 res;
-        res.x = g->u.posx();
-        res.y = g->u.posz();
-        res.z = g->u.posy();
-        return res;
-    }
-
-    IVector3 playerSubmap(void) {
-        IVector3 res;
-        tripoint sub = g->m.get_abs_sub();
-        res.x = sub.x;
-        res.y = sub.y;
-        res.z = sub.z;
-        return res;
-    }
-
-
     void deinit(void) {
         deinitDebug();
         if (g != NULL) {

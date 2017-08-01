@@ -34,8 +34,8 @@ public class DDA
 		[MarshalAs(UnmanagedType.LPStr)] string worldName
 	);
 
-    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "intForStrTerId")]
-    public static extern int intForStrTerId([MarshalAs(UnmanagedType.LPStr)] string ter_str_id);
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "terId")]
+    public static extern int terId([MarshalAs(UnmanagedType.LPStr)] string ter_str_id);
 
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "loadSaveGame")] // loads specific save
     public static extern void loadSaveGame(

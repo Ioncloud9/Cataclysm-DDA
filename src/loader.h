@@ -46,6 +46,7 @@ struct Tile {
     int ter;
     int furn;
     IVector3 loc;
+    bool seen;
 };
 
 struct Map {
@@ -71,7 +72,7 @@ extern "C" {
     LOADERDLL_API void init(bool openMainMenu);
     LOADERDLL_API CStringArray* getWorldNames(void);
     LOADERDLL_API CStringArray* getWorldSaves(char* worldName);
-    LOADERDLL_API int intForStrTerId(char* str);
+    LOADERDLL_API int terId(char* str);
     LOADERDLL_API void deinit(void);
     LOADERDLL_API void loadGame(char* worldName); // loads first available game for the world
     LOADERDLL_API void loadSaveGame(char* worldName, char* saveName);
@@ -79,7 +80,6 @@ extern "C" {
     LOADERDLL_API int getTurn(void);
     LOADERDLL_API void doAction(char* action);
     LOADERDLL_API IVector3 playerPos(void);
-    LOADERDLL_API IVector3 playerSubmap(void);
     LOADERDLL_API Map* getTilesBetween(IVector2 from, IVector2 to);
     LOADERDLL_API GameData* getGameData(void);
 }
