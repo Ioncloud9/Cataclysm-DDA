@@ -45,8 +45,8 @@ public class TestMap : Assets.Scripts.GameBase
     {
         RebuildCache();
         startingPoint = DDA.playerPos();
-        Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.z * tileSize);
-        Game.Camera.MoveTo(cameraPos);
+        // Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.z * tileSize);
+        // Game.Camera.MoveTo(cameraPos);
         RebuildAll();
     }
 
@@ -201,9 +201,9 @@ public class TestMap : Assets.Scripts.GameBase
                     obj.transform.parent = gameObject.transform;
                     obj.name = chunkName;
                     chunk.transform.localPosition = new Vector3(
-                        chunkStart.x * tileSize + truncStartingPoint.x * tileSize, 
+                        chunkStart.x * tileSize, 
                         0, 
-                        chunkStart.y * tileSize  + truncStartingPoint.y * tileSize);
+                        chunkStart.y * tileSize);
                     chunk.Rebuild();
                 }
             }
