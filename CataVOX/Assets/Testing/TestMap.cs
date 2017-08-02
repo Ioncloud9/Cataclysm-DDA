@@ -81,6 +81,7 @@ public class TestMap : Assets.Scripts.GameBase
 
             if (terrainTexture == null)
             {
+                scale = 1.0f / model.sizeX; 
                 tileSize = model.sizeX * scale;
                 terrainTexture = VOX.Texture.FromModel(model, 16);
             }
