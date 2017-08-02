@@ -103,7 +103,7 @@ public class TestMap : Assets.Scripts.GameBase
     {
         if (enableGrid)
         {
-            var hlines = Resources.Load("hlines_tr") as UnityEngine.Texture;
+            var hlines = Resources.Load("hlines_bold") as UnityEngine.Texture;
             terrainMaterial.SetTexture("_DetailAlbedoMap", hlines);
             terrainMaterial.SetTextureScale("_DetailAlbedoMap", new Vector2(16f, 16f));
             terrainMaterial.EnableKeyword("_DETAIL_MULX2");
