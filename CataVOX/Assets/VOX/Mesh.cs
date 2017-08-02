@@ -7,10 +7,11 @@ namespace VOX
 {
     public static class Mesh
     {
-        public static MeshDraft FromModel(VOX.Model model, float scale = 1.0f, bool withoutEdge = false)
+        // halfTextShift - for better uv mapping
+        public static MeshDraft FromModel(VOX.Model model, float scale = 1.0f, bool withoutEdge = false, float halfTexelShift = 0.0f)
         {
             var planes = CreateColorPlanes(model, withoutEdge);
-            return CreateMesh(model, planes, scale);
+            return CreateMesh(model, planes, scale, halfTexelShift);
         }
 
         private static Dictionary<ColorPlanePos, ColorPlane> CreateColorPlanes(VOX.Model model, bool withoutEdge)
@@ -82,20 +83,20 @@ namespace VOX
             return plane;
         }
 
-        private static MeshDraft CreateMesh(VOX.Model model, Dictionary<ColorPlanePos, ColorPlane> planes, float scale = 1.0f)
+        private static MeshDraft CreateMesh(VOX.Model model, Dictionary<ColorPlanePos, ColorPlane> planes, float scale = 1.0f, float halfTexelShift = 0.0f)
         {
             MeshDraft mesh = new MeshDraft();
 
             foreach (KeyValuePair<ColorPlanePos, ColorPlane> plane in planes)
             {
-                mesh.Add(CreateOptimizedFaces(model, plane.Key, plane.Value));
+                mesh.Add(CreateOptimizedFaces(model, plane.Key, plane.Value, halfTexelShift));
             }
 
             mesh.Scale(scale);
             return mesh;
         }
 
-        private static MeshDraft CreateOptimizedFaces(VOX.Model model, ColorPlanePos pos, ColorPlane plane)
+        private static MeshDraft CreateOptimizedFaces(VOX.Model model, ColorPlanePos pos, ColorPlane plane, float halfTexelShift)
         {
             plane.vertices = new List<Vector3>();
             plane.triangles = new List<int>();
@@ -108,10 +109,10 @@ namespace VOX
                 matrix[dot.x - plane.minX, dot.y - plane.minY] = true;
                 count++;
             }
-            return SplitToRects(model, matrix, pos, plane, count);
+            return SplitToRects(model, matrix, pos, plane, count, halfTexelShift);
         }
 
-        private static MeshDraft SplitToRects(VOX.Model model, bool[,] matrix, ColorPlanePos pos, ColorPlane plane, int count)
+        private static MeshDraft SplitToRects(VOX.Model model, bool[,] matrix, ColorPlanePos pos, ColorPlane plane, int count, float halfTexelShift)
         {
             MeshDraft mesh = new MeshDraft();
             int matIdX = plane.matID % 16;
@@ -192,11 +193,6 @@ namespace VOX
 
                     x2 *= 1.0f / model.sizeX / 16.0f;
                     y2 *= 1.0f / model.sizeZ / 16.0f;
-
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));
                 }
                 else if (pos.normal.y == 1)
                 {
@@ -211,11 +207,6 @@ namespace VOX
 
                     x2 *= 1.0f / model.sizeX / 16.0f;
                     y2 *= 1.0f / model.sizeZ / 16.0f;
-
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                    
                 }
                 else if (pos.normal.z == -1)
                 {
@@ -229,11 +220,6 @@ namespace VOX
 
                     x2 *= 1.0f / model.sizeX / 16.0f;
                     y2 *= 1.0f / model.sizeY / 16.0f;
-
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                    
                 }
                 else if (pos.normal.z == 1)
                 {
@@ -248,11 +234,6 @@ namespace VOX
 
                     x2 *= 1.0f / model.sizeX / 16.0f;
                     y2 *= 1.0f / model.sizeY / 16.0f;
-
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                    
                 }
                 else if (pos.normal.x == -1)
                 {
@@ -267,11 +248,6 @@ namespace VOX
 
                     x2 *= 1.0f / model.sizeY / 16.0f;
                     y2 *= 1.0f / model.sizeY / 16.0f;
-
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));
                 }
                 else if (pos.normal.x == 1)
                 {
@@ -285,12 +261,18 @@ namespace VOX
 
                     x2 *= 1.0f / model.sizeY / 16.0f;
                     y2 *= 1.0f / model.sizeY / 16.0f;
-
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y1));
-                    mesh.uv.Add(new Vector2(uvStart.x + x2, uvStart.y + y2));
-                    mesh.uv.Add(new Vector2(uvStart.x + x1, uvStart.y + y2));                      
                 }
+
+                x1 += uvStart.x + halfTexelShift;
+                y1 += uvStart.y + halfTexelShift;
+
+                x2 += uvStart.x - halfTexelShift;
+                y2 += uvStart.y - halfTexelShift;
+
+                mesh.uv.Add(new Vector2(x1, y1));
+                mesh.uv.Add(new Vector2(x2, y1));
+                mesh.uv.Add(new Vector2(x2, y2));
+                mesh.uv.Add(new Vector2(x1, y2));
 
                 if (order)
                 {

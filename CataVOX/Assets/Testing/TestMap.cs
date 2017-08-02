@@ -78,12 +78,14 @@ public class TestMap : Assets.Scripts.GameBase
         {
             var name = Path.GetFileNameWithoutExtension(file).ToLower();
             var model = new VOX.Model(file);
-            var mesh = VOX.Mesh.FromModel(model, scale, removeEdges);
+
             if (terrainTexture == null)
             {
                 tileSize = model.sizeX * scale;
-                terrainTexture = VOX.Texture.FromModel(model);
+                terrainTexture = VOX.Texture.FromModel(model, 16);
             }
+
+            var mesh = VOX.Mesh.FromModel(model, scale, removeEdges, 1.0f / terrainTexture.width / 2.0f);
             tilesCache[name] = mesh;
             terIds[0] = "t_null";
             int terId = DDA.terId(name);
