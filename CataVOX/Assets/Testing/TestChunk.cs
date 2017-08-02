@@ -57,7 +57,7 @@ public class TestChunk : MonoBehaviour
             int gameObjectCount = 0;
             foreach (var tile in mapData.tiles)
             {
-                if (!tile.seen) continue;
+                //if (!tile.seen) continue;
                 MeshDraft tileMesh = parentMap.GetCachedTerMesh(tile.ter); // probably will not work in non main thread
                 if (tileMesh != null)
                 {
