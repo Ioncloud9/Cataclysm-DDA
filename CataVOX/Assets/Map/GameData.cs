@@ -78,6 +78,16 @@ public struct Vector3Int
         return new Vector3Int(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
     }
 
+    public static Vector3Int operator -(Vector3Int v1, Vector3Int v2)
+    {
+        return new Vector3Int(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    }
+
+    public static Vector3 operator *(Vector3Int v1, float f)
+    {
+        return new Vector3(v1.x * f, v1.y * f, v1.z * f);
+    }
+
     public override string ToString()
     {
         return string.Format("({0}, {1}, {2})", x, y, z);

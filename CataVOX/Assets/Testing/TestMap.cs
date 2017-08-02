@@ -167,6 +167,8 @@ public class TestMap : Assets.Scripts.GameBase
 
     public void Rebuild()
     {
+        Vector3Int playerPos = DDA.playerPos();
+        Game.Player.Reload((playerPos - startingPoint) * tileSize);
         //if (TestGame.Started == false) return;
 
         // only for editor mode:
