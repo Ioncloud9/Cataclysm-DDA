@@ -59,9 +59,15 @@ public class TestMapEditor : Editor
         
         if (GUILayout.Button("Rebuild")) obj.Rebuild();
         if (GUILayout.Button("Rebuild All")) obj.RebuildAll();
-		if (GUILayout.Button("doAction"))
+		if (GUILayout.Button("go north"))
 		{
 			DDA.doAction("move_n");
+            obj.RebuildAll();
+		}
+		if (GUILayout.Button("go south"))
+		{
+			DDA.doAction("move_s");
+            obj.RebuildAll();
 		}
 
         serializedObject.ApplyModifiedProperties();

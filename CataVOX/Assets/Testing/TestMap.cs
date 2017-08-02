@@ -45,8 +45,7 @@ public class TestMap : Assets.Scripts.GameBase
     {
         RebuildCache();
         startingPoint = DDA.playerPos();
-        // Vector3 cameraPos = new Vector3(startingPoint.x * tileSize, 100f, startingPoint.z * tileSize);
-        // Game.Camera.MoveTo(cameraPos);
+        Game.Player.Reload(new Vector3(0,0,0));
         RebuildAll();
     }
 
@@ -180,7 +179,7 @@ public class TestMap : Assets.Scripts.GameBase
 
         if (tilesCache.Count == 0) RebuildCache();
 
-        Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.z / chunkSize * chunkSize);
+        Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize + chunkSize, startingPoint.z / chunkSize * chunkSize + chunkSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {
@@ -201,9 +200,9 @@ public class TestMap : Assets.Scripts.GameBase
                     obj.transform.parent = gameObject.transform;
                     obj.name = chunkName;
                     chunk.transform.localPosition = new Vector3(
-                        chunkStart.x * tileSize, 
+                        chunkStart.x * tileSize - startingPoint.x % chunkSize * tileSize + chunkSize / 2 + 1,
                         0, 
-                        chunkStart.y * tileSize);
+                        chunkStart.y * tileSize - startingPoint.z % chunkSize * tileSize + chunkSize / 2); // dunno
                     chunk.Rebuild();
                 }
             }
