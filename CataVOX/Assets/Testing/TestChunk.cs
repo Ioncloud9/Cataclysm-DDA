@@ -38,7 +38,7 @@ public class TestChunk : MonoBehaviour
         }
     }
 
-    public void Rebuild()
+    public void Rebuild(int sleepMs = 0)
     {
         if (!needRebuild) return;
         var parentMap = gameObject.GetComponentInParent<TestMap>();
@@ -53,6 +53,7 @@ public class TestChunk : MonoBehaviour
 
         thread = new Thread(() =>
         {
+            Thread.Sleep(sleepMs);
             MeshDraft chunkMesh = new MeshDraft();
             int gameObjectCount = 0;
             foreach (var tile in mapData.tiles)

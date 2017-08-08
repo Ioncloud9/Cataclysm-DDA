@@ -168,6 +168,7 @@ public class TestMap : Assets.Scripts.GameBase
 
     public void Rebuild()
     {
+        int i = 0;
         Vector3Int playerPos = DDA.playerPos();
         Game.Player.Reload((playerPos - startingPoint) * tileSize);
         //if (TestGame.Started == false) return;
@@ -203,7 +204,8 @@ public class TestMap : Assets.Scripts.GameBase
                         chunkStart.x * tileSize - startingPoint.x % chunkSize * tileSize + chunkSize / 2 + 1,
                         0, 
                         chunkStart.y * tileSize - startingPoint.z % chunkSize * tileSize + chunkSize / 2); // dunno
-                    chunk.Rebuild();
+                    chunk.Rebuild(i * 10);
+                    i++;
                 }
             }
         }
