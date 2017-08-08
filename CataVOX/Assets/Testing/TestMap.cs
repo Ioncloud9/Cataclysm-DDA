@@ -16,6 +16,8 @@ public class TestMap : Assets.Scripts.GameBase
     public Vector3Int startingPoint = new Vector3Int(0,0,0);
     public Material terrainMaterial;
 
+    private bool needReload = false;    
+
     public static string WorldName = "";
 
     [HideInInspector]
@@ -124,7 +126,7 @@ public class TestMap : Assets.Scripts.GameBase
         {
             foreach (Transform child in gameObject.transform)
             {
-                DestroyImmediate(child.gameObject);
+                Destroy(child.gameObject);
             }
         }
     }
@@ -134,19 +136,16 @@ public class TestMap : Assets.Scripts.GameBase
         foreach (Transform child in gameObject.transform)
         {
             var chunk = child.gameObject.GetComponent<TestChunk>();
+            Vector3Int playerPos = DDA.playerPos() - startingPoint;
 
-            Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize, startingPoint.z / chunkSize * chunkSize);            
+            Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize + chunkSize, startingPoint.z / chunkSize * chunkSize + chunkSize);
             Vector2Int chunkStart = new Vector2Int(truncStartingPoint.x - chunkSize / 2 - chunkRadius * chunkSize, truncStartingPoint.y - chunkSize / 2 - 1 - chunkRadius * chunkSize);
             Vector2Int chunkEnd = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkRadius * chunkSize, truncStartingPoint.y + chunkSize / 2 - 1 + chunkRadius * chunkSize);            
             
             if (chunk.start.x < chunkStart.x || chunk.start.y < chunkStart.y ||
                 chunk.end.x > chunkEnd.x || chunk.end.y > chunkEnd.y)
             {   
-                // for some reason some children do not destroys immediately, so remove them later
-                UnityMainThreadDispatcher.Instance().Enqueue(() =>
-                {             
-                    DestroyImmediate(child.gameObject);
-                });
+                Destroy(child.gameObject);
             }    
         }
     }
@@ -156,7 +155,7 @@ public class TestMap : Assets.Scripts.GameBase
         // need for editor mode
         // when Unity recompiles the scripts, it losts link to UnityMainThreadDispatcher
         var dispatcher = GameObject.Find("UnityMainThreadDispatcher");
-        DestroyImmediate(dispatcher.GetComponent<UnityMainThreadDispatcher>());
+        Destroy(dispatcher.GetComponent<UnityMainThreadDispatcher>());
         dispatcher.AddComponent<UnityMainThreadDispatcher>();
     }
 
@@ -166,20 +165,12 @@ public class TestMap : Assets.Scripts.GameBase
         Rebuild();
     }
 
-    public void Rebuild()
+    public void Update()
     {
         int i = 0;
-        Vector3Int playerPos = DDA.playerPos();
-        Game.Player.Reload((playerPos - startingPoint) * tileSize);
-        //if (TestGame.Started == false) return;
-
-        // only for editor mode:
-        // ReattachMainDispatch();
-        
-        RemoveOldChunks();
-
-        if (tilesCache.Count == 0) RebuildCache();
-
+        if (!needReload) return;
+        needReload = false;
+        Vector3Int playerPos = DDA.playerPos() - startingPoint;
         Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize + chunkSize, startingPoint.z / chunkSize * chunkSize + chunkSize);
 
         for (int x = -chunkRadius; x <= chunkRadius; x++)
@@ -209,5 +200,20 @@ public class TestMap : Assets.Scripts.GameBase
                 }
             }
         }
+    }
+
+    public void Rebuild()
+    {
+        Vector3Int playerPos = DDA.playerPos();
+        Game.Player.Reload((playerPos - startingPoint) * tileSize);
+        //if (TestGame.Started == false) return;
+
+        // only for editor mode:
+        // ReattachMainDispatch();
+        
+        RemoveOldChunks();
+        needReload = true; // reload on next frame because Destroy method finishes at the end of frame
+
+        if (tilesCache.Count == 0) RebuildCache();
     }
 }
