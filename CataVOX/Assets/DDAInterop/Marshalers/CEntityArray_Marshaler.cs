@@ -26,11 +26,12 @@ namespace Assets.DDAInterop.Marshalers
 
                 managedEntityArray[i] = new Entity();
                 managedEntityArray[i].hp = entity.hp;
-                managedEntityArray[i].isMonster = entity.isMonster;
-                managedEntityArray[i].isNpc = entity.isNpc;
+                managedEntityArray[i].isMonster = entity.isMonster != 0;
+                managedEntityArray[i].isNpc = entity.isNpc != 0;
                 managedEntityArray[i].loc = entity.loc;
                 managedEntityArray[i].maxHp = entity.maxHp;
                 managedEntityArray[i].type = entity.type;
+                managedEntityArray[i].attitude = (Attitude)entity.attitude;
             }
 
             return managedEntityArray;

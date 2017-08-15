@@ -9,11 +9,11 @@ namespace Assets.DDAInterop
     {
         public int type;
         public Vector2Int loc;
-        public bool isMonster;
-        public bool isNpc;
+        public int isMonster;
+        public int isNpc;
         public int hp;
         public int maxHp;
-        
+        public int attitude;        
     }
 
     public struct CEntityArray

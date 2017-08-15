@@ -38,8 +38,8 @@ struct IVector2 {
 struct Entity {
     int type;
     IVector2 loc;
-    bool isMonster;
-    bool isNpc;
+    int isMonster;
+    int isNpc;
     int hp;
     int maxHp;
     Creature::Attitude attitude;

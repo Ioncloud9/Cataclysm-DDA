@@ -13,6 +13,7 @@ public class Entity
     public bool isNpc;
     public int hp;
     public int maxHp;
+    public Assets.DDAInterop.Attitude attitude;
 }
 
 [Serializable]

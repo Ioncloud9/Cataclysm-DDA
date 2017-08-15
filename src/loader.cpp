@@ -312,12 +312,12 @@ extern "C" {
 
             Entity e{
                 0,
-                localPos,
-                crit->is_monster(),
-                crit->is_npc(),
+                globalPos,
+                crit->is_monster() ? 1 : 0,
+                crit->is_npc() ? 1 : 0,
                 crit->get_hp(),
                 crit->get_hp_max(),
-                e.attitude = crit->attitude_to(g->u)
+                crit->attitude_to(g->u)
             };
 
             if (crit->is_monster()) {
