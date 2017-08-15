@@ -60,4 +60,9 @@ public class DDA
     [DllImport("Cataclysm", EntryPoint = "getTilesBetween", CallingConvention = CallingConvention.Cdecl)]
     [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "Assets.DDAInterop.Marshalers.CMap_Marshaler")]
     public static extern Map GetTilesBetween(Vector2Int from, Vector2Int to);
+
+    [DllImport("Cataclysm", EntryPoint = "getEntities", CallingConvention = CallingConvention.Cdecl)]
+    [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "Assets.DDAInterop.Marshalers.CEntityArray_Marshaler")]
+    public static extern Entity[] GetEntities(Vector2Int from, Vector2Int to);
+    
 }

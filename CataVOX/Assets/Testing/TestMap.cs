@@ -162,6 +162,16 @@ public class TestMap : Assets.Scripts.GameBase
         Rebuild();
     }
 
+    public void UpdateEntities()
+    {
+        Vector3Int playerPos = DDA.playerPos();
+        int size = 60;
+        Vector2Int from  = new Vector2Int(playerPos.x - size, playerPos.z - size);
+        Vector2Int to  = new Vector2Int(playerPos.x + size, playerPos.z + size);
+        Entity[] entities = DDA.GetEntities(from, to);
+        Debug.Log("found " + entities.Length + " entities");
+    }
+
     public void Update()
     {
         int i = 0;

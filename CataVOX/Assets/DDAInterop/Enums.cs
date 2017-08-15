@@ -3,6 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace Assets.DDAInterop
 {
+    public enum Attitude
+    {
+        Hostile = 0,
+        Neutral,
+        Friendly,
+        Any
+    }
+
 	public enum WeatherType
 	{
 		Null = 0,

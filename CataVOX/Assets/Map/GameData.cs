@@ -4,6 +4,18 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 
 [Serializable]
+[StructLayout(LayoutKind.Sequential)]
+public class Entity
+{
+    public int type;
+    public Vector2Int loc;
+    public bool isMonster;
+    public bool isNpc;
+    public int hp;
+    public int maxHp;
+}
+
+[Serializable]
 public class GameData
 {
     public Vector3Int playerPosition;
