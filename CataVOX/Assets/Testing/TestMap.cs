@@ -122,12 +122,9 @@ public class TestMap : Assets.Scripts.GameBase
 
     private void ClearGameObject()
     {
-        while (gameObject.transform.childCount != 0) 
+        foreach (Transform child in gameObject.transform)
         {
-            foreach (Transform child in gameObject.transform)
-            {
-                Destroy(child.gameObject);
-            }
+            Destroy(child.gameObject);
         }
     }
 
@@ -136,9 +133,9 @@ public class TestMap : Assets.Scripts.GameBase
         foreach (Transform child in gameObject.transform)
         {
             var chunk = child.gameObject.GetComponent<TestChunk>();
-            Vector3Int playerPos = DDA.playerPos() - startingPoint;
+            Vector3Int playerPos = DDA.playerPos();
 
-            Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize + chunkSize, startingPoint.z / chunkSize * chunkSize + chunkSize);
+            Vector2Int truncStartingPoint = new Vector2Int(playerPos.x / chunkSize * chunkSize + chunkSize, playerPos.z / chunkSize * chunkSize + chunkSize);
             Vector2Int chunkStart = new Vector2Int(truncStartingPoint.x - chunkSize / 2 - chunkRadius * chunkSize, truncStartingPoint.y - chunkSize / 2 - 1 - chunkRadius * chunkSize);
             Vector2Int chunkEnd = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkRadius * chunkSize, truncStartingPoint.y + chunkSize / 2 - 1 + chunkRadius * chunkSize);            
             
@@ -170,16 +167,17 @@ public class TestMap : Assets.Scripts.GameBase
         int i = 0;
         if (!needReload) return;
         needReload = false;
-        Vector3Int playerPos = DDA.playerPos() - startingPoint;
-        Vector2Int truncStartingPoint = new Vector2Int(startingPoint.x / chunkSize * chunkSize + chunkSize, startingPoint.z / chunkSize * chunkSize + chunkSize);
-
+        Vector3Int playerPos = DDA.playerPos();
+        Vector2Int truncPlayerPos = new Vector2Int(playerPos.x / chunkSize * chunkSize, playerPos.z / chunkSize * chunkSize);
+        Vector2Int truncStartingPoint = new Vector2Int(truncPlayerPos.x + chunkSize, truncPlayerPos.y + chunkSize);
+        Vector2Int dTruncPos = new Vector2Int((playerPos.x - startingPoint.x) / chunkSize * chunkSize - chunkSize, (playerPos.z - startingPoint.z) / chunkSize * chunkSize - chunkSize);
         for (int x = -chunkRadius; x <= chunkRadius; x++)
         {
             for (int y = -chunkRadius; y <= chunkRadius; y++)
             {
                 var chunkStart = new Vector2Int(x * chunkSize, y * chunkSize);
-                Vector2Int start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
-                Vector2Int end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
+                Vector2Int start = new Vector2Int(truncStartingPoint.x - chunkSize / 2 - 1 + chunkStart.x, truncStartingPoint.y - chunkSize / 2 - 1 + chunkStart.y);
+                Vector2Int end = new Vector2Int(truncStartingPoint.x + chunkSize / 2 - 1 + chunkStart.x, truncStartingPoint.y + chunkSize / 2 - 1 + chunkStart.y);
                 string chunkName = "chunk_" + start.x.ToString("D2") + "_" + start.y.ToString("D2");
 
                 if (GameObject.Find("Map/" + chunkName) == null)
@@ -192,9 +190,9 @@ public class TestMap : Assets.Scripts.GameBase
                     obj.transform.parent = gameObject.transform;
                     obj.name = chunkName;
                     chunk.transform.localPosition = new Vector3(
-                        chunkStart.x * tileSize - startingPoint.x % chunkSize * tileSize + chunkSize / 2 + 1,
+                        (chunkStart.x - startingPoint.x % chunkSize + dTruncPos.x) * tileSize + chunkSize / 2,
                         0, 
-                        chunkStart.y * tileSize - startingPoint.z % chunkSize * tileSize + chunkSize / 2); // dunno
+                        (chunkStart.y - startingPoint.z % chunkSize + dTruncPos.y) * tileSize + chunkSize / 2); // dunno
                     chunk.Rebuild(i * 10);
                     i++;
                 }

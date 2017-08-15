@@ -69,6 +69,16 @@ public class TestMapEditor : Editor
 			DDA.doAction("move_s");
             obj.Rebuild();
 		}
+		if (GUILayout.Button("go east"))
+		{
+			DDA.doAction("move_e");
+            obj.Rebuild();
+		}
+		if (GUILayout.Button("go west"))
+		{
+			DDA.doAction("move_w");
+            obj.Rebuild();
+		}                
 
         serializedObject.ApplyModifiedProperties();
     }
