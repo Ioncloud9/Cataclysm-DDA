@@ -7,14 +7,7 @@
 #include "game.h"
 #include "calendar.h"
 #include "coordinate_conversions.h"
-
-struct Entity {
-    int hp;
-    int maxHp;
-    bool isMonster;
-    bool isNpc;
-    std::string attitude;
-};
+#include "creature.h"
 
 struct Weather {
     weather_type type;
@@ -40,6 +33,21 @@ struct IVector3 {
 
 struct IVector2 {
     int x, y;
+};
+
+struct Entity {
+    int type;
+    IVector2 loc;
+    bool isMonster;
+    bool isNpc;
+    int hp;
+    int maxHp;
+    Creature::Attitude attitude;
+};
+
+struct EntityArray {
+    int size;
+    Entity* entities;
 };
 
 struct Tile {
@@ -81,5 +89,6 @@ extern "C" {
     LOADERDLL_API void doAction(char* action);
     LOADERDLL_API IVector3 playerPos(void);
     LOADERDLL_API Map* getTilesBetween(IVector2 from, IVector2 to);
+    LOADERDLL_API EntityArray* getEntities(IVector2 from, IVector2 to);
     LOADERDLL_API GameData* getGameData(void);
 }

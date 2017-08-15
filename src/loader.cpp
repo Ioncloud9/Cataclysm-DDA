@@ -18,11 +18,14 @@
 #include "main_menu.h"
 #include "weather_gen.h"
 #include "init.h"
+#include "mtype.h"
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
 extern bool test_dirty;
 extern input_context get_default_mode_input_context();
+
+typedef std::function<void(submap* sm, int index, IVector2 submapPos, IVector2 globalPos, IVector2 localPos)> mapCallback;
 
 extern "C" {
     void init(bool openMainMenu) {
@@ -215,57 +218,6 @@ extern "C" {
         }
     }
 
-    Entity* getEntities(IVector2 from, IVector2 to) {
-        IVector2 bottomLeft;
-        IVector2 topRight;
-        if (from.x < to.x && from.y < to.y) {
-            bottomLeft = from;
-            topRight = to;
-        }
-        else {
-            bottomLeft = to;
-            topRight = from;
-        }
-
-        int i = 0;
-        std::vector<Entity> ent;
-        Entity* entities;
-        for (int dx = bottomLeft.x; dx <= topRight.x; dx++) {
-            for (int dy = bottomLeft.y; dy <= topRight.y; dy++) {
-                tripoint p = tripoint(dx, dy, 0);
-                Creature* crit = g->critter_at(p, true);
-                if (crit->is_player()) continue;
-                sm_to_om(p);
-                Entity e;
-                e.hp = crit->get_hp();
-                e.maxHp = crit->get_hp_max();
-                e.isMonster = crit->is_monster();
-                e.isNpc = crit->is_npc();
-                Creature::Attitude attitude = crit->attitude_to(g->u);
-                std::string strAtt = "";
-                if (attitude == Creature::Attitude::A_FRIENDLY) {
-                    e.attitude = "friendly";
-                }
-                else if (attitude == Creature::Attitude::A_HOSTILE) {
-                    e.attitude = "hostile";
-                }
-                else if (attitude == Creature::Attitude::A_NEUTRAL) {
-                    e.attitude = "neutral";
-                }
-                else {
-                    e.attitude = "any";
-                }
-                ent.push_back(e);
-            }
-        }
-        entities = (Entity*)::CoTaskMemAlloc(ent.size() * sizeof(Entity));
-        for (i = 0; i <= ent.size(); i++)
-        {
-            entities[i] = ent.at(i);
-        }
-        return entities;
-    }
-
     IVector3 playerPos()
     {
         tripoint pos = g->u.global_square_location();
@@ -273,8 +225,7 @@ extern "C" {
         return res;
     }
 
-    Map* getTilesBetween(IVector2 from, IVector2 to) {
-        Map* map = (Map*)::CoTaskMemAlloc(sizeof(Map));
+    void iterateThroughTiles(IVector2 from, IVector2 to, mapCallback callback) {
         IVector2 bottomLeft;
         IVector2 topRight;
         if (from.x < to.x && from.y < to.y) {
@@ -288,9 +239,6 @@ extern "C" {
 
         int width = topRight.x - bottomLeft.x + 1;
         int height = topRight.y - bottomLeft.y + 1;
-        map->width = width;
-        map->height = height;
-        map->tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * width * height);
 
         int z = 0;
         submap *sm;
@@ -309,8 +257,8 @@ extern "C" {
                     sm = g->m.generateSubmap(x, y, z);
                 }
                 IVector2 sfrom = { 0,0 };
-                IVector2 sto = { SEEX - 1, SEEY - 1};
-              
+                IVector2 sto = { SEEX - 1, SEEY - 1 };
+
                 if (x == submapFrom.x) {
                     sfrom.x = submapFromS.x;
                 }
@@ -330,25 +278,89 @@ extern "C" {
                 for (int sx = sfrom.x; sx <= sto.x; sx++) {
                     for (int sy = sfrom.y; sy <= sto.y; sy++) {
                         int i = (y * SEEY + sy - from.y) * width + x * SEEX + sx - from.x;
-                        map->tiles[i].loc.x = x * SEEX + sx;
-                        map->tiles[i].loc.y = z;
-                        map->tiles[i].loc.z = y * SEEY + sy; // swap z and y for unity coordinate system
-
-                        IVector2 localPos = { map->tiles[i].loc.x - ppos.x + g->u.posx(), 
-                                              map->tiles[i].loc.z - ppos.z + g->u.posy()};
+                        IVector2 submapPos{ sx, sy };
+                        IVector2 globalPos{ x * SEEX + sx, y * SEEY + sy };
+                        IVector2 localPos{ globalPos.x - ppos.x + g->u.posx(), globalPos.y - ppos.z + g->u.posy() };
                         
-                        map->tiles[i].ter = sm->get_ter(sx, sy);
-                        map->tiles[i].furn = sm->get_furn(sx, sy);
-                        map->tiles[i].seen = false;
-                        if (localPos.x >= 0 && localPos.y >= 0 &&
-                            localPos.x < 120 && localPos.y < 120) {
-                            tripoint tpos(localPos.x, localPos.y, z);
-                            map->tiles[i].seen = g->u.sees(tpos, true);
-                        }
+                        callback(sm, i, submapPos, globalPos, localPos);
                     }
                 }
             }
         }
+    }
+
+    EntityArray* getEntities(IVector2 from, IVector2 to) {
+        std::vector<Entity> entities;
+        // todo: crop area only to critter_tracker's loaded area
+
+        iterateThroughTiles(from, to, [&entities](submap* sm, int index, IVector2 submapPos,
+            IVector2 globalPos, IVector2 localPos) {
+
+            tripoint lp(localPos.x, localPos.y, 0);
+
+            Creature* crit = g->critter_at(lp, true);
+            if (crit == NULL) return;
+            if (crit->is_player()) return;
+
+            int type;
+            IVector2 loc;
+            bool isMonster;
+            bool isNpc;
+            int hp;
+            int maxHp;
+            Creature::Attitude attitude;
+
+            Entity e{
+                0,
+                localPos,
+                crit->is_monster(),
+                crit->is_npc(),
+                crit->get_hp(),
+                crit->get_hp_max(),
+                e.attitude = crit->attitude_to(g->u)
+            };
+
+            if (crit->is_monster()) {
+                monster* m = dynamic_cast<monster*>(crit);
+                mtype_id mId= m->type->id;
+                e.type = mId.get_cid();
+            }
+
+            entities.push_back(e);
+        });
+
+        EntityArray* result = (EntityArray*)::CoTaskMemAlloc(sizeof(EntityArray));
+        result->size = entities.size();
+        result->entities = (Entity*)::CoTaskMemAlloc(entities.size() * sizeof(Entity));
+
+        for (int i = 0; i < entities.size(); i++) {
+            result->entities[i] = entities.at(i);
+        }
+        return result;
+    }
+
+    Map* getTilesBetween(IVector2 from, IVector2 to) {
+        Map* map = (Map*)::CoTaskMemAlloc(sizeof(Map));
+        map->width = abs(from.x - to.x) + 1;
+        map->height = abs(from.y - to.y) + 1;
+        map->tiles = (Tile*)::CoTaskMemAlloc(sizeof(Tile) * map->width * map->height);
+
+        iterateThroughTiles(from, to, [map] (submap* sm, int index, IVector2 submapPos, IVector2 globalPos, IVector2 localPos) {
+            int z = 0;
+            map->tiles[index].loc.x = globalPos.x;
+            map->tiles[index].loc.y = 0;
+            map->tiles[index].loc.z = globalPos.y; // swap z and y for unity coordinate system
+            map->tiles[index].ter = sm->get_ter(submapPos.x, submapPos.y);
+            map->tiles[index].furn = sm->get_furn(submapPos.x, submapPos.y);
+            map->tiles[index].seen = false;
+
+            if (localPos.x >= 0 && localPos.y >= 0 &&
+                localPos.x < 120 && localPos.y < 120) {
+                tripoint tpos(localPos.x, localPos.y, z);
+                map->tiles[index].seen = g->u.sees(tpos, true);
+            }
+        });
+
 
         return map;
     }
