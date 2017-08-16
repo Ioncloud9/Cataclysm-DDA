@@ -19,6 +19,7 @@
 #include "weather_gen.h"
 #include "init.h"
 #include "mtype.h"
+#include "monstergenerator.h"
 using mtype_id = string_id<mtype>;
 
 extern bool assure_dir_exist(std::string const &path);
@@ -312,8 +313,14 @@ extern "C" {
             int maxHp;
             Creature::Attitude attitude;
 
-            Entity e{
+            int size = crit->get_name().length() + 1;
+            char* name = (char*)::CoTaskMemAlloc(size);
+            memset(name, 0, size);
+            strcpy(name, crit->get_name().c_str());
+
+            Entity e {
                 0,
+                name,
                 globalPos,
                 crit->is_monster() ? 1 : 0,
                 crit->is_npc() ? 1 : 0,
@@ -324,7 +331,7 @@ extern "C" {
 
             if (crit->is_monster()) {
                 monster* m = dynamic_cast<monster*>(crit);
-                mtype_id mId= m->type->id;
+                mtype_id mId = m->type->id;
                 e.type = mId.get_cid();
             }
 

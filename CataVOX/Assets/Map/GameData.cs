@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 public class Entity
 {
     public int type;
+    public string name;
     public Vector2Int loc;
     public bool isMonster;
     public bool isNpc;

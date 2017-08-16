@@ -8,6 +8,7 @@ namespace Assets.DDAInterop
     public struct CEntity 
     {
         public int type;
+        public IntPtr name;
         public Vector2Int loc;
         public int isMonster;
         public int isNpc;

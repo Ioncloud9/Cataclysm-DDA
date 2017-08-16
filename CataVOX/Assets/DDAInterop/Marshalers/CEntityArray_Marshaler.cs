@@ -25,6 +25,7 @@ namespace Assets.DDAInterop.Marshalers
                 CEntity entity = (CEntity)Marshal.PtrToStructure(p, typeof(CEntity));
 
                 managedEntityArray[i] = new Entity();
+                managedEntityArray[i].name = Marshal.PtrToStringAnsi(entity.name);
                 managedEntityArray[i].hp = entity.hp;
                 managedEntityArray[i].isMonster = entity.isMonster != 0;
                 managedEntityArray[i].isNpc = entity.isNpc != 0;
@@ -42,6 +43,12 @@ namespace Assets.DDAInterop.Marshalers
             CEntityArray arr = (CEntityArray)Marshal.PtrToStructure(pNativeData, typeof(CEntityArray));
             Marshal.FreeCoTaskMem(arr.entityArray);
             Marshal.FreeCoTaskMem(pNativeData);
+            for (int i = 0; i < arr.size; i++)
+            {
+                IntPtr p = new IntPtr(arr.entityArray.ToInt64() + i * Marshal.SizeOf(typeof(CEntity)));
+                CEntity entity = (CEntity)Marshal.PtrToStructure(p, typeof(CEntity));
+                Marshal.FreeCoTaskMem(entity.name);
+            }
         }
 
         public void CleanUpManagedData(object ManagedObj)

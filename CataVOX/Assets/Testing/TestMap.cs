@@ -95,7 +95,7 @@ public class TestMap : Assets.Scripts.GameBase
             int terId = DDA.terId(name);
             int monId = DDA.monId(name);
             if (terId != 0) terIds[terId] = name;
-            if (monId != 0) monIds[monId] = name;
+            if (monId != -1) monIds[monId] = name;
         }
 
         terrainMaterial = new UnityEngine.Material(Shader.Find("Standard"));
@@ -176,6 +176,7 @@ public class TestMap : Assets.Scripts.GameBase
         Entity[] entities = DDA.GetEntities(from, to);
         Debug.Log("found " + entities.Length + " entities: ");
         foreach (var entity in entities) {
+            Debug.Log(entity.name);
             string stringId;
             monIds.TryGetValue(entity.type, out stringId);
             string name = stringId == null ? "mon_unknown" : stringId;

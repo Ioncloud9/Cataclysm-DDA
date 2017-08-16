@@ -37,6 +37,7 @@ struct IVector2 {
 
 struct Entity {
     int type;
+    char* name;
     IVector2 loc;
     int isMonster;
     int isNpc;
