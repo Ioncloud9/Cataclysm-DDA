@@ -23,8 +23,9 @@ public class TestMap : Assets.Scripts.GameBase
     [HideInInspector]
     public static bool gameStarted { get; private set; }
 
-    protected readonly Dictionary<string, MeshDraft> tilesCache = new Dictionary<string, MeshDraft>();
+    protected readonly Dictionary<string, MeshDraft> voxModelsCache = new Dictionary<string, MeshDraft>();
     protected readonly Dictionary<int, string> terIds = new Dictionary<int, string>();
+    protected readonly Dictionary<int, string> monIds = new Dictionary<int, string>();
 
     [HideInInspector]
     public float tileSize = 1.0f;
@@ -64,13 +65,13 @@ public class TestMap : Assets.Scripts.GameBase
         terIds.TryGetValue(ter_id, out str_id);
         if (str_id == null) return null;
         MeshDraft mesh;
-        tilesCache.TryGetValue(str_id, out mesh);
+        voxModelsCache.TryGetValue(str_id, out mesh);
         return mesh;
     }
 
     public void RebuildCache()
     {
-        tilesCache.Clear();
+        voxModelsCache.Clear();
         terIds.Clear();
         tilesFolder = tilesFolder.Trim();
         if (!Directory.Exists(tilesFolder)) return;
@@ -89,10 +90,12 @@ public class TestMap : Assets.Scripts.GameBase
             }
 
             var mesh = VOX.Mesh.FromModel(model, scale, removeEdges, 1.0f / terrainTexture.width / 2.0f);
-            tilesCache[name] = mesh;
+            voxModelsCache[name] = mesh;
             terIds[0] = "t_null";
             int terId = DDA.terId(name);
+            int monId = DDA.monId(name);
             if (terId != 0) terIds[terId] = name;
+            if (monId != 0) monIds[monId] = name;
         }
 
         terrainMaterial = new UnityEngine.Material(Shader.Find("Standard"));
@@ -164,12 +167,29 @@ public class TestMap : Assets.Scripts.GameBase
 
     public void UpdateEntities()
     {
+        GameObject entitiesObj = new GameObject("entities");
+
         Vector3Int playerPos = DDA.playerPos();
         int size = 60;
         Vector2Int from  = new Vector2Int(playerPos.x - size, playerPos.z - size);
         Vector2Int to  = new Vector2Int(playerPos.x + size, playerPos.z + size);
         Entity[] entities = DDA.GetEntities(from, to);
-        Debug.Log("found " + entities.Length + " entities");
+        Debug.Log("found " + entities.Length + " entities: ");
+        foreach (var entity in entities) {
+            string stringId;
+            monIds.TryGetValue(entity.type, out stringId);
+            string name = stringId == null ? "mon_unknown" : stringId;
+            GameObject obj = new GameObject(name);
+            obj.transform.parent = entitiesObj.transform;
+            var pos = new Vector3(entity.loc.x, 0, entity.loc.y);
+            obj.transform.Translate((pos - startingPoint) * tileSize);
+            // probably should prepare GameObjects and do their clones instead
+            var mr = obj.AddComponent<MeshRenderer>();
+            var mf = obj.AddComponent<MeshFilter>();
+            mf.sharedMesh = voxModelsCache[name].ToMesh();
+            mr.sharedMaterial = terrainMaterial;
+            mf.sharedMesh.RecalculateNormals(); 
+        }
     }
 
     public void Update()
@@ -222,6 +242,6 @@ public class TestMap : Assets.Scripts.GameBase
         RemoveOldChunks();
         needReload = true; // reload on next frame because Destroy method finishes at the end of frame
 
-        if (tilesCache.Count == 0) RebuildCache();
+        if (voxModelsCache.Count == 0) RebuildCache();
     }
 }
