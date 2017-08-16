@@ -91,4 +91,5 @@ extern "C" {
     LOADERDLL_API Map* getTilesBetween(IVector2 from, IVector2 to);
     LOADERDLL_API EntityArray* getEntities(IVector2 from, IVector2 to);
     LOADERDLL_API GameData* getGameData(void);
+    LOADERDLL_API int monId(char* name);
 }

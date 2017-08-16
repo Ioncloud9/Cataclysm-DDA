@@ -19,6 +19,7 @@
 #include "weather_gen.h"
 #include "init.h"
 #include "mtype.h"
+using mtype_id = string_id<mtype>;
 
 extern bool assure_dir_exist(std::string const &path);
 extern void exit_handler(int s);
@@ -290,10 +291,11 @@ extern "C" {
     }
 
     EntityArray* getEntities(IVector2 from, IVector2 to) {
+        FILE* ff = fopen("debug.log", "wt");
         std::vector<Entity> entities;
         // todo: crop area only to critter_tracker's loaded area
 
-        iterateThroughTiles(from, to, [&entities](submap* sm, int index, IVector2 submapPos,
+        iterateThroughTiles(from, to, [&entities, ff](submap* sm, int index, IVector2 submapPos,
             IVector2 globalPos, IVector2 localPos) {
 
             tripoint lp(localPos.x, localPos.y, 0);
@@ -371,6 +373,15 @@ extern "C" {
         ter_id id(str);
         test_mode = prevTestMode;
         return id;
+    }
+
+    int monId(char* str) {
+        bool prevTestMode = test_mode;
+        const mtype_id id(str);
+        test_mode = true;
+        const mtype actual = id.obj();
+        test_mode = prevTestMode;
+        return actual.id.get_cid();
     }
 
     GameData* getGameData(void) {
