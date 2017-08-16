@@ -37,6 +37,9 @@ public class DDA
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "terId")]
     public static extern int terId([MarshalAs(UnmanagedType.LPStr)] string ter_str_id);
 
+    [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "furnId")]
+    public static extern int furnId([MarshalAs(UnmanagedType.LPStr)] string furn_str_id);
+
     [DllImport("Cataclysm", CharSet = CharSet.Auto, EntryPoint = "monId")]
     public static extern int monId([MarshalAs(UnmanagedType.LPStr)] string mon_str_id);
 

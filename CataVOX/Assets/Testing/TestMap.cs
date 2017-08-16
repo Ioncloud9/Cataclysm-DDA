@@ -25,6 +25,7 @@ public class TestMap : Assets.Scripts.GameBase
 
     protected readonly Dictionary<string, MeshDraft> voxModelsCache = new Dictionary<string, MeshDraft>();
     protected readonly Dictionary<int, string> terIds = new Dictionary<int, string>();
+    protected readonly Dictionary<int, string> furnIds = new Dictionary<int, string>();
     protected readonly Dictionary<int, string> monIds = new Dictionary<int, string>();
 
     [HideInInspector]
@@ -94,8 +95,10 @@ public class TestMap : Assets.Scripts.GameBase
             terIds[0] = "t_null";
             int terId = DDA.terId(name);
             int monId = DDA.monId(name);
+            int furnId = DDA.furnId(name);
             if (terId != 0) terIds[terId] = name;
             if (monId != -1) monIds[monId] = name;
+            if (furnId != -1) furnIds[furnId] = name;
         }
 
         terrainMaterial = new UnityEngine.Material(Shader.Find("Standard"));
@@ -193,6 +196,36 @@ public class TestMap : Assets.Scripts.GameBase
         }
     }
 
+    // TODO: almost the same as UpdateEntities, need to refactor
+    public void UpdateFurniture()
+    {
+        GameObject furnObj = new GameObject("furniture");
+
+        Vector3Int playerPos = DDA.playerPos();
+        int size = 60;
+        Vector2Int from  = new Vector2Int(playerPos.x - size, playerPos.z - size);
+        Vector2Int to  = new Vector2Int(playerPos.x + size, playerPos.z + size);
+        Tile[] tiles = DDA.GetTilesBetween(from, to).tiles;
+
+        foreach (var tile in tiles) {
+            if (tile.furn == -1) continue;
+            string stringId;
+            furnIds.TryGetValue(tile.furn, out stringId);
+            string name = stringId == null ? "f_unknown" : stringId;
+
+            GameObject obj = new GameObject(name);
+            obj.transform.parent = furnObj.transform;
+            var pos = new Vector3(tile.loc.x, 0, tile.loc.z);
+            obj.transform.Translate((pos - startingPoint) * tileSize);
+            // probably should prepare GameObjects and do their clones instead
+            var mr = obj.AddComponent<MeshRenderer>();
+            var mf = obj.AddComponent<MeshFilter>();
+            mf.sharedMesh = voxModelsCache[name].ToMesh();
+            mr.sharedMaterial = terrainMaterial;
+            mf.sharedMesh.RecalculateNormals(); 
+        }
+    }    
+
     public void Update()
     {
         int i = 0;
@@ -221,9 +254,9 @@ public class TestMap : Assets.Scripts.GameBase
                     obj.transform.parent = gameObject.transform;
                     obj.name = chunkName;
                     chunk.transform.localPosition = new Vector3(
-                        (chunkStart.x - startingPoint.x % chunkSize + dTruncPos.x) * tileSize + chunkSize / 2,
+                        (chunkStart.x - startingPoint.x % chunkSize + dTruncPos.x  + chunkSize / 2 + chunkSize - 1) * tileSize,
                         0, 
-                        (chunkStart.y - startingPoint.z % chunkSize + dTruncPos.y) * tileSize + chunkSize / 2); // dunno
+                        (chunkStart.y - startingPoint.z % chunkSize + dTruncPos.y + chunkSize / 2 + chunkSize - 1) * tileSize);
                     chunk.Rebuild(i * 10);
                     i++;
                 }

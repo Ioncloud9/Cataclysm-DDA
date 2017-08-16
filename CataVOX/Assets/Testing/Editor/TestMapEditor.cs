@@ -83,6 +83,10 @@ public class TestMapEditor : Editor
         {
             obj.UpdateEntities();
         }
+        if (GUILayout.Button("update furniture"))
+        {
+            obj.UpdateFurniture();
+        }
         serializedObject.ApplyModifiedProperties();
     }
 }

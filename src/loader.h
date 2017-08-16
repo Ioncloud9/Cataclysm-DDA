@@ -82,6 +82,8 @@ extern "C" {
     LOADERDLL_API CStringArray* getWorldNames(void);
     LOADERDLL_API CStringArray* getWorldSaves(char* worldName);
     LOADERDLL_API int terId(char* str);
+    LOADERDLL_API int furnId(char* str);
+    LOADERDLL_API int monId(char* name);
     LOADERDLL_API void deinit(void);
     LOADERDLL_API void loadGame(char* worldName); // loads first available game for the world
     LOADERDLL_API void loadSaveGame(char* worldName, char* saveName);
@@ -92,5 +94,4 @@ extern "C" {
     LOADERDLL_API Map* getTilesBetween(IVector2 from, IVector2 to);
     LOADERDLL_API EntityArray* getEntities(IVector2 from, IVector2 to);
     LOADERDLL_API GameData* getGameData(void);
-    LOADERDLL_API int monId(char* name);
 }

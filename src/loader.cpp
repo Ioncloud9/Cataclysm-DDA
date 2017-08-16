@@ -382,6 +382,14 @@ extern "C" {
         return id;
     }
 
+    int furnId(char* str) {
+        bool prevTestMode = test_mode;
+        test_mode = true;
+        furn_id id(str);
+        test_mode = prevTestMode;
+        return id;
+    }
+
     int monId(char* str) {
         bool prevTestMode = test_mode;
         const mtype_id id(str);
