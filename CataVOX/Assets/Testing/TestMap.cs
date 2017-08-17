@@ -126,9 +126,10 @@ public class TestMap : Assets.Scripts.GameBase
         }
     }
 
-    private void ClearGameObject()
+    private void ClearGameObject(GameObject obj = null)
     {
-        foreach (Transform child in gameObject.transform)
+        if (obj == null) obj = gameObject;
+        foreach (Transform child in obj.transform)
         {
             Destroy(child.gameObject);
         }
@@ -170,6 +171,9 @@ public class TestMap : Assets.Scripts.GameBase
 
     public void UpdateEntities()
     {
+        GameObject parent = GameObject.Find("entities");
+        if (parent != null) ClearGameObject(parent);
+
         GameObject entitiesObj = new GameObject("entities");
 
         Vector3Int playerPos = DDA.playerPos();
@@ -199,6 +203,8 @@ public class TestMap : Assets.Scripts.GameBase
     // TODO: almost the same as UpdateEntities, need to refactor
     public void UpdateFurniture()
     {
+        GameObject parent = GameObject.Find("furniture");
+        if (parent != null) ClearGameObject(parent);
         GameObject furnObj = new GameObject("furniture");
 
         Vector3Int playerPos = DDA.playerPos();
@@ -208,7 +214,7 @@ public class TestMap : Assets.Scripts.GameBase
         Tile[] tiles = DDA.GetTilesBetween(from, to).tiles;
 
         foreach (var tile in tiles) {
-            if (tile.furn == -1) continue;
+            if (tile.furn == 0) continue;
             string stringId;
             furnIds.TryGetValue(tile.furn, out stringId);
             string name = stringId == null ? "f_unknown" : stringId;
@@ -277,5 +283,7 @@ public class TestMap : Assets.Scripts.GameBase
         needReload = true; // reload on next frame because Destroy method finishes at the end of frame
 
         if (voxModelsCache.Count == 0) RebuildCache();
+        UpdateEntities();
+        UpdateFurniture();
     }
 }

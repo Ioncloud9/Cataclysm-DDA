@@ -79,14 +79,6 @@ public class TestMapEditor : Editor
 			DDA.doAction("move_w");
             obj.Rebuild();
 		}                
-        if (GUILayout.Button("update entities"))
-        {
-            obj.UpdateEntities();
-        }
-        if (GUILayout.Button("update furniture"))
-        {
-            obj.UpdateFurniture();
-        }
         serializedObject.ApplyModifiedProperties();
     }
 }
