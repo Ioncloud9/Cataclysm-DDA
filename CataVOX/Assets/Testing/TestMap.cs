@@ -171,10 +171,15 @@ public class TestMap : Assets.Scripts.GameBase
 
     public void UpdateEntities()
     {
-        GameObject parent = GameObject.Find("entities");
-        if (parent != null) ClearGameObject(parent);
-
-        GameObject entitiesObj = new GameObject("entities");
+        GameObject entitiesObj = GameObject.Find("entities");
+        if (entitiesObj != null)
+        {
+            ClearGameObject(entitiesObj);
+        }
+        else
+        {
+            entitiesObj = new GameObject("entities");
+        }
 
         Vector3Int playerPos = DDA.playerPos();
         int size = 60;
@@ -203,9 +208,15 @@ public class TestMap : Assets.Scripts.GameBase
     // TODO: almost the same as UpdateEntities, need to refactor
     public void UpdateFurniture()
     {
-        GameObject parent = GameObject.Find("furniture");
-        if (parent != null) ClearGameObject(parent);
-        GameObject furnObj = new GameObject("furniture");
+        GameObject furnObj = GameObject.Find("furniture");
+        if (furnObj != null)
+        {
+            ClearGameObject(furnObj);
+        }
+        else
+        {
+            furnObj = new GameObject("furniture");
+        }
 
         Vector3Int playerPos = DDA.playerPos();
         int size = 60;
